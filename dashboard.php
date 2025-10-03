@@ -8,6 +8,8 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Added axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -325,28 +327,31 @@
                                 </div>
                                 <span class="text-xs text-green-600 font-semibold">+8%</span>
                             </div>
+                            <!-- Updated to use dynamic listings data -->
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offreurs Actifs</div>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-heart text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+15%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandeurs Actifs</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-hand-holding-heart text-xl"></i>
+                                </div>
+                                <span class="text-xs text-green-600 font-semibold">+15%</span>
+                            </div>
+                            <!-- Updated to use dynamic listings data -->
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-exchange-alt text-xl"></i>
                                 </div>
                                 <span class="text-xs text-green-600 font-semibold">+23%</span>
                             </div>
+                            <!-- Updated to use dynamic listings data -->
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
                         </div>
@@ -355,7 +360,8 @@
                     <!-- Charts Row -->
                     <div class="grid lg:grid-cols-2 gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Transactions par mois</h3>
+                            <!-- Updated chart title -->
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
                             <canvas id="transactionsChart"></canvas>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
@@ -367,14 +373,22 @@
                     <!-- Recent Activity -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
-                        <div class="space-y-4">
+                        <!-- Updated to use dynamic listings data -->
+                        <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                            <p>Chargement des activités...</p>
+                        </div>
+                        <div v-else class="space-y-4">
                             <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'user' ? 'bg-blue-100 text-blue-600' : activity.type === 'transaction' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
+                                <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'Offre' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
                                     <i :class="activity.icon"></i>
                                 </div>
                                 <div class="flex-1">
                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</div>
                                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</div>
+                                </div>
+                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    {{ formatCurrency(activity.amount) }} {{ activity.currency }}
                                 </div>
                             </div>
                         </div>
@@ -669,6 +683,10 @@
             createApp
         } = Vue;
 
+        const api = axios.create({
+            baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        });
+
         createApp({
             data() {
                 return {
@@ -695,43 +713,8 @@
                         currency: 'EUR'
                     },
                     countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo'],
-                    recentActivities: [{
-                            id: 1,
-                            type: 'user',
-                            icon: 'fas fa-user-plus',
-                            title: 'Nouvel utilisateur inscrit: Marie Dubois',
-                            time: 'Il y a 5 min'
-                        },
-                        {
-                            id: 2,
-                            type: 'transaction',
-                            icon: 'fas fa-exchange-alt',
-                            title: 'Transaction complétée: 500 EUR',
-                            time: 'Il y a 12 min'
-                        },
-                        {
-                            id: 3,
-                            type: 'offer',
-                            icon: 'fas fa-hand-holding-usd',
-                            title: 'Nouvelle offre publiée à Paris',
-                            time: 'Il y a 23 min'
-                        },
-                        {
-                            id: 4,
-                            type: 'user',
-                            icon: 'fas fa-user-check',
-                            title: 'Utilisateur vérifié: Jean Dupont',
-                            time: 'Il y a 1h'
-                        },
-                        {
-                            id: 5,
-                            type: 'transaction',
-                            icon: 'fas fa-exchange-alt',
-                            title: 'Transaction complétée: 250000 XOF',
-                            time: 'Il y a 2h'
-                        }
-                    ],
-                    // API call placeholder: GET /api/admin/users
+                    recentActivities: [],
+                    listings: [],
                     allUsers: [{
                             id: 1,
                             name: 'Jean Dupont',
@@ -950,9 +933,9 @@
                 stats() {
                     return {
                         totalUsers: this.allUsers.length,
-                        activeOffers: this.allUsers.filter(u => u.type === 'offerer' && u.hasAvailability).length,
-                        activeRequests: this.allUsers.filter(u => u.type === 'requester').length,
-                        totalTransactions: 156 // Mock data
+                        activeOffers: this.listings.filter(l => l.type === 'Offre').length,
+                        activeRequests: this.listings.filter(l => l.type === 'Demande').length,
+                        totalTransactions: this.listings.length
                     };
                 }
             },
@@ -963,36 +946,90 @@
                     document.body.classList.add('dark-mode');
                 }
 
-                this.initCharts();
+                this.fetchListings();
             },
             methods: {
+                async fetchListings() {
+                    try {
+                        const response = await api.get('?action=allListings');
+                        this.listings = response.data || [];
+                        console.log('[v0] Listings fetched:', this.listings);
+
+                        // Map listings to recent activities (take 5 most recent)
+                        this.recentActivities = this.listings.slice(0, 5).map(listing => ({
+                            id: listing.id,
+                            type: listing.type,
+                            icon: listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart',
+                            title: `${listing.type} #${listing.id} - ${listing.city}, ${listing.country}`,
+                            time: this.formatTimeAgo(listing.created_at),
+                            amount: parseFloat(listing.amount),
+                            currency: listing.currency
+                        }));
+
+                        // Initialize charts after data is loaded
+                        this.$nextTick(() => {
+                            this.initCharts();
+                        });
+                    } catch (error) {
+                        console.error('[v0] Erreur lors du chargement des listings:', error);
+                        this.listings = [];
+                        this.recentActivities = [];
+                    }
+                },
+                formatTimeAgo(dateString) {
+                    const date = new Date(dateString);
+                    const now = new Date();
+                    const diffMs = now - date;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMs / 3600000);
+                    const diffDays = Math.floor(diffMs / 86400000);
+
+                    if (diffMins < 60) {
+                        return `Il y a ${diffMins} min`;
+                    } else if (diffHours < 24) {
+                        return `Il y a ${diffHours}h`;
+                    } else {
+                        return `Il y a ${diffDays}j`;
+                    }
+                },
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
                     document.body.classList.toggle('dark-mode');
                     localStorage.setItem('darkMode', this.darkMode);
                 },
                 initCharts() {
-                    // Transactions Chart
                     const transactionsCtx = document.getElementById('transactionsChart');
                     if (transactionsCtx) {
+                        // Group listings by month and type
+                        const monthlyData = this.getMonthlyData();
+
                         new Chart(transactionsCtx, {
                             type: 'line',
                             data: {
                                 labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
                                 datasets: [{
-                                    label: 'Transactions',
-                                    data: [65, 78, 90, 105, 125, 156],
-                                    borderColor: '#10B981',
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                    tension: 0.4
-                                }]
+                                        label: 'Offres',
+                                        data: monthlyData.offers,
+                                        borderColor: '#10B981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        tension: 0.4
+                                    },
+                                    {
+                                        label: 'Demandes',
+                                        data: monthlyData.requests,
+                                        borderColor: '#F59E0B',
+                                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                        tension: 0.4
+                                    }
+                                ]
                             },
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: true,
                                 plugins: {
                                     legend: {
-                                        display: false
+                                        display: true,
+                                        position: 'top'
                                     }
                                 }
                             }
@@ -1005,10 +1042,10 @@
                         new Chart(typeCtx, {
                             type: 'doughnut',
                             data: {
-                                labels: ['Offreurs', 'Demandeurs'],
+                                labels: ['Offres', 'Demandes'],
                                 datasets: [{
                                     data: [this.stats.activeOffers, this.stats.activeRequests],
-                                    backgroundColor: ['#10B981', '#3B82F6']
+                                    backgroundColor: ['#10B981', '#F59E0B']
                                 }]
                             },
                             options: {
@@ -1022,6 +1059,16 @@
                             }
                         });
                     }
+                },
+                getMonthlyData() {
+                    // Mock data for now - in production, this would aggregate real data by month
+                    const offers = [12, 18, 25, 32, 38, this.stats.activeOffers];
+                    const requests = [8, 15, 20, 28, 35, this.stats.activeRequests];
+
+                    return {
+                        offers,
+                        requests
+                    };
                 },
                 applyFilters() {
                     this.currentPage = 1;

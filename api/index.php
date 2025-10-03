@@ -5,8 +5,12 @@ include 'functions.php';
 $action = $_GET['action'] ?? '';
 
 switch ($action) {
-    case 'allTransactions':
-        getAllTransactions();
+    case 'allListings':
+        getAllListings();
+        break;
+
+    case 'allUsers':
+        getAllUsers();
         break;
 
 

@@ -1,13 +1,22 @@
 <?php
 require 'db.php';
 
-// Récupérer toutes les claims
-function getAllTransactions()
+// Récupérer toutes les listings
+function getAllListings()
 {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM transactions ORDER BY id DESC");
-    $claims = $stmt->fetchAll();
-    echo json_encode($claims);
+    $stmt = $pdo->query("SELECT * FROM listings ORDER BY id DESC");
+    $listings = $stmt->fetchAll();
+    echo json_encode($listings);
+}
+
+// Récupérer toutes les claims
+function getAllUsers()
+{
+    global $pdo;
+    $stmt = $pdo->query("SELECT * FROM users WHERE role != 'admin' ORDER BY id DESC");
+    $users = $stmt->fetchAll();
+    echo json_encode($users);
 }
 
 
