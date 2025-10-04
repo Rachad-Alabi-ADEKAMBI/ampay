@@ -21,60 +21,10 @@
             color: #F9FAFB;
         }
 
-        .dark-mode .bg-white {
-            background-color: var(--bg-dark-secondary) !important;
-        }
-
-        .dark-mode .bg-gray-50 {
-            background-color: var(--bg-dark) !important;
-        }
-
-        .dark-mode .bg-gray-100 {
-            background-color: var(--bg-dark-secondary) !important;
-        }
-
-        .dark-mode .text-gray-900 {
-            color: #F9FAFB !important;
-        }
-
-        .dark-mode .text-gray-700 {
-            color: #94A3B8 !important;
-        }
-
-        .dark-mode .text-gray-600 {
-            color: #94A3B8 !important;
-        }
-
-        .dark-mode .border-gray-200 {
-            border-color: #334155 !important;
-        }
-
-        .dark-mode .border-gray-300 {
-            border-color: #475569 !important;
-        }
-
-        .dark-mode .shadow-md {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
-        }
-
         .primary-gradient {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
         }
 
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .dark-mode i {
-            color: inherit;
-        }
-
-        /* Added sidebar styles */
         .sidebar {
             transition: transform 0.3s ease;
         }
@@ -94,36 +44,62 @@
             }
         }
 
-        @media print {
-            .no-print {
-                display: none !important;
-            }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
 
-            body {
-                background: white !important;
-                color: black !important;
-            }
-
-            .bg-white {
-                background: white !important;
-            }
-
-            .shadow-sm,
-            .shadow-md {
-                box-shadow: none !important;
-            }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
 
 <body>
     <div id="app">
-        <!-- Added mobile overlay for sidebar -->
-        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
+        <!-- Overlay mobile -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden md:hidden"></div>
 
-        <!-- Added sidebar navigation -->
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-            <?php include 'sidebar.php'; ?>
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar fixed md:static w-64 bg-white dark:bg-gray-800 shadow-lg h-screen overflow-y-auto z-40">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-xl"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">AMPAY</span>
+                        </div>
+                        <button id="closeSidebar" class="md:hidden text-gray-600 dark:text-gray-300">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+
+                    <nav class="space-y-2">
+                        <a href="index.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                            <i class="fas fa-home"></i>
+                            <span>Accueil</span>
+                        </a>
+                        <a href="marketplace.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                            <i class="fas fa-store"></i>
+                            <span>Marketplace</span>
+                        </a>
+                        <a href="profile.html" class="flex items-center space-x-3 px-4 py-3 primary-gradient text-white rounded-lg">
+                            <i class="fas fa-user"></i>
+                            <span>Profil</span>
+                        </a>
+                        <a href="transactions.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span>Transactions</span>
+                        </a>
+                        <a href="admin.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                            <i class="fas fa-user-shield"></i>
+                            <span>Admin</span>
+                        </a>
+                    </nav>
+                </div>
+            </aside>
 
             <!-- Main Content -->
             <div class="flex-1 md:ml-0">
@@ -134,9 +110,7 @@
                                 <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                     <i class="fas fa-bars text-xl"></i>
                                 </button>
-                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                    Profil
-                                </h1>
+                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Mon Profil</h1>
                             </div>
                             <div class="flex items-center space-x-4">
                                 <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -307,6 +281,7 @@
         </div>
     </div>
 
+    <!-- Vue pour la logique utilisateur -->
     <script>
         const {
             createApp

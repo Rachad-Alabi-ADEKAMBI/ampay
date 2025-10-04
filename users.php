@@ -191,7 +191,6 @@
 <body>
     <div id="app">
         <!-- Mobile Overlay -->
-        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden no-print"></div>
 
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
             <!-- Sidebar -->
@@ -202,7 +201,16 @@
                 <!-- Top Bar -->
                 <?php include 'header.php'; ?>
 
-                <div class="p-4 sm:p-6">
+                <div class="p-4 mt-10">
+                    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Utilisateurs</h1>
+                            <p class="text-gray-600 dark:text-gray-400">Liste de tous les utilisateurs</p>
+                        </div>
+                        <button @click="printList" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                            <i class="fas fa-print mr-2"></i>Imprimer la liste
+                        </button>
+                    </div>
                     <!-- Stats -->
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">

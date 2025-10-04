@@ -1,12 +1,14 @@
 <header class="bg-white dark:bg-dark-secondary shadow-md fixed w-full top-0 z-50 transition-colors duration-300">
-    <nav class="container mx-auto px-4 sm:px-6 py-4">
+    <nav class="container mx-auto px-4">
         <div class="flex items-center justify-between">
-            <a href="index.html" class="flex items-center space-x-2 slide-in-left">
+            <a href="index.html" class="flex items-center slide-in-left">
                 <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
                     <i class="fas fa-bolt text-white text-xl"></i>
                 </div>
-                <span class="text-2xl font-bold text-gray-900">AMPAY</span>
+                <span class="ml-2 text-2xl font-bold text-gray-900">AMPAY</span>
             </a>
+
+
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.php" class="text-gray-700 hover:text-primary transition-colors font-medium">

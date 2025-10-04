@@ -17,6 +17,10 @@ switch ($action) {
         getAllMessages();
         break;
 
+    case 'allSponsorships':
+        getAllSponsorships();
+        break;
+
 
 
     case 'login':
