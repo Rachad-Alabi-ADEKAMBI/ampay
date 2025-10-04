@@ -13,7 +13,9 @@ switch ($action) {
         getAllUsers();
         break;
 
-
+    case 'allMessages':
+        getAllMessages();
+        break;
 
 
 

@@ -5,18 +5,42 @@ require 'db.php';
 function getAllListings()
 {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM listings ORDER BY id DESC");
-    $listings = $stmt->fetchAll();
+    $stmt = $pdo->query("
+        SELECT listings.*, users.*
+        FROM listings
+        INNER JOIN users ON users.id = listings.user_id
+        ORDER BY listings.id DESC
+    ");
+    $listings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    header('Content-Type: application/json');
     echo json_encode($listings);
 }
+
 
 // Récupérer toutes les claims
 function getAllUsers()
 {
     global $pdo;
-    $stmt = $pdo->query("SELECT * FROM users WHERE role != 'admin' ORDER BY id DESC");
+    $stmt = $pdo->query("SELECT * FROM users WHERE role != 'admin'   ORDER BY id DESC");
     $users = $stmt->fetchAll();
     echo json_encode($users);
+}
+
+// Récupérer tous les messages
+function getAllMessages()
+{
+    global $pdo;
+    $stmt = $pdo->query("
+        SELECT messages.*, users.*
+        FROM messages
+        INNER JOIN users ON users.id = messages.user_id
+        ORDER BY messages.id DESC
+    ");
+    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    header('Content-Type: application/json');
+    echo json_encode($messages);
 }
 
 

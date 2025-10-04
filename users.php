@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utilisateurs - AMPAY</title>
+    <title>Gestion des Utilisateurs - AMPAY</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
@@ -65,53 +65,25 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
         }
 
+        .dark-mode input,
+        .dark-mode select,
+        .dark-mode textarea {
+            background-color: var(--bg-dark-secondary) !important;
+            color: #F9FAFB !important;
+            border-color: #475569 !important;
+        }
+
+        .dark-mode input::placeholder,
+        .dark-mode textarea::placeholder {
+            color: #64748B !important;
+        }
+
+        .dark-mode i {
+            color: inherit;
+        }
+
         .primary-gradient {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-        }
-
-        .indicator-green {
-            width: 12px;
-            height: 12px;
-            background-color: #10B981;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 2s infinite;
-        }
-
-        .indicator-yellow {
-            width: 12px;
-            height: 12px;
-            background-color: #F59E0B;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .indicator-wheel {
-            width: 12px;
-            height: 12px;
-            border: 2px solid #3B82F6;
-            border-top-color: transparent;
-            border-radius: 50%;
-            display: inline-block;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
         }
 
         .sidebar {
@@ -155,6 +127,11 @@
                 background: white;
             }
 
+            .dark-mode tr {
+                background: var(--bg-dark-secondary);
+                border-color: #475569;
+            }
+
             td {
                 border: none;
                 position: relative;
@@ -173,16 +150,10 @@
                 font-weight: bold;
                 color: #374151;
             }
-        }
 
-        .stat-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-            border-left: 4px solid var(--primary);
-        }
-
-        /* Added dark mode icon fixes */
-        .dark-mode i {
-            color: inherit;
+            .dark-mode td:before {
+                color: #94A3B8;
+            }
         }
 
         @media print {
@@ -195,13 +166,23 @@
                 color: black !important;
             }
 
-            .bg-white {
+            .bg-white,
+            .bg-gray-50 {
                 background: white !important;
             }
 
             .shadow-sm,
             .shadow-md {
                 box-shadow: none !important;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
             }
         }
     </style>
@@ -210,207 +191,59 @@
 <body>
     <div id="app">
         <!-- Mobile Overlay -->
-        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
+        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden no-print"></div>
 
-        <!-- Improved sidebar layout with better positioning -->
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
             <!-- Sidebar -->
-            <aside :class="['sidebar fixed md:static w-64 bg-white dark:bg-gray-800 shadow-lg h-screen overflow-y-auto z-40', sidebarOpen ? 'open' : '']">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-8">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
-                                <i class="fas fa-bolt text-white text-xl"></i>
-                            </div>
-                            <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">AMPAY</span>
-                        </div>
-                        <button @click="sidebarOpen = false" class="md:hidden text-gray-600 dark:text-gray-300">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-
-                    <nav class="space-y-2">
-                        <a @click="currentView = 'dashboard'" :class="['flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer', currentView === 'dashboard' ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700']">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Dashboard</span>
-                        </a>
-                        <a @click="currentView = 'users'" :class="['flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer', currentView === 'users' ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700']">
-                            <i class="fas fa-users"></i>
-                            <span>Utilisateurs</span>
-                        </a>
-                        <a @click="currentView = 'transactions'" :class="['flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer', currentView === 'transactions' ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700']">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>Transactions</span>
-                        </a>
-                        <a @click="currentView = 'analytics'" :class="['flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer', currentView === 'analytics' ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700']">
-                            <i class="fas fa-chart-pie"></i>
-                            <span>Analytiques</span>
-                        </a>
-                        <a @click="currentView = 'settings'" :class="['flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors cursor-pointer', currentView === 'settings' ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700']">
-                            <i class="fas fa-cog"></i>
-                            <span>Paramètres</span>
-                        </a>
-                    </nav>
-
-                    <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-                        <a href="index.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                            <i class="fas fa-home"></i>
-                            <span>Accueil</span>
-                        </a>
-                        <a href="marketplace.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                            <i class="fas fa-store"></i>
-                            <span>Marketplace</span>
-                        </a>
-                        <a href="profile.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                            <i class="fas fa-user"></i>
-                            <span>Profil</span>
-                        </a>
-                        <a href="transactions.html" class="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                            <i class="fas fa-exchange-alt"></i>
-                            <span>Transactions</span>
-                        </a>
-                    </div>
-                </div>
-            </aside>
+            <?php include 'sidebar.php'; ?>
 
             <!-- Main Content -->
             <div class="flex-1 md:ml-0">
                 <!-- Top Bar -->
-                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
-                    <div class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-4">
-                                <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
-                                    <i class="fas fa-bars text-xl"></i>
-                                </button>
-                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Dashboard Admin</h1>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                                    <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
-                                </button>
-                                <div class="hidden sm:flex items-center space-x-3">
-                                    <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user text-white"></i>
-                                    </div>
-                                    <div>
-                                        <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Admin</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">Administrateur</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
+                <?php include 'header.php'; ?>
 
-                <!-- Dashboard View -->
-                <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
+                <div class="p-4 sm:p-6">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Utilisateurs</p>
+                                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ allUsers.length }}</p>
+                                </div>
                                 <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-users text-xl"></i>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+12%</span>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalUsers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Utilisateurs</div>
                         </div>
-
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Annonces</p>
+                                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ totalListings }}</p>
+                                </div>
                                 <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-usd text-xl"></i>
+                                    <i class="fas fa-list text-xl"></i>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+8%</span>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offreurs Actifs</div>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-heart text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+15%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandeurs Actifs</div>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-exchange-alt text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+23%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Row -->
-                    <div class="grid lg:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Transactions par mois</h3>
-                            <canvas id="transactionsChart"></canvas>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
-                            <canvas id="typeChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
-                        <div class="space-y-4">
-                            <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'user' ? 'bg-blue-100 text-blue-600' : activity.type === 'transaction' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
-                                    <i :class="activity.icon"></i>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Utilisateurs Bannis</p>
+                                    <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ bannedUsers }}</p>
                                 </div>
-                                <div class="flex-1">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</div>
+                                <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-ban text-xl"></i>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Users View -->
-                <div v-if="currentView === 'users'" class="p-4 sm:p-6">
-                    <!-- Indicators Legend -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Légende des indicateurs</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div class="flex items-center space-x-3">
-                                <span class="indicator-green"></span>
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Offreur avec disponibilité</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="indicator-yellow"></span>
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Offreur sans disponibilité</span>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <span class="indicator-wheel"></span>
-                                <span class="text-sm text-gray-700 dark:text-gray-300">Demandeur actif</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Filters -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les types</option>
-                                <option value="offerer">Offreurs</option>
-                                <option value="requester">Demandeurs</option>
-                            </select>
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher par nom, email..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <select v-model="filterCountry" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 <option value="">Tous les pays</option>
                                 <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
@@ -418,7 +251,7 @@
                             <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 <option value="">Tous les statuts</option>
                                 <option value="active">Actifs</option>
-                                <option value="inactive">Inactifs</option>
+                                <option value="banned">Bannis</option>
                             </select>
                         </div>
                     </div>
@@ -429,22 +262,18 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-900">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Indicateur</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Utilisateur</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Type</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pays</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Ville</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Montant</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Annonces</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider no-print">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <!-- Removed hover effect in dark mode for table rows -->
-                                    <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50">
-                                        <td class="px-6 py-4 whitespace-nowrap" data-label="Indicateur">
-                                            <span v-if="user.type === 'offerer' && user.hasAvailability" class="indicator-green"></span>
-                                            <span v-else-if="user.type === 'offerer' && !user.hasAvailability" class="indicator-yellow"></span>
-                                            <span v-else class="indicator-wheel"></span>
+                                    <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100" data-label="ID">
+                                            #{{ user.id }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap" data-label="Utilisateur">
                                             <div class="flex items-center">
@@ -457,31 +286,26 @@
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap" data-label="Type">
-                                            <span :class="['px-2 py-1 text-xs font-semibold rounded-full', user.type === 'offerer' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300']">
-                                                {{ user.type === 'offerer' ? 'Offreur' : 'Demandeur' }}
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" data-label="Pays">
+                                            <i class="fas fa-flag mr-1 text-primary"></i>{{ user.country || 'N/A' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" data-label="Annonces">
+                                            {{ getUserListingsCount(user.id) }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap" data-label="Statut">
+                                            <span :class="['px-2 py-1 text-xs font-semibold rounded-full', user.banned ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300']">
+                                                {{ user.banned ? 'Banni' : 'Actif' }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" data-label="Pays">
-                                            <!-- Improved icon visibility -->
-                                            <i class="fas fa-flag mr-1" style="color: var(--primary);"></i>{{ user.country }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" data-label="Ville">
-                                            <!-- Improved icon visibility -->
-                                            <i class="fas fa-map-marker-alt mr-1" style="color: var(--primary);"></i>{{ user.city }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" data-label="Montant">
-                                            {{ formatCurrency(user.amount) }} {{ user.currency }}
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium no-print" data-label="Actions">
-                                            <button @click="viewDetails(user)" class="text-primary hover:text-primary-dark mr-3">
+                                            <button @click="viewUserListings(user)" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-3" title="Voir les annonces">
                                                 <i class="fas fa-eye"></i>
                                             </button>
-                                            <button @click="editUser(user)" class="text-blue-600 hover:text-blue-800 mr-3">
-                                                <i class="fas fa-edit"></i>
+                                            <button v-if="!user.banned" @click="openBanModal(user)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Bannir">
+                                                <i class="fas fa-ban"></i>
                                             </button>
-                                            <button @click="deleteUser(user.id)" class="text-red-600 hover:text-red-800">
-                                                <i class="fas fa-trash"></i>
+                                            <button v-else @click="unbanUser(user)" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" title="Débannir">
+                                                <i class="fas fa-check-circle"></i>
                                             </button>
                                         </td>
                                     </tr>
@@ -522,144 +346,103 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Other Views Placeholder -->
-                <div v-if="currentView !== 'dashboard' && currentView !== 'users'" class="p-4 sm:p-6">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-12 text-center">
-                        <i class="fas fa-construction text-6xl text-gray-300 mb-4"></i>
-                        <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Section en construction</h3>
-                        <p class="text-gray-600 dark:text-gray-400">Cette section sera bientôt disponible</p>
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Details Modal -->
-        <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full p-6">
+        <!-- Ban User Modal -->
+        <div v-if="showBanModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeBanModal">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        <i class="fas fa-user-circle mr-2 text-primary"></i>Détails de l'utilisateur
+                        <i class="fas fa-ban text-red-600 mr-2"></i>Bannir l'utilisateur
                     </h3>
-                    <button @click="closeDetailsModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <button @click="closeBanModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <i class="fas fa-times text-xl"></i>
                     </button>
                 </div>
 
-                <div v-if="selectedUser" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Nom</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.name }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Email</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.email }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Type</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.type === 'offerer' ? 'Offreur' : 'Demandeur' }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Pays</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.country }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Ville</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.city }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Montant</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(selectedUser.amount) }} {{ selectedUser.currency }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Téléphone</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.phone }}</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600 dark:text-gray-300">Date d'inscription</p>
-                            <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.joinDate }}</p>
-                        </div>
-                    </div>
-                    <div v-if="selectedUser.type === 'offerer'">
-                        <p class="text-sm text-gray-600 dark:text-gray-300">Disponibilité</p>
-                        <p class="text-lg font-semibold" :class="selectedUser.hasAvailability ? 'text-green-600' : 'text-yellow-600'">
-                            {{ selectedUser.hasAvailability ? 'Disponible' : 'Non disponible' }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add User Modal -->
-        <div v-if="showAddUserModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        <i class="fas fa-user-plus text-primary mr-2"></i>Ajouter un utilisateur
-                    </h3>
-                    <button @click="showAddUserModal = false" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                        <i class="fas fa-times text-xl"></i>
-                    </button>
+                <div v-if="selectedUser" class="mb-4">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Vous êtes sur le point de bannir:</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.name }}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ selectedUser.email }}</p>
                 </div>
 
-                <form @submit.prevent="submitNewUser" class="space-y-4">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nom</label>
-                            <input v-model="newUser.name" type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
-                            <input v-model="newUser.email" type="email" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" required>
-                        </div>
+                <form @submit.prevent="submitBan">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Raison du bannissement
+                        </label>
+                        <textarea v-model="banReason" rows="4" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Expliquez la raison du bannissement..."></textarea>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type</label>
-                            <select v-model="newUser.type" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="offerer">Offreur</option>
-                                <option value="requester">Demandeur</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Téléphone</label>
-                            <input v-model="newUser.phone" type="tel" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Pays</label>
-                            <select v-model="newUser.country" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ville</label>
-                            <input v-model="newUser.city" type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Montant</label>
-                            <input v-model="newUser.amount" type="number" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Devise</label>
-                            <select v-model="newUser.currency" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="EUR">EUR</option>
-                                <option value="XOF">XOF</option>
-                                <option value="GBP">GBP</option>
-                                <option value="USD">USD</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="pt-4">
-                        <button type="submit" class="w-full px-8 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-check mr-2"></i>Créer l'utilisateur
+
+                    <div class="flex space-x-3">
+                        <button type="button" @click="closeBanModal" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                            Annuler
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="fas fa-ban mr-2"></i>Bannir
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!-- View Listings Modal -->
+        <div v-if="showListingsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeListingsModal">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                        <i class="fas fa-list text-primary mr-2"></i>Annonces de {{ selectedUser?.name }}
+                    </h3>
+                    <button @click="closeListingsModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Filters for listings -->
+                <div class="mb-4 flex space-x-3">
+                    <select v-model="listingsFilter" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <option value="">Tous les types</option>
+                        <option value="Offre">Offres</option>
+                        <option value="Demande">Demandes</option>
+                    </select>
+                    <select v-model="listingsSortBy" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <option value="date">Date</option>
+                        <option value="amount">Montant</option>
+                        <option value="type">Type</option>
+                    </select>
+                </div>
+
+                <div v-if="filteredUserListings.length === 0" class="text-center py-8">
+                    <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
+                    <p class="text-gray-500 dark:text-gray-400">Aucune annonce trouvée</p>
+                </div>
+
+                <div v-else class="space-y-4">
+                    <div v-for="listing in filteredUserListings" :key="listing.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between mb-2">
+                            <span :class="['px-3 py-1 rounded-full text-sm font-semibold', listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300']">
+                                {{ listing.type }}
+                            </span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Montant</p>
+                                <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">Localisation</p>
+                                <p class="text-sm text-gray-900 dark:text-gray-100">{{ listing.city }}, {{ listing.country }}</p>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <span :class="['px-2 py-1 text-xs font-semibold rounded-full', listing.status === 'Actif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700']">
+                                {{ listing.status }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -669,226 +452,29 @@
             createApp
         } = Vue;
 
+        const api = axios.create({
+            baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        });
+
         createApp({
             data() {
                 return {
                     darkMode: false,
                     sidebarOpen: false,
-                    currentView: 'dashboard',
                     searchTerm: '',
-                    filterType: '',
                     filterCountry: '',
                     filterStatus: '',
                     currentPage: 1,
                     itemsPerPage: 10,
-                    showDetailsModal: false,
+                    showBanModal: false,
+                    showListingsModal: false,
                     selectedUser: null,
-                    showAddUserModal: false,
-                    newUser: {
-                        name: '',
-                        email: '',
-                        type: 'offerer',
-                        phone: '',
-                        country: 'France',
-                        city: '',
-                        amount: '',
-                        currency: 'EUR'
-                    },
-                    countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo'],
-                    recentActivities: [{
-                            id: 1,
-                            type: 'user',
-                            icon: 'fas fa-user-plus',
-                            title: 'Nouvel utilisateur inscrit: Marie Dubois',
-                            time: 'Il y a 5 min'
-                        },
-                        {
-                            id: 2,
-                            type: 'transaction',
-                            icon: 'fas fa-exchange-alt',
-                            title: 'Transaction complétée: 500 EUR',
-                            time: 'Il y a 12 min'
-                        },
-                        {
-                            id: 3,
-                            type: 'offer',
-                            icon: 'fas fa-hand-holding-usd',
-                            title: 'Nouvelle offre publiée à Paris',
-                            time: 'Il y a 23 min'
-                        },
-                        {
-                            id: 4,
-                            type: 'user',
-                            icon: 'fas fa-user-check',
-                            title: 'Utilisateur vérifié: Jean Dupont',
-                            time: 'Il y a 1h'
-                        },
-                        {
-                            id: 5,
-                            type: 'transaction',
-                            icon: 'fas fa-exchange-alt',
-                            title: 'Transaction complétée: 250000 XOF',
-                            time: 'Il y a 2h'
-                        }
-                    ],
-                    // API call placeholder: GET /api/admin/users
-                    allUsers: [{
-                            id: 1,
-                            name: 'Jean Dupont',
-                            email: 'jean.dupont@email.com',
-                            type: 'offerer',
-                            country: 'France',
-                            city: 'Paris',
-                            amount: 500,
-                            currency: 'EUR',
-                            hasAvailability: true,
-                            phone: '+33 6 12 34 56 78',
-                            joinDate: '15/01/2025'
-                        },
-                        {
-                            id: 2,
-                            name: 'Aminata Diallo',
-                            email: 'aminata.diallo@email.com',
-                            type: 'requester',
-                            country: 'Sénégal',
-                            city: 'Dakar',
-                            amount: 250000,
-                            currency: 'XOF',
-                            hasAvailability: false,
-                            phone: '+221 77 123 45 67',
-                            joinDate: '12/01/2025'
-                        },
-                        {
-                            id: 3,
-                            name: 'Kofi Mensah',
-                            email: 'kofi.mensah@email.com',
-                            type: 'offerer',
-                            country: 'Ghana',
-                            city: 'Accra',
-                            amount: 2000,
-                            currency: 'GHS',
-                            hasAvailability: true,
-                            phone: '+233 24 123 4567',
-                            joinDate: '10/01/2025'
-                        },
-                        {
-                            id: 4,
-                            name: 'Marie Laurent',
-                            email: 'marie.laurent@email.com',
-                            type: 'requester',
-                            country: 'France',
-                            city: 'Paris',
-                            amount: 800,
-                            currency: 'EUR',
-                            hasAvailability: false,
-                            phone: '+33 6 98 76 54 32',
-                            joinDate: '18/01/2025'
-                        },
-                        {
-                            id: 5,
-                            name: 'Adeola Okonkwo',
-                            email: 'adeola.okonkwo@email.com',
-                            type: 'offerer',
-                            country: 'Nigeria',
-                            city: 'Lagos',
-                            amount: 150000,
-                            currency: 'NGN',
-                            hasAvailability: false,
-                            phone: '+234 803 123 4567',
-                            joinDate: '08/01/2025'
-                        },
-                        {
-                            id: 6,
-                            name: 'Pierre Martin',
-                            email: 'pierre.martin@email.com',
-                            type: 'requester',
-                            country: 'Allemagne',
-                            city: 'Berlin',
-                            amount: 1200,
-                            currency: 'EUR',
-                            hasAvailability: false,
-                            phone: '+49 151 12345678',
-                            joinDate: '14/01/2025'
-                        },
-                        {
-                            id: 7,
-                            name: 'Fatou Sow',
-                            email: 'fatou.sow@email.com',
-                            type: 'offerer',
-                            country: 'Côte d\'Ivoire',
-                            city: 'Abidjan',
-                            amount: 300000,
-                            currency: 'XOF',
-                            hasAvailability: true,
-                            phone: '+225 07 12 34 56 78',
-                            joinDate: '16/01/2025'
-                        },
-                        {
-                            id: 8,
-                            name: 'John Smith',
-                            email: 'john.smith@email.com',
-                            type: 'requester',
-                            country: 'Royaume-Uni',
-                            city: 'Londres',
-                            amount: 600,
-                            currency: 'GBP',
-                            hasAvailability: false,
-                            phone: '+44 7700 123456',
-                            joinDate: '11/01/2025'
-                        },
-                        {
-                            id: 9,
-                            name: 'Yao Kouassi',
-                            email: 'yao.kouassi@email.com',
-                            type: 'offerer',
-                            country: 'Bénin',
-                            city: 'Cotonou',
-                            amount: 180000,
-                            currency: 'XOF',
-                            hasAvailability: true,
-                            phone: '+229 97 12 34 56',
-                            joinDate: '13/01/2025'
-                        },
-                        {
-                            id: 10,
-                            name: 'Sophie Dubois',
-                            email: 'sophie.dubois@email.com',
-                            type: 'requester',
-                            country: 'France',
-                            city: 'Lyon',
-                            amount: 950,
-                            currency: 'EUR',
-                            hasAvailability: false,
-                            phone: '+33 6 45 67 89 01',
-                            joinDate: '17/01/2025'
-                        },
-                        {
-                            id: 11,
-                            name: 'Kwame Asante',
-                            email: 'kwame.asante@email.com',
-                            type: 'offerer',
-                            country: 'Ghana',
-                            city: 'Kumasi',
-                            amount: 3500,
-                            currency: 'GHS',
-                            hasAvailability: false,
-                            phone: '+233 24 987 6543',
-                            joinDate: '09/01/2025'
-                        },
-                        {
-                            id: 12,
-                            name: 'Ibrahim Traoré',
-                            email: 'ibrahim.traore@email.com',
-                            type: 'requester',
-                            country: 'Sénégal',
-                            city: 'Thiès',
-                            amount: 400000,
-                            currency: 'XOF',
-                            hasAvailability: false,
-                            phone: '+221 77 987 65 43',
-                            joinDate: '19/01/2025'
-                        }
-                    ]
+                    banReason: '',
+                    listingsFilter: '',
+                    listingsSortBy: 'date',
+                    countries: [],
+                    allUsers: [],
+                    listings: []
                 };
             },
             computed: {
@@ -897,25 +483,19 @@
 
                     if (this.searchTerm) {
                         filtered = filtered.filter(u =>
-                            u.name.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                            u.email.toLowerCase().includes(this.searchTerm.toLowerCase())
+                            u.name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                            u.email?.toLowerCase().includes(this.searchTerm.toLowerCase())
                         );
-                    }
-
-                    if (this.filterType) {
-                        filtered = filtered.filter(u => u.type === this.filterType);
                     }
 
                     if (this.filterCountry) {
                         filtered = filtered.filter(u => u.country === this.filterCountry);
                     }
 
-                    if (this.filterStatus) {
-                        if (this.filterStatus === 'active') {
-                            filtered = filtered.filter(u => u.type === 'offerer' ? u.hasAvailability : true);
-                        } else if (this.filterStatus === 'inactive') {
-                            filtered = filtered.filter(u => u.type === 'offerer' ? !u.hasAvailability : false);
-                        }
+                    if (this.filterStatus === 'active') {
+                        filtered = filtered.filter(u => !u.banned);
+                    } else if (this.filterStatus === 'banned') {
+                        filtered = filtered.filter(u => u.banned);
                     }
 
                     return filtered;
@@ -947,81 +527,115 @@
                     }
                     return pages;
                 },
-                stats() {
-                    return {
-                        totalUsers: this.allUsers.length,
-                        activeOffers: this.allUsers.filter(u => u.type === 'offerer' && u.hasAvailability).length,
-                        activeRequests: this.allUsers.filter(u => u.type === 'requester').length,
-                        totalTransactions: 156 // Mock data
-                    };
+                totalListings() {
+                    return this.listings.length;
+                },
+                bannedUsers() {
+                    return this.allUsers.filter(u => u.banned).length;
+                },
+                filteredUserListings() {
+                    if (!this.selectedUser) return [];
+
+                    let userListings = this.listings.filter(l => l.user_id === this.selectedUser.id);
+
+                    if (this.listingsFilter) {
+                        userListings = userListings.filter(l => l.type === this.listingsFilter);
+                    }
+
+                    // Sort
+                    if (this.listingsSortBy === 'date') {
+                        userListings.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    } else if (this.listingsSortBy === 'amount') {
+                        userListings.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount));
+                    } else if (this.listingsSortBy === 'type') {
+                        userListings.sort((a, b) => a.type.localeCompare(b.type));
+                    }
+
+                    return userListings;
                 }
             },
-            mounted() {
+            async mounted() {
                 const savedDarkMode = localStorage.getItem('darkMode');
                 if (savedDarkMode === 'true') {
                     this.darkMode = true;
                     document.body.classList.add('dark-mode');
                 }
 
-                this.initCharts();
+                await this.fetchUsers();
+                await this.fetchListings();
             },
             methods: {
+                async fetchUsers() {
+                    try {
+                        const response = await api.get('?action=allUsers');
+                        this.allUsers = (response.data || []).map(user => ({
+                            ...user,
+                            banned: user.banned || false
+                        }));
+
+                        // Extract unique countries
+                        this.countries = [...new Set(this.allUsers.map(u => u.country).filter(Boolean))];
+
+                        console.log('[v0] Users fetched:', this.allUsers);
+                    } catch (error) {
+                        console.error('Erreur lors du chargement des utilisateurs:', error);
+                        this.allUsers = [];
+                    }
+                },
+                async fetchListings() {
+                    try {
+                        const response = await api.get('?action=allListings');
+                        this.listings = response.data || [];
+                        console.log('[v0] Listings fetched:', this.listings);
+                    } catch (error) {
+                        console.error('Erreur lors du chargement des listings:', error);
+                        this.listings = [];
+                    }
+                },
+                getUserListingsCount(userId) {
+                    return this.listings.filter(l => l.user_id === userId).length;
+                },
+                viewUserListings(user) {
+                    this.selectedUser = user;
+                    this.showListingsModal = true;
+                    this.listingsFilter = '';
+                    this.listingsSortBy = 'date';
+                },
+                closeListingsModal() {
+                    this.showListingsModal = false;
+                    this.selectedUser = null;
+                },
+                openBanModal(user) {
+                    this.selectedUser = user;
+                    this.showBanModal = true;
+                    this.banReason = '';
+                },
+                closeBanModal() {
+                    this.showBanModal = false;
+                    this.selectedUser = null;
+                    this.banReason = '';
+                },
+                submitBan() {
+                    if (this.selectedUser && this.banReason.trim()) {
+                        // API call would go here
+                        this.selectedUser.banned = true;
+                        this.selectedUser.banReason = this.banReason;
+                        alert(`Utilisateur ${this.selectedUser.name} banni avec succès.\nRaison: ${this.banReason}`);
+                        this.closeBanModal();
+                    }
+                },
+                unbanUser(user) {
+                    if (confirm(`Êtes-vous sûr de vouloir débannir ${user.name} ?`)) {
+                        // API call would go here
+                        user.banned = false;
+                        delete user.banReason;
+                        alert(`Utilisateur ${user.name} débanni avec succès.`);
+                    }
+                },
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
                     document.body.classList.toggle('dark-mode');
                     localStorage.setItem('darkMode', this.darkMode);
-                },
-                initCharts() {
-                    // Transactions Chart
-                    const transactionsCtx = document.getElementById('transactionsChart');
-                    if (transactionsCtx) {
-                        new Chart(transactionsCtx, {
-                            type: 'line',
-                            data: {
-                                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-                                datasets: [{
-                                    label: 'Transactions',
-                                    data: [65, 78, 90, 105, 125, 156],
-                                    borderColor: '#10B981',
-                                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                                    tension: 0.4
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: true,
-                                plugins: {
-                                    legend: {
-                                        display: false
-                                    }
-                                }
-                            }
-                        });
-                    }
-
-                    // Type Chart
-                    const typeCtx = document.getElementById('typeChart');
-                    if (typeCtx) {
-                        new Chart(typeCtx, {
-                            type: 'doughnut',
-                            data: {
-                                labels: ['Offreurs', 'Demandeurs'],
-                                datasets: [{
-                                    data: [this.stats.activeOffers, this.stats.activeRequests],
-                                    backgroundColor: ['#10B981', '#3B82F6']
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: true,
-                                plugins: {
-                                    legend: {
-                                        position: 'bottom'
-                                    }
-                                }
-                            }
-                        });
-                    }
                 },
                 applyFilters() {
                     this.currentPage = 1;
@@ -1032,25 +646,13 @@
                         maximumFractionDigits: 0
                     }).format(amount);
                 },
-                viewDetails(user) {
-                    this.selectedUser = user;
-                    this.showDetailsModal = true;
-                },
-                closeDetailsModal() {
-                    this.showDetailsModal = false;
-                    this.selectedUser = null;
-                },
-                editUser(user) {
-                    // API call placeholder: PUT /api/admin/users/:id
-                    alert(`Modifier l'utilisateur: ${user.name}`);
-                },
-                deleteUser(userId) {
-                    if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
-                        // API call placeholder: DELETE /api/admin/users/:id
-                        const index = this.allUsers.findIndex(u => u.id === userId);
-                        if (index !== -1) this.allUsers.splice(index, 1);
-                        alert('Utilisateur supprimé avec succès');
-                    }
+                formatDate(dateString) {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
                 },
                 previousPage() {
                     if (this.currentPage > 1) this.currentPage--;
@@ -1061,22 +663,8 @@
                 goToPage(page) {
                     this.currentPage = page;
                 },
-                printList() {
+                printPage() {
                     window.print();
-                },
-                submitNewUser() {
-                    alert('Utilisateur ajouté avec succès !');
-                    this.showAddUserModal = false;
-                    this.newUser = {
-                        name: '',
-                        email: '',
-                        type: 'offerer',
-                        phone: '',
-                        country: 'France',
-                        city: '',
-                        amount: '',
-                        currency: 'EUR'
-                    };
                 }
             }
         }).mount('#app');
