@@ -190,7 +190,9 @@
 
 <body>
     <div id="app">
-        <!-- Mobile Overlay -->
+        <!-- Added mobile overlay for sidebar -->
+        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
+
 
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
             <!-- Sidebar -->
@@ -198,10 +200,26 @@
 
             <!-- Main Content -->
             <div class="flex-1 md:ml-0">
-                <!-- Top Bar -->
-                <?php include 'header.php'; ?>
-
-                <div class="p-4 mt-10">
+                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
+                    <div class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
+                                    <i class="fas fa-bars text-xl"></i>
+                                </button>
+                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                    Liste des utilisateurs
+                                </h1>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                    <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="p-4 sm:p-6">
                     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Utilisateurs</h1>
@@ -270,7 +288,6 @@
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-900">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Utilisateur</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pays</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Annonces</th>
@@ -280,9 +297,6 @@
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100" data-label="ID">
-                                            #{{ user.id }}
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap" data-label="Utilisateur">
                                             <div class="flex items-center">
                                                 <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">

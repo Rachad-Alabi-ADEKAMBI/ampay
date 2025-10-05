@@ -19,11 +19,13 @@
             $links = [
                 'index.php' => ['Accueil', 'fas fa-home'],
                 'marketplace.php' => ['Marketplace', 'fas fa-store'],
-                'profile.php' => ['Profil', 'fas fa-user'],
+                'dashboard.php' => ['Tableau de bord', 'fas fa-user-shield'],
                 'transactions.php' => ['Transactions', 'fas fa-exchange-alt'],
-                'dashboard.php' => ['Admin', 'fas fa-user-shield'],
+                'sponsorships.php' => ['Parrainages', 'fas fa-hand-holding-usd'],
                 'users.php' => ['Utilisateurs', 'fas fa-users'],
-                'sponsorships.php' => ['Parrainages', 'fas fa-hand-holding-usd']
+                'notifications.php' => ['Notifications', 'fas fa-bell'],
+
+                'profile.php' => ['Profil', 'fas fa-user'],
             ];
 
             foreach ($links as $file => $data) {
@@ -39,7 +41,7 @@
         </nav>
     </div>
 
-    <div class="p-6">
+    <div class="p-3">
         <a href="logout.php" class="flex items-center justify-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
             <i class="fas fa-sign-out-alt mr-2"></i>
             <span>Déconnexion</span>

@@ -1,0 +1,108 @@
+Cahier des charges – Application Web de mise en relation financière
+
+
+---
+
+1. Objectif
+
+Créer une plateforme sécurisée pour mettre en relation des utilisateurs disposant de fonds (« donneurs ») et des utilisateurs souhaitant recevoir des fonds (« demandeurs »). Chaque interaction est facturée par une commission.
+
+
+---
+
+2. Fonctionnalités principales
+
+Inscription / Authentification
+
+Création de compte sécurisé (email + mot de passe, 2FA)
+
+Gestion de profils utilisateurs
+
+
+Profil utilisateur
+
+Affichage d’un voyant d’état :
+
+Vert : besoin urgent d’argent
+
+Jaune : demande en attente (~2 semaines)
+
+Rouge : aucun besoin
+
+
+
+Gestion des fonds
+
+« Donneurs » indiquent le montant disponible
+
+« Demandeurs » indiquent le montant souhaité
+
+
+Matching
+
+Mise en relation automatique ou manuelle entre donneurs et demandeurs compatibles
+
+Notifications des mises en relation
+
+
+Commission
+
+Calcul et prélèvement automatique d’une commission sur chaque mise en relation finalisée
+
+
+Multidevise et multilingue
+
+Support de plusieurs devises et langues
+
+Conversion et affichage en fonction de la localisation
+
+
+Sécurité
+
+Chiffrement des données sensibles (chiffrement au repos et en transit)
+
+Protection contre injections, XSS, CSRF
+
+Authentification forte (2FA, limitation des tentatives)
+
+Audit et logs des accès
+
+Hébergement sécurisé (certificats SSL, pare-feu, backups)
+
+
+Administration
+
+Tableau de bord admin pour gestion des utilisateurs, commissions, et litiges
+
+Modération et blocage d’utilisateurs frauduleux
+
+
+
+
+---
+
+3. Contraintes techniques
+
+Scalabilité pour utilisateurs multi-pays
+
+API REST sécurisée pour frontend / backend
+
+Interface responsive (mobile et desktop)
+
+Logs et monitoring en temps réel
+
+Sauvegardes régulières et plan de reprise après sinistre
+
+
+
+---
+
+4. Livrables
+
+Code source complet
+
+Documentation technique et utilisateur
+
+Environnement de test et production
+
+Plan de maintenance et de sécurité

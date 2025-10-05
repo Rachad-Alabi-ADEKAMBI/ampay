@@ -61,36 +61,45 @@
                     </p>
                 </div>
 
-                <form @submit.prevent="handleRegister" class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+                <form @submit.prevent="handleRegister"
+                    class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 <i class="fas fa-user mr-1 text-primary"></i>Prénom
                             </label>
-                            <input v-model="registerForm.firstName" type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Jean">
+                            <input v-model="registerForm.firstName" type="text" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Jean">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 <i class="fas fa-user mr-1 text-primary"></i>Nom
                             </label>
-                            <input v-model="registerForm.lastName" type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Dupont">
+                            <input v-model="registerForm.lastName" type="text" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Dupont">
                         </div>
 
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 <i class="fas fa-envelope mr-1 text-primary"></i>Email
                             </label>
-                            <input v-model="registerForm.email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="jean.dupont@example.com">
+                            <input v-model="registerForm.email" type="email" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="jean.dupont@example.com">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 <i class="fas fa-flag mr-1 text-primary"></i>Pays
                             </label>
-                            <select v-model="registerForm.country" @change="loadCities" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                            <select v-model="registerForm.country" @change="onCountryChange" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                                 <option value="">Sélectionnez un pays</option>
-                                <option v-for="country in countries" :key="country.code" :value="country.name">{{ country.name }}</option>
+                                <option v-for="country in countries" :key="country.cca2"
+                                    :value="country.cca2">{{ country.name.common }}</option>
                             </select>
                         </div>
 
@@ -98,10 +107,23 @@
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 <i class="fas fa-city mr-1 text-primary"></i>Ville
                             </label>
-                            <select v-model="registerForm.city" :disabled="!registerForm.country" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50">
-                                <option value="">Sélectionnez une ville</option>
-                                <option v-for="city in cities" :key="city" :value="city">{{ city }}</option>
-                            </select>
+                            <input
+                                v-model="registerForm.city"
+                                type="text"
+                                required
+                                list="cities-list"
+                                :disabled="!registerForm.country || loadingCities"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
+                                placeholder="Tapez pour rechercher une ville"
+                                @input="searchCities">
+                            <datalist id="cities-list">
+                                <option v-for="city in cities" :key="city.id" :value="city.name">
+                                    {{ city.name }}
+                                </option>
+                            </datalist>
+                            <p v-if="loadingCities" class="text-xs text-gray-500 mt-1">
+                                <i class="fas fa-spinner fa-spin mr-1"></i>Chargement des villes...
+                            </p>
                         </div>
 
                         <div class="md:col-span-2">
@@ -109,12 +131,12 @@
                                 <i class="fas fa-phone mr-1 text-primary"></i>Téléphone
                             </label>
                             <div class="flex gap-2">
-                                <select v-model="registerForm.phonePrefix" class="w-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                                    <option v-for="prefix in phonePrefixes" :key="prefix.code" :value="prefix.dial_code">
-                                        {{ prefix.dial_code }} {{ prefix.code }}
-                                    </option>
-                                </select>
-                                <input v-model="registerForm.phone" type="tel" required class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="612345678">
+                                <input type="text" v-model="registerForm.phonePrefix" readonly
+                                    class="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-gray-100"
+                                    placeholder="+33">
+                                <input v-model="registerForm.phone" type="tel" required
+                                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="612345678">
                             </div>
                         </div>
 
@@ -123,11 +145,18 @@
                                 <i class="fas fa-lock mr-1 text-primary"></i>Mot de passe
                             </label>
                             <div class="relative">
-                                <input v-model="registerForm.password" :type="showPassword ? 'text' : 'password'" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
-                                <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <input v-model="registerForm.password" :type="showPassword ? 'text' : 'password'"
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="••••••••">
+                                <button type="button" @click="showPassword = !showPassword"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                                     <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                                 </button>
                             </div>
+                            <p v-if="registerForm.password && registerForm.password.length < 8" class="text-red-600 text-sm mt-1">
+                                Le mot de passe doit contenir au moins 8 caractères
+                            </p>
                         </div>
 
                         <div>
@@ -135,8 +164,12 @@
                                 <i class="fas fa-lock mr-1 text-primary"></i>Confirmer le mot de passe
                             </label>
                             <div class="relative">
-                                <input v-model="registerForm.confirmPassword" :type="showConfirmPassword ? 'text' : 'password'" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
-                                <button type="button" @click="showConfirmPassword = !showConfirmPassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <input v-model="registerForm.confirmPassword" :type="showConfirmPassword ? 'text' : 'password'"
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="••••••••">
+                                <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                                     <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                                 </button>
                             </div>
@@ -144,13 +177,16 @@
                     </div>
 
                     <div class="flex items-center">
-                        <input v-model="registerForm.acceptTerms" id="terms" type="checkbox" required class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                        <input v-model="registerForm.acceptTerms" id="terms" type="checkbox" required
+                            class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
                         <label for="terms" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                            J'accepte les <a href="#" class="text-primary hover:text-primary-dark">conditions d'utilisation</a> et la <a href="#" class="text-primary hover:text-primary-dark">politique de confidentialité</a>
+                            J'accepte les <a href="#" class="text-primary hover:text-primary-dark">conditions d'utilisation</a>
+                            et la <a href="#" class="text-primary hover:text-primary-dark">politique de confidentialité</a>
                         </label>
                     </div>
 
-                    <button type="submit" :disabled="loading" class="w-full px-4 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                    <button type="submit" :disabled="loading"
+                        class="w-full px-4 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                         <i class="fas fa-user-plus mr-2"></i>
                         {{ loading ? 'Inscription...' : 'Créer mon compte' }}
                     </button>
@@ -181,121 +217,103 @@
                         email: '',
                         country: '',
                         city: '',
-                        phonePrefix: '+33',
+                        phonePrefix: '',
                         phone: '',
                         password: '',
                         confirmPassword: '',
+                        role: 'user',
+                        account_verified: 'no',
                         acceptTerms: false
                     },
                     showPassword: false,
                     showConfirmPassword: false,
                     loading: false,
+                    loadingCities: false,
                     error: '',
                     success: '',
                     countries: [],
                     cities: [],
-                    phonePrefixes: []
+                    searchTimeout: null
                 };
             },
             async mounted() {
                 await this.loadCountries();
-                await this.loadPhonePrefixes();
             },
             methods: {
                 async loadCountries() {
                     try {
-                        const response = await axios.get('https://restcountries.com/v3.1/all');
-                        this.countries = response.data
-                            .map(country => ({
-                                name: country.name.common,
-                                code: country.cca2
-                            }))
-                            .sort((a, b) => a.name.localeCompare(b.name));
-                    } catch (error) {
-                        console.error('Erreur lors du chargement des pays:', error);
-                        // Fallback countries
-                        this.countries = [{
-                                name: 'France',
-                                code: 'FR'
-                            },
-                            {
-                                name: 'Bénin',
-                                code: 'BJ'
-                            },
-                            {
-                                name: 'Côte d\'Ivoire',
-                                code: 'CI'
-                            },
-                            {
-                                name: 'Sénégal',
-                                code: 'SN'
-                            },
-                            {
-                                name: 'Togo',
-                                code: 'TG'
-                            }
-                        ];
+                        const response = await axios.get('https://restcountries.com/v3.1/independent?status=true');
+                        // Trier les pays par nom
+                        this.countries = response.data.sort((a, b) =>
+                            a.name.common.localeCompare(b.name.common)
+                        );
+                    } catch (err) {
+                        console.error('Erreur lors du chargement des pays:', err);
+                        this.error = 'Impossible de charger la liste des pays';
                     }
                 },
-                async loadPhonePrefixes() {
-                    try {
-                        const response = await axios.get('https://restcountries.com/v3.1/all');
-                        this.phonePrefixes = response.data
-                            .filter(country => country.idd && country.idd.root)
-                            .map(country => ({
-                                code: country.cca2,
-                                dial_code: country.idd.root + (country.idd.suffixes ? country.idd.suffixes[0] : '')
-                            }))
-                            .sort((a, b) => a.dial_code.localeCompare(b.dial_code));
-                    } catch (error) {
-                        console.error('Erreur lors du chargement des préfixes:', error);
-                        // Fallback prefixes
-                        this.phonePrefixes = [{
-                                code: 'FR',
-                                dial_code: '+33'
-                            },
-                            {
-                                code: 'BJ',
-                                dial_code: '+229'
-                            },
-                            {
-                                code: 'CI',
-                                dial_code: '+225'
-                            },
-                            {
-                                code: 'SN',
-                                dial_code: '+221'
-                            },
-                            {
-                                code: 'TG',
-                                dial_code: '+228'
-                            }
-                        ];
+                onCountryChange() {
+                    // Réinitialiser la ville
+                    this.registerForm.city = '';
+                    this.cities = [];
+
+                    // Trouver le pays sélectionné et définir le préfixe téléphonique
+                    const selectedCountry = this.countries.find(c => c.cca2 === this.registerForm.country);
+                    if (selectedCountry) {
+                        // Récupérer le premier préfixe téléphonique (certains pays en ont plusieurs)
+                        const idd = selectedCountry.idd;
+                        if (idd && idd.root) {
+                            const suffix = idd.suffixes && idd.suffixes.length > 0 ? idd.suffixes[0] : '';
+                            this.registerForm.phonePrefix = idd.root + suffix;
+                        } else {
+                            this.registerForm.phonePrefix = '';
+                        }
                     }
                 },
-                async loadCities() {
-                    if (!this.registerForm.country) {
+                searchCities() {
+                    // Débounce pour éviter trop de requêtes
+                    clearTimeout(this.searchTimeout);
+
+                    if (!this.registerForm.country || this.registerForm.city.length < 2) {
                         this.cities = [];
                         return;
                     }
 
-                    // Simulated cities data - in production, use a real API
-                    const citiesData = {
-                        'France': ['Paris', 'Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille'],
-                        'Bénin': ['Cotonou', 'Porto-Novo', 'Parakou', 'Djougou', 'Bohicon', 'Kandi', 'Lokossa', 'Ouidah', 'Abomey', 'Natitingou'],
-                        'Côte d\'Ivoire': ['Abidjan', 'Bouaké', 'Daloa', 'Yamoussoukro', 'San-Pédro', 'Korhogo', 'Man', 'Divo', 'Gagnoa', 'Abengourou'],
-                        'Sénégal': ['Dakar', 'Thiès', 'Kaolack', 'Ziguinchor', 'Saint-Louis', 'Louga', 'Mbour', 'Rufisque', 'Kolda', 'Diourbel'],
-                        'Togo': ['Lomé', 'Sokodé', 'Kara', 'Kpalimé', 'Atakpamé', 'Bassar', 'Tsévié', 'Aného', 'Sansanné-Mango', 'Dapaong']
-                    };
+                    this.searchTimeout = setTimeout(async () => {
+                        await this.loadCities();
+                    }, 500);
+                },
+                async loadCities() {
+                    if (!this.registerForm.country || this.registerForm.city.length < 2) return;
 
-                    this.cities = citiesData[this.registerForm.country] || [];
-                    this.registerForm.city = '';
+                    this.loadingCities = true;
+                    try {
+                        // Utiliser l'API GeoDB Cities (gratuite avec limite de requêtes)
+                        const response = await axios.get('https://wft-geo-db.p.rapidapi.com/v1/geo/cities', {
+                            params: {
+                                countryIds: this.registerForm.country,
+                                namePrefix: this.registerForm.city,
+                                limit: 10,
+                                sort: '-population'
+                            },
+                            headers: {
+                                'X-RapidAPI-Key': 'VOTRE_CLE_RAPIDAPI', // Vous devez obtenir une clé gratuite sur rapidapi.com
+                                'X-RapidAPI-Host': 'wft-geo-db.p.rapidapi.com'
+                            }
+                        });
+                        this.cities = response.data.data || [];
+                    } catch (err) {
+                        console.error('Erreur lors du chargement des villes:', err);
+                        // En cas d'erreur, permettre la saisie manuelle
+                        this.cities = [];
+                    } finally {
+                        this.loadingCities = false;
+                    }
                 },
                 async handleRegister() {
                     this.error = '';
                     this.success = '';
 
-                    // Validation
                     if (this.registerForm.password !== this.registerForm.confirmPassword) {
                         this.error = 'Les mots de passe ne correspondent pas';
                         return;
@@ -314,16 +332,11 @@
                     this.loading = true;
 
                     try {
-                        // TODO: Replace with actual API call
-                        await new Promise(resolve => setTimeout(resolve, 1500));
-
+                        const response = await axios.post('http://127.0.0.1/ampay/api/index.php?action=register', this.registerForm);
                         this.success = 'Compte créé avec succès! Redirection...';
-
-                        setTimeout(() => {
-                            window.location.href = 'login.php';
-                        }, 2000);
+                        setTimeout(() => window.location.href = 'login.php', 2000);
                     } catch (err) {
-                        this.error = 'Une erreur est survenue lors de l\'inscription';
+                        this.error = err.response?.data?.message || 'Une erreur est survenue lors de l\'inscription';
                     } finally {
                         this.loading = false;
                     }

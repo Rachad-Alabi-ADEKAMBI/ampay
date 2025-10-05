@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Added axios CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -182,7 +181,6 @@
             border-left: 4px solid var(--primary);
         }
 
-        /* Added dark mode icon fixes */
         .dark-mode i {
             color: inherit;
         }
@@ -211,22 +209,33 @@
 
 <body>
     <div id="app">
-        <!-- Mobile Overlay -->
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-        <!-- Improved sidebar layout with better positioning -->
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-            <!-- Sidebar -->
             <?php include 'sidebar.php'; ?>
 
-            <!-- Main Content -->
-            <div class="flex-1 md:ml-0 mt-5 pt-5">
-                <!-- Top Bar -->
-                <?php include 'header.php'; ?>
+            <div class="flex-1 md:ml-0">
+                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
+                    <div class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
+                                    <i class="fas fa-bars text-xl"></i>
+                                </button>
+                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                    Tableau de bord
+                                </h1>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                    <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
-                <!-- Dashboard View -->
                 <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
-                    <!-- Stats Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
@@ -246,7 +255,6 @@
                                 </div>
                                 <span class="text-xs text-green-600 font-semibold">+8%</span>
                             </div>
-                            <!-- Updated to use dynamic listings data -->
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
                         </div>
@@ -258,7 +266,6 @@
                                 </div>
                                 <span class="text-xs text-green-600 font-semibold">+15%</span>
                             </div>
-                            <!-- Updated to use dynamic listings data -->
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
                         </div>
@@ -270,16 +277,13 @@
                                 </div>
                                 <span class="text-xs text-green-600 font-semibold">+23%</span>
                             </div>
-                            <!-- Updated to use dynamic listings data -->
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
                         </div>
                     </div>
 
-                    <!-- Charts Row -->
                     <div class="grid lg:grid-cols-2 gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <!-- Updated chart title -->
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
                             <canvas id="transactionsChart"></canvas>
                         </div>
@@ -289,10 +293,8 @@
                         </div>
                     </div>
 
-                    <!-- Recent Activity -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
-                        <!-- Updated to use dynamic listings data -->
                         <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
                             <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
                             <p>Chargement des activités...</p>
@@ -332,22 +334,15 @@
                     darkMode: false,
                     sidebarOpen: false,
                     currentView: 'dashboard',
-                    searchTerm: '',
-                    filterType: '',
-                    filterCountry: '',
-                    filterStatus: '',
-                    currentPage: 1,
-                    itemsPerPage: 10,
-                    showDetailsModal: false,
-                    countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo'],
-                    recentActivities: [],
                     listings: [],
+                    users: [],
+                    recentActivities: [],
                 };
             },
             computed: {
-
                 stats() {
                     return {
+                        totalUsers: this.users.length, // ← Compte réel des utilisateurs
                         activeOffers: this.listings.filter(l => l.type === 'Offre').length,
                         activeRequests: this.listings.filter(l => l.type === 'Demande').length,
                         totalTransactions: this.listings.length
@@ -361,16 +356,24 @@
                     document.body.classList.add('dark-mode');
                 }
 
+                this.fetchUsers();
                 this.fetchListings();
             },
             methods: {
+                async fetchUsers() {
+                    try {
+                        const response = await api.get('?action=allUsers');
+                        this.users = response.data || [];
+                        console.log('Utilisateurs chargés :', this.users);
+                    } catch (error) {
+                        console.error('Erreur lors du chargement des utilisateurs:', error);
+                        this.users = [];
+                    }
+                },
                 async fetchListings() {
                     try {
                         const response = await api.get('?action=allListings');
                         this.listings = response.data || [];
-                        console.log('[v0] Listings fetched:', this.listings);
-
-                        // Map listings to recent activities (take 5 most recent)
                         this.recentActivities = this.listings.slice(0, 5).map(listing => ({
                             id: listing.id,
                             type: listing.type,
@@ -380,15 +383,9 @@
                             amount: parseFloat(listing.amount),
                             currency: listing.currency
                         }));
-
-                        // Initialize charts after data is loaded
-                        this.$nextTick(() => {
-                            this.initCharts();
-                        });
+                        this.$nextTick(() => this.initCharts());
                     } catch (error) {
-                        console.error('[v0] Erreur lors du chargement des listings:', error);
-                        this.listings = [];
-                        this.recentActivities = [];
+                        console.error('Erreur lors du chargement des listings:', error);
                     }
                 },
                 formatTimeAgo(dateString) {
@@ -399,13 +396,9 @@
                     const diffHours = Math.floor(diffMs / 3600000);
                     const diffDays = Math.floor(diffMs / 86400000);
 
-                    if (diffMins < 60) {
-                        return `Il y a ${diffMins} min`;
-                    } else if (diffHours < 24) {
-                        return `Il y a ${diffHours}h`;
-                    } else {
-                        return `Il y a ${diffDays}j`;
-                    }
+                    if (diffMins < 60) return `Il y a ${diffMins} min`;
+                    if (diffHours < 24) return `Il y a ${diffHours}h`;
+                    return `Il y a ${diffDays}j`;
                 },
                 toggleDarkMode() {
                     this.darkMode = !this.darkMode;
@@ -415,9 +408,7 @@
                 initCharts() {
                     const transactionsCtx = document.getElementById('transactionsChart');
                     if (transactionsCtx) {
-                        // Group listings by month and type
                         const monthlyData = this.getMonthlyData();
-
                         new Chart(transactionsCtx, {
                             type: 'line',
                             data: {
@@ -440,10 +431,8 @@
                             },
                             options: {
                                 responsive: true,
-                                maintainAspectRatio: true,
                                 plugins: {
                                     legend: {
-                                        display: true,
                                         position: 'top'
                                     }
                                 }
@@ -451,7 +440,6 @@
                         });
                     }
 
-                    // Type Chart
                     const typeCtx = document.getElementById('typeChart');
                     if (typeCtx) {
                         new Chart(typeCtx, {
@@ -465,7 +453,6 @@
                             },
                             options: {
                                 responsive: true,
-                                maintainAspectRatio: true,
                                 plugins: {
                                     legend: {
                                         position: 'bottom'
@@ -476,22 +463,16 @@
                     }
                 },
                 getMonthlyData() {
-                    // Mock data for now - in production, this would aggregate real data by month
                     const offers = [12, 18, 25, 32, 38, this.stats.activeOffers];
                     const requests = [8, 15, 20, 28, 35, this.stats.activeRequests];
-
                     return {
                         offers,
                         requests
                     };
                 },
-                applyFilters() {
-                    this.currentPage = 1;
-                },
                 formatCurrency(amount) {
                     return new Intl.NumberFormat('fr-FR', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0
+                        minimumFractionDigits: 0
                     }).format(amount);
                 },
                 printList() {

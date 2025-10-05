@@ -54,6 +54,58 @@ $currentPage = 'parrainages';
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
         }
 
+        .sidebar {
+            transition: transform 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 40;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            tr {
+                margin-bottom: 1rem;
+                border-bottom: 1px solid #ccc;
+            }
+
+            td {
+                padding: 0.5rem;
+                text-align: right;
+                position: relative;
+            }
+
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 0.5rem;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+
         @media print {
             .no-print {
                 display: none !important;
@@ -63,29 +115,85 @@ $currentPage = 'parrainages';
                 background: white !important;
                 color: black !important;
             }
+
+            .bg-white,
+            .bg-gray-50 {
+                background: white !important;
+            }
+
+            .shadow-sm,
+            .shadow-md {
+                box-shadow: none !important;
+            }
+
+            table {
+                page-break-inside: auto;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .print-title {
+                display: block !important;
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+        }
+
+        .print-title {
+            display: none;
         }
     </style>
 </head>
 
 <body>
     <div id="app">
+        <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
+
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
             <?php include 'sidebar.php'; ?>
 
             <div class="flex-1 md:ml-0">
-                <?php include 'header.php'; ?>
 
-                <div class="p-4  mt-10">
+                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
+                    <div class="px-4 sm:px-6 py-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
+                                    <i class="fas fa-bars text-xl"></i>
+                                </button>
+                                <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                                    Liste des parrainages
+                                </h1>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                    <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="p-4 sm:p-6">
                     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Parrainages</h1>
                             <p class="text-gray-600 dark:text-gray-400">Liste de tous les parrainages effectués</p>
                         </div>
-                        <button @click="printList" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
-                            <i class="fas fa-print mr-2"></i>Imprimer la liste
+                        <button
+                            @click="printList"
+                            class="w-[200px] sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 
+           hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium 
+           transition-all shadow-lg flex items-center justify-center gap-2 no-print">
+                            <i class="fas fa-print"></i>
+                            <span class="hidden sm:inline">Imprimer la liste</span>
                         </button>
                     </div>
-
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
@@ -135,7 +243,6 @@ $currentPage = 'parrainages';
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-900">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">ID</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parrain</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filleul</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
@@ -143,32 +250,27 @@ $currentPage = 'parrainages';
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr v-for="sponsorship in paginatedSponsorships" :key="sponsorship.id" class="hover:bg-gray-50 dark:hover:bg-slate-700">
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                                            #{{ sponsorship.id }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td data-label="Parrain" class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
                                                     <i class="fas fa-user text-white"></i>
                                                 </div>
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ sponsorship.sponsor_first_name }} {{ sponsorship.sponsor_last_name }}</div>
-                                                    <div class="text-sm text-gray-500 dark:text-gray-400">ID: {{ sponsorship.sponsor_id }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td data-label="Filleul" class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center">
                                                 <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
                                                     <i class="fas fa-user text-white"></i>
                                                 </div>
                                                 <div>
                                                     <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ sponsorship.sponsored_first_name }} {{ sponsorship.sponsored_last_name }}</div>
-                                                    <div class="text-sm text-gray-500 dark:text-gray-400">ID: {{ sponsorship.sponsored_id }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td data-label="Date" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                                             {{ formatDate(sponsorship.created_at) }}
                                         </td>
                                     </tr>
@@ -216,7 +318,6 @@ $currentPage = 'parrainages';
         const {
             createApp
         } = Vue;
-
         const api = axios.create({
             baseURL: 'http://127.0.0.1/ampay/api/index.php'
         });
@@ -227,6 +328,7 @@ $currentPage = 'parrainages';
                     darkMode: false,
                     searchTerm: '',
                     sortBy: 'date',
+                    sidebarOpen: false,
                     currentPage: 1,
                     itemsPerPage: 10,
                     allSponsorships: []
@@ -241,7 +343,6 @@ $currentPage = 'parrainages';
                 },
                 filteredSponsorships() {
                     let filtered = this.allSponsorships;
-
                     if (this.searchTerm) {
                         filtered = filtered.filter(s =>
                             s.sponsor_first_name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -250,16 +351,9 @@ $currentPage = 'parrainages';
                             s.sponsored_last_name?.toLowerCase().includes(this.searchTerm.toLowerCase())
                         );
                     }
-
-                    // Sort
-                    if (this.sortBy === 'date') {
-                        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                    } else if (this.sortBy === 'sponsor') {
-                        filtered.sort((a, b) => a.sponsor_first_name.localeCompare(b.sponsor_first_name));
-                    } else if (this.sortBy === 'sponsored') {
-                        filtered.sort((a, b) => a.sponsored_first_name.localeCompare(b.sponsored_first_name));
-                    }
-
+                    if (this.sortBy === 'date') filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    else if (this.sortBy === 'sponsor') filtered.sort((a, b) => a.sponsor_first_name.localeCompare(b.sponsor_first_name));
+                    else if (this.sortBy === 'sponsored') filtered.sort((a, b) => a.sponsored_first_name.localeCompare(b.sponsored_first_name));
                     return filtered;
                 },
                 paginatedSponsorships() {
@@ -279,24 +373,19 @@ $currentPage = 'parrainages';
                     return Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
                 },
                 visiblePages() {
-                    const pages = [];
-                    const total = this.totalPages;
-                    const current = this.currentPage;
-                    for (let i = 1; i <= total; i++) {
-                        if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) {
-                            pages.push(i);
-                        }
-                    }
+                    const pages = [],
+                        total = this.totalPages,
+                        current = this.currentPage;
+                    for (let i = 1; i <= total; i++)
+                        if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) pages.push(i);
                     return pages;
                 }
             },
             async mounted() {
-                const savedDarkMode = localStorage.getItem('darkMode');
-                if (savedDarkMode === 'true') {
+                if (localStorage.getItem('darkMode') === 'true') {
                     this.darkMode = true;
                     document.body.classList.add('dark-mode');
                 }
-
                 await this.fetchSponsorships();
             },
             methods: {
@@ -318,8 +407,7 @@ $currentPage = 'parrainages';
                     this.currentPage = 1;
                 },
                 formatDate(dateString) {
-                    const date = new Date(dateString);
-                    return date.toLocaleDateString('fr-FR', {
+                    return new Date(dateString).toLocaleDateString('fr-FR', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'

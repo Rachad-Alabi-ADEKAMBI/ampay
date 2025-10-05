@@ -121,7 +121,6 @@
         <!-- Added mobile overlay for sidebar -->
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-        <!-- Added sidebar navigation -->
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
             <?php include 'sidebar.php'; ?>
 
