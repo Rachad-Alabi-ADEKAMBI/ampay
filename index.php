@@ -58,6 +58,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             loginPage();
             break;
 
+        case 'registerPage':
+            registerPage();
+            break;
+
         default: ?>
             <script>
                 alert("Page non trouvée ! Merci de vérifier cette adresse ! ");

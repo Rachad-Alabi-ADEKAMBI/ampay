@@ -7,60 +7,7 @@ ob_start(); ?>
 
 
 <div class="app" id="app">
-    <header class="bg-white dark:bg-dark-secondary shadow-md fixed w-full top-0 z-50 transition-colors duration-300">
-        <nav class="container mx-auto px-4">
-            <div class="flex items-center justify-between">
-                <a href="index.html" class="flex items-center slide-in-left">
-                    <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
-                        <i class="fas fa-bolt text-white text-xl"></i>
-                    </div>
-                    <span class="ml-2 text-2xl font-bold text-gray-900">AMPAY</span>
-                </a>
-
-
-
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.php" class="text-gray-700 hover:text-primary transition-colors font-medium">
-                        <i class="fas fa-home mr-1"></i>Accueil
-                    </a>
-                    <a href="index.php?action=marketplace" class="text-gray-700 hover:text-primary transition-colors font-medium">
-                        <i class="fas fa-store mr-1"></i>Marketplace
-                    </a>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Toggle dark mode">
-                        <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
-                    </button>
-
-                    <div class="hidden sm:flex items-center space-x-3">
-                        <a href="index.php?action=dashboard" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
-                            <i class="fas fa-user-shield mr-1"></i>Tableau de bord
-                        </a>
-                        <a href="index.php?action=login" class="px-6 py-2 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            Commencer
-                        </a>
-                    </div>
-
-                    <button @click="toggleMobileMenu" class="md:hidden p-2 text-gray-700 dark:text-gray-300">
-                        <i :class="mobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'" class="text-2xl"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div v-if="mobileMenuOpen" class="md:hidden mt-4 pb-4 space-y-3 mobile-menu-enter">
-                <a href="index.php" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <i class="fas fa-home mr-2"></i> Accueil
-                </a>
-                <a href="index.php?action=marketplace" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <i class="fas fa-store mr-2"></i> Marketplace
-                </a>
-                <a href="index.php?action=dashboard" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <i class="fas fa-user-shield mr-2"></i> Tableau de bord
-                </a>
-            </div>
-        </nav>
-    </header>
+    <?php include 'header.php'; ?>
 
 
     <section class="parallax hero-gradient pt-32 pb-20 min-h-screen flex items-center" style="background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1920&h=1080&fit=crop');">
@@ -69,7 +16,7 @@ ob_start(); ?>
                 <div class="text-white space-y-6 slide-in-left">
                     <div class="inline-block px-4 py-2 bg-primary/20 backdrop-blur-sm rounded-full text-primary-light border border-primary/30">
                         <i class="fas fa-star mr-2"></i>
-                        <span class="font-semibold">Transferts instantanés Afrique-Europe</span>
+                        <span class="font-semibold">Transferts d'argent instantané </span>
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
                         Transfert d'argent <span class="text-primary">sans intermédiaire</span>
@@ -78,7 +25,7 @@ ob_start(); ?>
                         Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et économique.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <a href="marketplace.html" class="px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity text-center shadow-lg">
+                        <a href="index.php?action=marketplace" class="px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity text-center shadow-lg">
                             <i class="fas fa-rocket mr-2"></i>Commencer maintenant
                         </a>
                         <a href="#how-it-works" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-lg text-lg font-semibold hover:bg-white/20 transition-colors text-center">
@@ -308,7 +255,7 @@ ob_start(); ?>
             </div>
 
             <div class="text-center mt-12">
-                <a href="marketplace.html" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
+                <a href="index.php?action=marketplace" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
                     <i class="fas fa-store mr-2"></i>Voir toutes les offres
                 </a>
             </div>
@@ -482,63 +429,14 @@ ob_start(); ?>
                 <p class="text-xl text-gray-300 mb-8 leading-relaxed">
                     Rejoignez des milliers d'utilisateurs qui font confiance à AMPAY pour leurs transferts d'argent
                 </p>
-                <a href="marketplace.html" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
+                <a href="index.php?action=marketplace" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
                     <i class="fas fa-rocket mr-2"></i>Accéder à la Marketplace
                 </a>
             </div>
         </div>
     </section>
 
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-4 sm:px-6">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
-                            <i class="fas fa-bolt text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold">AMPAY</span>
-                    </div>
-                    <p class="text-gray-400 leading-relaxed">Transferts d'argent sans intermédiaire entre l'Afrique et l'Europe.</p>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Liens rapides</h4>
-                    <ul class="space-y-2">
-                        <li><a href="index.php" class="text-gray-400 hover:text-primary transition-colors">Accueil</a></li>
-                        <li><a href="marketplace.php" class="text-gray-400 hover:text-primary transition-colors">Marketplace</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#faq" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
-                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">tableau de bord</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">Suivez-nous</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 AMPAY. Tous droits réservés.</p>
-            </div>
-        </div>
-    </footer>
+    <?php include 'footer.php'; ?>
 </div>
 
 <script>

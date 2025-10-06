@@ -14,7 +14,9 @@ ob_start(); ?>
             <div class="text-center">
                 <div class="flex justify-center mb-4">
                     <div class="w-16 h-16 primary-gradient rounded-xl flex items-center justify-center">
-                        <i class="fas fa-bolt text-white text-3xl"></i>
+                        <a href="index.php">
+                            <i class="fas fa-bolt text-white text-3xl"></i>
+                        </a>
                     </div>
                 </div>
                 <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Créer un compte AMPAY</h2>
