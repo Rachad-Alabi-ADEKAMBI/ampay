@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Parrainages';
-$currentPage = 'parrainages';
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
@@ -87,22 +87,43 @@ $currentPage = 'parrainages';
             tr {
                 margin-bottom: 1rem;
                 border-bottom: 1px solid #ccc;
+                padding-bottom: 1rem;
             }
 
             td {
-                padding: 0.5rem;
-                text-align: right;
+                padding: 0.75rem 0.5rem;
+                text-align: left;
                 position: relative;
+                padding-left: 40%;
+                min-height: 3rem;
+                display: flex;
+                align-items: center;
             }
 
             td::before {
                 content: attr(data-label);
                 position: absolute;
-                left: 0;
-                width: 50%;
-                padding-left: 0.5rem;
+                left: 0.5rem;
+                width: 35%;
                 font-weight: bold;
                 text-align: left;
+                color: #4B5563;
+            }
+
+            /* Fix icon overflow on mobile */
+            td .flex {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            td .w-10.h-10 {
+                width: 2rem;
+                height: 2rem;
+                flex-shrink: 0;
+            }
+
+            td .w-10.h-10 i {
+                font-size: 0.75rem;
             }
         }
 
@@ -155,11 +176,57 @@ $currentPage = 'parrainages';
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
         <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-            <?php include 'sidebar.php'; ?>
+            <!-- Sidebar code -->
+            <aside :class="['sidebar fixed w-64 bg-white dark:bg-gray-800 shadow-lg h-screen flex flex-col justify-between overflow-y-auto z-40', sidebarOpen ? 'open' : '']">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-xl"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">AMPAY</span>
+                        </div>
+                        <button @click="sidebarOpen = false" class="md:hidden text-gray-600 dark:text-gray-300">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
 
-            <div class="flex-1 md:ml-0">
+                    <nav class="space-y-2 flex-1">
+                        <?php
+                        $links = [
+                            'index.php' => ['Accueil', 'fas fa-home'],
+                            'marketplace.php' => ['Marketplace', 'fas fa-store'],
+                            'dashboard.php' => ['Tableau de bord', 'fas fa-user-shield'],
+                            'transactions.php' => ['Transactions', 'fas fa-exchange-alt'],
+                            'sponsorships.php' => ['Parrainages', 'fas fa-hand-holding-usd'],
+                            'users.php' => ['Utilisateurs', 'fas fa-users'],
+                            'notifications.php' => ['Notifications', 'fas fa-bell'],
+                            'profile.php' => ['Profil', 'fas fa-user'],
+                        ];
 
-                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
+                        foreach ($links as $file => $data) {
+                            $title = $data[0];
+                            $icon = $data[1];
+                            $activeClass = ($currentPage == $file) ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700';
+                            echo "<a href='$file' class='flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors $activeClass'>
+                        <i class='$icon'></i>
+                        <span>$title</span>
+                      </a>";
+                        }
+                        ?>
+                    </nav>
+                </div>
+
+                <div class="p-3">
+                    <a href="logout.php" class="flex items-center justify-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </aside>
+
+            <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
+                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                     <div class="px-4 sm:px-6 py-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
@@ -179,7 +246,7 @@ $currentPage = 'parrainages';
                     </div>
                 </header>
 
-                <div class="p-4 sm:p-6">
+                <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
                     <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div>
                             <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Parrainages</h1>
@@ -239,39 +306,57 @@ $currentPage = 'parrainages';
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
+                        <div class="overflow-x-auto max-w-full">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-900">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parrain</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email Parrain</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filleul</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email Filleul</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Téléphone</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr v-for="sponsorship in paginatedSponsorships" :key="sponsorship.id" class="hover:bg-gray-50 dark:hover:bg-slate-700">
-                                        <td data-label="Parrain" class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
+                                        <td data-label="Parrain" class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center flex-shrink-0">
                                                     <i class="fas fa-user text-white"></i>
                                                 </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ sponsorship.sponsor_first_name }} {{ sponsorship.sponsor_last_name }}</div>
+                                                <div class="min-w-0">
+                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ sponsorship.sponsor_first_name }} {{ sponsorship.sponsor_last_name }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td data-label="Filleul" class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                                        <td data-label="Email Parrain" class="px-6 py-4">
+                                            <div class="text-sm text-gray-600 dark:text-gray-400 break-all">{{ sponsorship.sponsor_email || 'N/A' }}</div>
+                                        </td>
+                                        <td data-label="Filleul" class="px-6 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
                                                     <i class="fas fa-user text-white"></i>
                                                 </div>
-                                                <div>
-                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ sponsorship.sponsored_first_name }} {{ sponsorship.sponsored_last_name }}</div>
+                                                <div class="min-w-0">
+                                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ sponsorship.sponsored_first_name }} {{ sponsorship.sponsored_last_name }}</div>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td data-label="Date" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                        <td data-label="Email Filleul" class="px-6 py-4">
+                                            <div class="text-sm text-gray-600 dark:text-gray-400 break-all">{{ sponsorship.sponsored_email || 'N/A' }}</div>
+                                        </td>
+                                        <td data-label="Téléphone" class="px-6 py-4">
+                                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ sponsorship.sponsored_phone || 'N/A' }}</div>
+                                        </td>
+                                        <td data-label="Date" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                             {{ formatDate(sponsorship.created_at) }}
+                                        </td>
+                                        <td data-label="Statut" class="px-6 py-4">
+                                            <span :class="['px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', sponsorship.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
+                                                {{ sponsorship.status === 'active' ? 'Actif' : 'Inactif' }}
+                                            </span>
                                         </td>
                                     </tr>
                                 </tbody>

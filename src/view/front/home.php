@@ -1,271 +1,9 @@
 <?php $title = "AmPay - Accueil"; ?>
 
 
-<style>
-    :root {
-        --primary: #10B981;
-        --primary-dark: #059669;
-        --accent: #F59E0B;
-        --accent-dark: #D97706;
-        --bg-light: #FFFFFF;
-        --bg-light-secondary: #F9FAFB;
-        --bg-dark: #0F172A;
-        --bg-dark-secondary: #1E293B;
-        --text-light: #111827;
-        --text-light-secondary: #6B7280;
-        --text-dark: #F9FAFB;
-        --text-dark-secondary: #94A3B8;
-    }
-
-    body.dark-mode {
-        background-color: var(--bg-dark);
-        color: var(--text-dark);
-    }
-
-    .dark-mode .bg-white {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .bg-gray-50 {
-        background-color: var(--bg-dark) !important;
-    }
-
-    .dark-mode .bg-gray-100 {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .text-gray-900 {
-        color: var(--text-dark) !important;
-    }
-
-    .dark-mode .text-gray-700 {
-        color: var(--text-dark-secondary) !important;
-    }
-
-    .dark-mode .text-gray-600 {
-        color: var(--text-dark-secondary) !important;
-    }
-
-    .dark-mode .border-gray-200 {
-        border-color: #334155 !important;
-    }
-
-    .dark-mode .border-gray-300 {
-        border-color: #475569 !important;
-    }
-
-    .dark-mode .shadow-md {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-lg {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-xl {
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-2xl {
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    /* Added dark mode icon color fixes */
-    .dark-mode i.fa-moon,
-    .dark-mode i.fa-sun {
-        color: inherit !important;
-    }
-
-    .dark-mode .text-gray-600 i,
-    .dark-mode .text-gray-700 i {
-        color: #94A3B8 !important;
-    }
-
-    .primary-gradient {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    }
-
-    .hero-gradient {
-        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
-    }
-
-    .dark-mode .hero-gradient {
-        background: linear-gradient(135deg, #000000 0%, #0F172A 50%, #1E293B 100%);
-    }
-
-    .parallax {
-        background-attachment: fixed;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        position: relative;
-    }
-
-    .parallax::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(15, 23, 42, 0.85);
-    }
-
-    .parallax-content {
-        position: relative;
-        z-index: 1;
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes slideInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-50px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(50px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes float {
-
-        0%,
-        100% {
-            transform: translateY(0px);
-        }
-
-        50% {
-            transform: translateY(-20px);
-        }
-    }
-
-    @keyframes pulse-glow {
-
-        0%,
-        100% {
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-        }
-
-        50% {
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
-        }
-    }
-
-    .fade-in-up {
-        animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    .slide-in-left {
-        animation: slideInLeft 0.8s ease-out forwards;
-    }
-
-    .slide-in-right {
-        animation: slideInRight 0.8s ease-out forwards;
-    }
-
-    .float-animation {
-        animation: float 3s ease-in-out infinite;
-    }
-
-    .hover-lift {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .mobile-mockup {
-        max-width: 300px;
-        border-radius: 40px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-        border-left: 4px solid var(--primary);
-    }
-
-    .dark-mode .stat-card {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
-    }
-
-    /* Mobile menu animation */
-    .mobile-menu-enter {
-        animation: slideDown 0.3s ease-out;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Smooth scroll */
-    html {
-        scroll-behavior: smooth;
-    }
-
-    /* Enhanced scrollbar for dark mode */
-    ::-webkit-scrollbar {
-        width: 10px;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    .dark-mode ::-webkit-scrollbar-track {
-        background: #1E293B;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #10B981;
-        border-radius: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #059669;
-    }
-</style>
-
 <?php
 
 ob_start(); ?>
-
-
 
 
 <div class="app" id="app">
@@ -1030,6 +768,266 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
+
+<style>
+    :root {
+        --primary: #10B981;
+        --primary-dark: #059669;
+        --accent: #F59E0B;
+        --accent-dark: #D97706;
+        --bg-light: #FFFFFF;
+        --bg-light-secondary: #F9FAFB;
+        --bg-dark: #0F172A;
+        --bg-dark-secondary: #1E293B;
+        --text-light: #111827;
+        --text-light-secondary: #6B7280;
+        --text-dark: #F9FAFB;
+        --text-dark-secondary: #94A3B8;
+    }
+
+    body.dark-mode {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+    }
+
+    .dark-mode .bg-white {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .bg-gray-50 {
+        background-color: var(--bg-dark) !important;
+    }
+
+    .dark-mode .bg-gray-100 {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .text-gray-900 {
+        color: var(--text-dark) !important;
+    }
+
+    .dark-mode .text-gray-700 {
+        color: var(--text-dark-secondary) !important;
+    }
+
+    .dark-mode .text-gray-600 {
+        color: var(--text-dark-secondary) !important;
+    }
+
+    .dark-mode .border-gray-200 {
+        border-color: #334155 !important;
+    }
+
+    .dark-mode .border-gray-300 {
+        border-color: #475569 !important;
+    }
+
+    .dark-mode .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-lg {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-xl {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-2xl {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Added dark mode icon color fixes */
+    .dark-mode i.fa-moon,
+    .dark-mode i.fa-sun {
+        color: inherit !important;
+    }
+
+    .dark-mode .text-gray-600 i,
+    .dark-mode .text-gray-700 i {
+        color: #94A3B8 !important;
+    }
+
+    .primary-gradient {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+
+    .hero-gradient {
+        background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+    }
+
+    .dark-mode .hero-gradient {
+        background: linear-gradient(135deg, #000000 0%, #0F172A 50%, #1E293B 100%);
+    }
+
+    .parallax {
+        background-attachment: fixed;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+    }
+
+    .parallax::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.85);
+    }
+
+    .parallax-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes pulse-glow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        50% {
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+        }
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .slide-in-left {
+        animation: slideInLeft 0.8s ease-out forwards;
+    }
+
+    .slide-in-right {
+        animation: slideInRight 0.8s ease-out forwards;
+    }
+
+    .float-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .mobile-mockup {
+        max-width: 300px;
+        border-radius: 40px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+        border-left: 4px solid var(--primary);
+    }
+
+    .dark-mode .stat-card {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(5, 150, 105, 0.08) 100%);
+    }
+
+    /* Mobile menu animation */
+    .mobile-menu-enter {
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Smooth scroll */
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* Enhanced scrollbar for dark mode */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .dark-mode ::-webkit-scrollbar-track {
+        background: #1E293B;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #10B981;
+        border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #059669;
+    }
+</style>
 
 <?php $content = ob_get_clean(); ?>
 

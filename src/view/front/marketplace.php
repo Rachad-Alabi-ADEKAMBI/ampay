@@ -1,183 +1,6 @@
-<?php $title = "AmPay - Accueil";
+<?php $title = "AmPay - Marketplace";
 
 ob_start(); ?>
-
-<style>
-    :root {
-        --primary: #10B981;
-        --primary-dark: #059669;
-        --accent: #F59E0B;
-        --bg-dark: #0F172A;
-        --bg-dark-secondary: #1E293B;
-    }
-
-    body.dark-mode {
-        background-color: var(--bg-dark);
-        color: #F9FAFB;
-    }
-
-    .dark-mode .bg-white {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .bg-gray-50 {
-        background-color: var(--bg-dark) !important;
-    }
-
-    .dark-mode .bg-gray-100 {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .text-gray-900 {
-        color: #F9FAFB !important;
-    }
-
-    .dark-mode .text-gray-700 {
-        color: #94A3B8 !important;
-    }
-
-    .dark-mode .text-gray-600 {
-        color: #94A3B8 !important;
-    }
-
-    .dark-mode .text-gray-500 {
-        color: #64748B !important;
-    }
-
-    .dark-mode .border-gray-200 {
-        border-color: #334155 !important;
-    }
-
-    .dark-mode .border-gray-300 {
-        border-color: #475569 !important;
-    }
-
-    .dark-mode .shadow-sm {
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-md {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-lg {
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-xl {
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    /* Fix dark mode input visibility */
-    .dark-mode input,
-    .dark-mode select,
-    .dark-mode textarea {
-        background-color: #1E293B !important;
-        color: #F9FAFB !important;
-        border-color: #475569 !important;
-    }
-
-    .dark-mode input::placeholder,
-    .dark-mode textarea::placeholder {
-        color: #64748B !important;
-    }
-
-    /* Fix dark mode icon visibility */
-    .dark-mode i {
-        color: #94A3B8 !important;
-    }
-
-    .dark-mode .text-primary i,
-    .dark-mode .primary-gradient i {
-        color: #10B981 !important;
-    }
-
-    .dark-mode .bg-white i {
-        color: #94A3B8 !important;
-    }
-
-    .primary-gradient {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    }
-
-    .card-hover {
-        transition: all 0.3s ease;
-    }
-
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .dark-mode .card-hover:hover {
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-    }
-
-    .country-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-        border-radius: 9999px;
-        border: 1px solid rgba(16, 185, 129, 0.2);
-    }
-
-    .color-filter-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 3px solid transparent;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .color-filter-btn:hover {
-        transform: scale(1.1);
-    }
-
-    .color-filter-btn.active {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-    }
-
-    .modal-overlay {
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .fade-in {
-        animation: fadeIn 0.5s ease-out forwards;
-    }
-
-    @keyframes modalSlideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .modal-content {
-        animation: modalSlideIn 0.3s ease-out;
-    }
-</style>
 
 
 <div id="app">
@@ -829,6 +652,183 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
+
+<style>
+    :root {
+        --primary: #10B981;
+        --primary-dark: #059669;
+        --accent: #F59E0B;
+        --bg-dark: #0F172A;
+        --bg-dark-secondary: #1E293B;
+    }
+
+    body.dark-mode {
+        background-color: var(--bg-dark);
+        color: #F9FAFB;
+    }
+
+    .dark-mode .bg-white {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .bg-gray-50 {
+        background-color: var(--bg-dark) !important;
+    }
+
+    .dark-mode .bg-gray-100 {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .text-gray-900 {
+        color: #F9FAFB !important;
+    }
+
+    .dark-mode .text-gray-700 {
+        color: #94A3B8 !important;
+    }
+
+    .dark-mode .text-gray-600 {
+        color: #94A3B8 !important;
+    }
+
+    .dark-mode .text-gray-500 {
+        color: #64748B !important;
+    }
+
+    .dark-mode .border-gray-200 {
+        border-color: #334155 !important;
+    }
+
+    .dark-mode .border-gray-300 {
+        border-color: #475569 !important;
+    }
+
+    .dark-mode .shadow-sm {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-lg {
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-xl {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Fix dark mode input visibility */
+    .dark-mode input,
+    .dark-mode select,
+    .dark-mode textarea {
+        background-color: #1E293B !important;
+        color: #F9FAFB !important;
+        border-color: #475569 !important;
+    }
+
+    .dark-mode input::placeholder,
+    .dark-mode textarea::placeholder {
+        color: #64748B !important;
+    }
+
+    /* Fix dark mode icon visibility */
+    .dark-mode i {
+        color: #94A3B8 !important;
+    }
+
+    .dark-mode .text-primary i,
+    .dark-mode .primary-gradient i {
+        color: #10B981 !important;
+    }
+
+    .dark-mode .bg-white i {
+        color: #94A3B8 !important;
+    }
+
+    .primary-gradient {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .dark-mode .card-hover:hover {
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    .country-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+        border-radius: 9999px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .color-filter-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 3px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .color-filter-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .color-filter-btn.active {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+    }
+
+    .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-content {
+        animation: modalSlideIn 0.3s ease-out;
+    }
+</style>
 
 <?php $content = ob_get_clean(); ?>
 

@@ -211,9 +211,8 @@
     <div id="app">
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-        Modified layout structure for fixed sidebar with independent scrolling
-        <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
-            Sidebar is now always fixed with its own scroll
+        <!-- Added overflow-x-hidden to prevent horizontal scroll -->
+        <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
             <aside :class="['sidebar fixed w-64 bg-white dark:bg-gray-800 shadow-lg h-screen flex flex-col justify-between overflow-y-auto z-40', sidebarOpen ? 'open' : '']">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-8">
@@ -265,7 +264,6 @@
                 </div>
             </aside>
 
-            Main content area with margin-left for sidebar and independent scrolling
             <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
                 <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                     <div class="px-4 sm:px-6 py-4">
@@ -287,8 +285,8 @@
                     </div>
                 </header>
 
-                Content wrapper with overflow-y-auto for independent scrolling
-                <div class="flex-1 overflow-y-auto">
+                <!-- Added overflow-x-hidden to content wrapper -->
+                <div class="flex-1 overflow-y-auto overflow-x-hidden">
                     <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -336,14 +334,19 @@
                             </div>
                         </div>
 
-                        <div class="grid lg:grid-cols-2 gap-6 mb-8">
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                        <!-- Added max-w-full and overflow-hidden to chart containers -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
-                                <canvas id="transactionsChart"></canvas>
+                                <div class="w-full max-w-full">
+                                    <canvas id="transactionsChart"></canvas>
+                                </div>
                             </div>
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
-                                <canvas id="typeChart"></canvas>
+                                <div class="w-full max-w-full">
+                                    <canvas id="typeChart"></canvas>
+                                </div>
                             </div>
                         </div>
 
@@ -486,6 +489,7 @@
                             },
                             options: {
                                 responsive: true,
+                                maintainAspectRatio: true,
                                 plugins: {
                                     legend: {
                                         position: 'top'
@@ -508,6 +512,7 @@
                             },
                             options: {
                                 responsive: true,
+                                maintainAspectRatio: true,
                                 plugins: {
                                     legend: {
                                         position: 'bottom'

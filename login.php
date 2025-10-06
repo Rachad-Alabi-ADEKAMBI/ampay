@@ -38,11 +38,48 @@
         .primary-gradient {
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
         }
+
+        /* Added styles for theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 50;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .theme-toggle {
+            background-color: var(--bg-dark-secondary);
+        }
+
+        .theme-toggle i {
+            font-size: 1.25rem;
+            color: #10B981;
+        }
     </style>
 </head>
 
 <body class="bg-gray-50">
     <div id="app">
+        <!-- Added theme toggle button -->
+        <button @click="toggleDarkMode" class="theme-toggle" title="Changer de thème">
+            <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+        </button>
+
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
                 <div class="text-center">
@@ -118,6 +155,7 @@
         createApp({
             data() {
                 return {
+                    darkMode: false,
                     loginForm: {
                         email: '',
                         password: '',
@@ -128,7 +166,19 @@
                     error: ''
                 };
             },
+            mounted() {
+                const savedDarkMode = localStorage.getItem('darkMode');
+                if (savedDarkMode === 'true') {
+                    this.darkMode = true;
+                    document.body.classList.add('dark-mode');
+                }
+            },
             methods: {
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    document.body.classList.toggle('dark-mode');
+                    localStorage.setItem('darkMode', this.darkMode);
+                },
                 async handleLogin() {
                     this.loading = true;
                     this.error = '';
