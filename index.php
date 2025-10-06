@@ -1,4 +1,9 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+
 session_start();
 
 // Configure le niveau de rapport des erreurs pour exclure les avertissements
@@ -56,6 +61,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
         case 'loginPage':
             loginPage();
+            break;
+
+        case 'login':
+            login();
             break;
 
         case 'registerPage':

@@ -1,0 +1,44 @@
+<?php
+//session_start();
+//local
+include_once 'config.php';
+
+// Connexion d'un utilisateur
+function login()
+{
+    global $pdo;
+    header('Content-Type: application/json');
+
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (empty($data['email']) || empty($data['password'])) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Email et mot de passe requis.'
+        ]);
+        return;
+    }
+
+    $email = trim($data['email']);
+    $password = $data['password'];
+
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if ($user && password_verify($password, $user['password'])) {
+        session_start();
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['email'] = $user['email'];
+
+        echo json_encode([
+            'success' => true,
+            'redirect' => 'index.php?action=dashboard'
+        ]);
+    } else {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Email ou mot de passe incorrect.'
+        ]);
+    }
+}

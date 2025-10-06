@@ -162,37 +162,40 @@ function login($data)
 {
     global $pdo;
 
-    if (empty($data['username']) || empty($data['password'])) {
+    header('Content-Type: application/json');
+
+    if (empty($data['email']) || empty($data['password'])) {
         echo json_encode([
             'success' => false,
-            'message' => 'Nom d\'utilisateur et mot de passe requis'
+            'message' => 'Email et mot de passe requis.'
         ]);
         return;
     }
 
-    $username = $data['username'];
+    $email = trim($data['email']);
     $password = $data['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
         session_start();
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
+        $_SESSION['email'] = $user['email'];
 
         echo json_encode([
             'success' => true,
-            'redirect' => 'http://127.0.0.1/tossin/index.php'
+            'redirect' => 'index.php?action=dashboard'
         ]);
     } else {
         echo json_encode([
             'success' => false,
-            'message' => 'Nom d’utilisateur ou mot de passe incorrect'
+            'message' => 'Email ou mot de passe incorrect.'
         ]);
     }
 }
+
 
 // logout
 function logout()

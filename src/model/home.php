@@ -1,7 +1,7 @@
 <?php
 //session_start();
 //local
-include 'config.php';
+include_once 'config.php';
 
 function addNewJob()
 {

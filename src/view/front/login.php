@@ -109,18 +109,31 @@ ob_start(); ?>
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
+
             async handleLogin() {
                 this.loading = true;
                 this.error = '';
 
                 try {
-                    // TODO: Replace with actual API call
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    const response = await fetch('http://ampay/api/index.php?action=login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.loginForm)
+                    });
 
-                    // Simulate successful login
-                    window.location.href = 'dashboard.php';
+                    const result = await response.json();
+
+                    if (result.success) {
+                        window.location.href = result.redirect;
+                    } else {
+                        alert(result.message || 'Une erreur est survenue.');
+                    }
+
                 } catch (err) {
-                    this.error = 'Email ou mot de passe incorrect';
+                    alert('Erreur de connexion au serveur.');
+                    console.error(err);
                 } finally {
                     this.loading = false;
                 }
@@ -128,6 +141,7 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
+
 
 
 <style>
