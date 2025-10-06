@@ -21,6 +21,10 @@ switch ($action) {
         getAllSponsorships();
         break;
 
+    case 'register':
+        $data = json_decode(file_get_contents('php://input'), true);
+        register($pdo, $data);
+        break;
 
 
     case 'login':

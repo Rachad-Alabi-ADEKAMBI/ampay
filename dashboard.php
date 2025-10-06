@@ -211,11 +211,63 @@
     <div id="app">
         <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-        <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-            <?php include 'sidebar.php'; ?>
+        Modified layout structure for fixed sidebar with independent scrolling
+        <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+            Sidebar is now always fixed with its own scroll
+            <aside :class="['sidebar fixed w-64 bg-white dark:bg-gray-800 shadow-lg h-screen flex flex-col justify-between overflow-y-auto z-40', sidebarOpen ? 'open' : '']">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-8">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bolt text-white text-xl"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-gray-900 dark:text-gray-100">AMPAY</span>
+                        </div>
+                        <button @click="sidebarOpen = false" class="md:hidden text-gray-600 dark:text-gray-300">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
 
-            <div class="flex-1 md:ml-0">
-                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print">
+                    <?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
+
+                    <nav class="space-y-2 flex-1">
+                        <?php
+                        $links = [
+                            'index.php' => ['Accueil', 'fas fa-home'],
+                            'marketplace.php' => ['Marketplace', 'fas fa-store'],
+                            'dashboard.php' => ['Tableau de bord', 'fas fa-user-shield'],
+                            'transactions.php' => ['Transactions', 'fas fa-exchange-alt'],
+                            'sponsorships.php' => ['Parrainages', 'fas fa-hand-holding-usd'],
+                            'users.php' => ['Utilisateurs', 'fas fa-users'],
+                            'notifications.php' => ['Notifications', 'fas fa-bell'],
+
+                            'profile.php' => ['Profil', 'fas fa-user'],
+                        ];
+
+                        foreach ($links as $file => $data) {
+                            $title = $data[0];
+                            $icon = $data[1];
+                            $activeClass = ($currentPage == $file) ? 'primary-gradient text-white' : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700';
+                            echo "<a href='$file' class='flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors $activeClass'>
+                        <i class='$icon'></i>
+                        <span>$title</span>
+                      </a>";
+                        }
+                        ?>
+                    </nav>
+                </div>
+
+                <div class="p-3">
+                    <a href="logout.php" class="flex items-center justify-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        <span>Déconnexion</span>
+                    </a>
+                </div>
+            </aside>
+
+            Main content area with margin-left for sidebar and independent scrolling
+            <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
+                <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                     <div class="px-4 sm:px-6 py-4">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center space-x-4">
@@ -235,81 +287,84 @@
                     </div>
                 </header>
 
-                <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-users text-xl"></i>
+                Content wrapper with overflow-y-auto for independent scrolling
+                <div class="flex-1 overflow-y-auto">
+                    <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-users text-xl"></i>
+                                    </div>
+                                    <span class="text-xs text-green-600 font-semibold">+12%</span>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+12%</span>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalUsers }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Total Utilisateurs</div>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalUsers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Utilisateurs</div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-hand-holding-usd text-xl"></i>
+                                    </div>
+                                    <span class="text-xs text-green-600 font-semibold">+8%</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-hand-holding-heart text-xl"></i>
+                                    </div>
+                                    <span class="text-xs text-green-600 font-semibold">+15%</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
+                            </div>
+
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-exchange-alt text-xl"></i>
+                                    </div>
+                                    <span class="text-xs text-green-600 font-semibold">+23%</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
+                            </div>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-usd text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+8%</span>
+                        <div class="grid lg:grid-cols-2 gap-6 mb-8">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
+                                <canvas id="transactionsChart"></canvas>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
+                                <canvas id="typeChart"></canvas>
+                            </div>
                         </div>
 
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-hand-holding-heart text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+15%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
-                        </div>
-
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-exchange-alt text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+23%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
-                        </div>
-                    </div>
-
-                    <div class="grid lg:grid-cols-2 gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
-                            <canvas id="transactionsChart"></canvas>
-                        </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
-                            <canvas id="typeChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
-                        <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                            <p>Chargement des activités...</p>
-                        </div>
-                        <div v-else class="space-y-4">
-                            <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'Offre' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
-                                    <i :class="activity.icon"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</div>
-                                </div>
-                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ formatCurrency(activity.amount) }} {{ activity.currency }}
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
+                            <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                                <p>Chargement des activités...</p>
+                            </div>
+                            <div v-else class="space-y-4">
+                                <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'Offre' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
+                                        <i :class="activity.icon"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</div>
+                                    </div>
+                                    <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                        {{ formatCurrency(activity.amount) }} {{ activity.currency }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -342,7 +397,7 @@
             computed: {
                 stats() {
                     return {
-                        totalUsers: this.users.length, // ← Compte réel des utilisateurs
+                        totalUsers: this.users.length,
                         activeOffers: this.listings.filter(l => l.type === 'Offre').length,
                         activeRequests: this.listings.filter(l => l.type === 'Demande').length,
                         totalTransactions: this.listings.length
