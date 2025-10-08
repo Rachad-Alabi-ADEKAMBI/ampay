@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 
+
 session_start();
 
 // Configure le niveau de rapport des erreurs pour exclure les avertissements
@@ -20,10 +21,11 @@ require_once 'src/controller/register.php';
 
 require_once 'src/controller/dashboard.php';
 require_once 'src/controller/transactions.php';
+require_once 'src/controller/mytransactions.php';
+require_once 'src/controller/mysponsorships.php';
 require_once 'src/controller/users.php';
 require_once 'src/controller/sponsorships.php';
 require_once 'src/controller/profile.php';
-require_once 'src/controller/notifications.php';
 
 if (isset($_GET['action']) && !empty($_GET['action'])) {
     switch ($_GET['action']) {
@@ -43,6 +45,14 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             transactionsPage();
             break;
 
+        case 'myTransactionsPage':
+            myTransactionsPage();
+            break;
+
+        case 'mySponsorshipsPage':
+            mySponsorshipsPage();
+            break;
+
         case 'sponsorships':
             sponsorshipsPage();
             break;
@@ -55,10 +65,6 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             profilePage();
             break;
 
-        case 'notifications':
-            notificationsPage();
-            break;
-
         case 'loginPage':
             loginPage();
             break;
@@ -66,6 +72,38 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
         case 'login':
             login();
             break;
+
+        case 'logout':
+            // Vérifie si une session est active
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+
+            // Détruit toutes les variables de session
+            $_SESSION = [];
+
+            // Détruit le cookie de session si nécessaire
+            if (ini_get("session.use_cookies")) {
+                $params = session_get_cookie_params();
+                setcookie(
+                    session_name(),
+                    '',
+                    time() - 42000,
+                    $params["path"],
+                    $params["domain"],
+                    $params["secure"],
+                    $params["httponly"]
+                );
+            }
+
+            // Termine la session
+            session_destroy();
+
+            // Redirection vers la page d'accueil
+            header("Location: index.php?action=home");
+            exit();
+            break;
+
 
         case 'registerPage':
             registerPage();

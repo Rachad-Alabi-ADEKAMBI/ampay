@@ -16,17 +16,37 @@
         <!-- Navigation -->
         <nav class="space-y-2 flex-1">
             <?php
-            // Tableau des liens
-            $links = [
-                'index.php?action=home' => ['Accueil', 'fas fa-home'],
-                'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
-                'index.php?action=dashboard' => ['Tableau de bord', 'fas fa-user-shield'],
-                'index.php?action=transactions' => ['Transactions', 'fas fa-exchange-alt'],
-                'index.php?action=sponsorships' => ['Parrainages', 'fas fa-hand-holding-usd'],
-                'index.php?action=users' => ['Utilisateurs', 'fas fa-users'],
-                'index.php?action=notifications' => ['Notifications', 'fas fa-bell'],
-                'index.php?action=profile' => ['Profil', 'fas fa-user'],
-            ];
+            // Tableau des liens admin
+
+            if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin') {
+                $links = [
+                    'index.php?action=dashboard' => ['Tableau de bord', 'fas fa-user-shield'],
+                    'index.php?action=transactions' => ['Transactions', 'fas fa-exchange-alt'],
+                    'index.php?action=sponsorships' => ['Parrainages', 'fas fa-hand-holding-usd'],
+                    'index.php?action=users' => ['Utilisateurs', 'fas fa-users'],
+                    'index.php?action=notifications' => ['Notifications', 'fas fa-bell'],
+                    'index.php?action=profile' => ['Profil', 'fas fa-user'],
+                    'index.php?action=home' => ['Accueil', 'fas fa-home'],
+                    'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
+                ];
+            } else if (isset($_SESSION['role']) && $_SESSION['role'] === 'user') {
+                $links = [
+                    'index.php?action=dashboard' => ['Tableau de bord', 'fas fa-user-shield'],
+                    'index.php?action=myTransactionsPage' => ['Mes transactions', 'fas fa-exchange-alt'],
+                    'index.php?action=mySponsorshipsPage' => ['Mes parrainages', 'fas fa-hand-holding-usd'],
+                    'index.php?action=notifications' => ['Notifications', 'fas fa-bell'],
+                    'index.php?action=profile' => ['Profil', 'fas fa-user'],
+                    'index.php?action=home' => ['Accueil', 'fas fa-home'],
+                    'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
+                ];
+            } else {
+                // Cas par défaut si rôle inconnu ou non connecté
+                $links = [
+                    'index.php?action=home' => ['Accueil', 'fas fa-home'],
+                    'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
+                ];
+            }
+
 
             // Action courante
             $currentAction = $_GET['action'] ?? 'home';
@@ -55,9 +75,30 @@
 
     <!-- Déconnexion -->
     <div class="p-3">
-        <a href="logout.php" class="flex items-center justify-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
+        <a href="index.php?action=logout" class="flex items-center justify-center px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors">
             <i class="fas fa-sign-out-alt mr-2"></i>
             <span>Déconnexion</span>
         </a>
     </div>
 </aside>
+
+<style>
+    .sidebar {
+        transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+    }
+</style>

@@ -1,10 +1,9 @@
 <?php
 //session_start();
-//local
 include_once 'config.php';
 
 // Connexion d'un utilisateur
-function login()
+function loginUser()
 {
     global $pdo;
     header('Content-Type: application/json');
@@ -27,9 +26,19 @@ function login()
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        session_start();
-        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['id'] = $user['id'];
         $_SESSION['email'] = $user['email'];
+        
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['first_name'] = $user['first_name'];
+
+        $_SESSION['last_name'] = $user['last_name'];
+
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['country'] = $user['country'];
+
+        $_SESSION['phone_prefix'] = $user['phone_prefix'];
+        $_SESSION['phone'] = $user['phone'];
 
         echo json_encode([
             'success' => true,

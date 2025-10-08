@@ -115,7 +115,7 @@ ob_start(); ?>
                 this.error = '';
 
                 try {
-                    const response = await fetch('http://ampay/api/index.php?action=login', {
+                    const response = await fetch('index.php?action=login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

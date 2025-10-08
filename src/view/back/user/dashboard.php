@@ -1,17 +1,13 @@
-<?php $title = "AmPay - Tableau de bord"; ?>
-
+<?php $title = "AmPay - Mon Tableau de bord"; ?>
 
 <?php
-
-
 ob_start(); ?>
 
 <div id="app">
     <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-    <!-- Added overflow-x-hidden to prevent horizontal scroll -->
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
-        <?php include 'sidebar.php'; ?>
+        <?php include __DIR__ . '/../sidebar.php'; ?>
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
@@ -22,7 +18,7 @@ ob_start(); ?>
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Tableau de bord
+                                Mon Tableau de bord
                             </h1>
                         </div>
                         <div class="flex items-center space-x-4">
@@ -34,30 +30,19 @@ ob_start(); ?>
                 </div>
             </header>
 
-            <!-- Added overflow-x-hidden to content wrapper -->
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
-                <div v-if="currentView === 'dashboard'" class="p-4 sm:p-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
-                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                    <i class="fas fa-users text-xl"></i>
-                                </div>
-                                <span class="text-xs text-green-600 font-semibold">+12%</span>
-                            </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalUsers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Utilisateurs</div>
-                        </div>
-
+                <div class="p-4 sm:p-6">
+                    Stats Cards
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-hand-holding-usd text-xl"></i>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+8%</span>
+                                <span v-if="stats.myOffersChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myOffersChange }}%</span>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myOffers }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Offres</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -65,10 +50,10 @@ ob_start(); ?>
                                 <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-hand-holding-heart text-xl"></i>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+15%</span>
+                                <span v-if="stats.myRequestsChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myRequestsChange }}%</span>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myRequests }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Demandes</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -76,34 +61,55 @@ ob_start(); ?>
                                 <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-exchange-alt text-xl"></i>
                                 </div>
-                                <span class="text-xs text-green-600 font-semibold">+23%</span>
+                                <span v-if="stats.myTransactionsChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myTransactionsChange }}%</span>
                             </div>
-                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myTransactions }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Transactions</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user-friends text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.mySponsorships }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Parrainages</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ formatCurrency(stats.totalVolume) }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Volume Total</div>
                         </div>
                     </div>
 
-                    <!-- Added max-w-full and overflow-hidden to chart containers -->
+                    Charts
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mon activité mensuelle</h3>
                             <div class="w-full max-w-full">
-                                <canvas id="transactionsChart"></canvas>
+                                <canvas id="activityChart"></canvas>
                             </div>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition Offres/Demandes</h3>
                             <div class="w-full max-w-full">
-                                <canvas id="typeChart"></canvas>
+                                <canvas id="distributionChart"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
+                    Recent Activity
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mon activité récente</h3>
                         <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                            <p>Chargement des activités...</p>
+                            <i class="fas fa-inbox text-3xl mb-2"></i>
+                            <p>Aucune activité récente</p>
                         </div>
                         <div v-else class="space-y-4">
                             <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
@@ -117,6 +123,9 @@ ob_start(); ?>
                                 <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                     {{ formatCurrency(activity.amount) }} {{ activity.currency }}
                                 </div>
+                                <span :class="['px-3 py-1 rounded-full text-xs font-semibold', getStatusClass(activity.status)]">
+                                    {{ activity.status }}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -140,19 +149,27 @@ ob_start(); ?>
             return {
                 darkMode: false,
                 sidebarOpen: false,
-                currentView: 'dashboard',
-                listings: [],
-                users: [],
+                myListings: [],
+                mySponsorships: [],
                 recentActivities: [],
+                userId: null,
             };
         },
         computed: {
             stats() {
+                const offers = this.myListings.filter(l => l.type === 'Offre');
+                const requests = this.myListings.filter(l => l.type === 'Demande');
+                const totalVolume = this.myListings.reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
+
                 return {
-                    totalUsers: this.users.length, // ← Compte réel des utilisateurs
-                    activeOffers: this.listings.filter(l => l.type === 'Offre').length,
-                    activeRequests: this.listings.filter(l => l.type === 'Demande').length,
-                    totalTransactions: this.listings.length
+                    myOffers: offers.length,
+                    myRequests: requests.length,
+                    myTransactions: this.myListings.length,
+                    mySponsorships: this.mySponsorships.length,
+                    totalVolume: totalVolume,
+                    myOffersChange: 12,
+                    myRequestsChange: 8,
+                    myTransactionsChange: 15
                 };
             }
         },
@@ -163,36 +180,39 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
 
-            this.fetchUsers();
-            this.fetchListings();
+            this.userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
+
+            if (this.userId) {
+                this.fetchMyData();
+            }
         },
         methods: {
-            async fetchUsers() {
+            async fetchMyData() {
                 try {
-                    const response = await api.get('?action=allUsers');
-                    this.users = response.data || [];
-                    console.log('Utilisateurs chargés :', this.users);
-                } catch (error) {
-                    console.error('Erreur lors du chargement des utilisateurs:', error);
-                    this.users = [];
-                }
-            },
-            async fetchListings() {
-                try {
-                    const response = await api.get('?action=allListings');
-                    this.listings = response.data || [];
-                    this.recentActivities = this.listings.slice(0, 5).map(listing => ({
+                    // Fetch all listings and filter by user_id
+                    const listingsResponse = await api.get('?action=allListings');
+                    const allListings = listingsResponse.data || [];
+                    this.myListings = allListings.filter(l => l.user_id == this.userId);
+
+                    // Fetch sponsorships
+                    const sponsorshipsResponse = await api.get('?action=allSponsorships');
+                    const allSponsorships = sponsorshipsResponse.data || [];
+                    this.mySponsorships = allSponsorships.filter(s => s.sponsor_id == this.userId);
+
+                    this.recentActivities = this.myListings.slice(0, 5).map(listing => ({
                         id: listing.id,
                         type: listing.type,
                         icon: listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart',
                         title: `${listing.type} #${listing.id} - ${listing.city}, ${listing.country}`,
                         time: this.formatTimeAgo(listing.created_at),
                         amount: parseFloat(listing.amount),
-                        currency: listing.currency
+                        currency: listing.currency,
+                        status: listing.status || 'Actif'
                     }));
+
                     this.$nextTick(() => this.initCharts());
                 } catch (error) {
-                    console.error('Erreur lors du chargement des listings:', error);
+                    console.error('Erreur lors du chargement de mes données:', error);
                 }
             },
             formatTimeAgo(dateString) {
@@ -213,22 +233,22 @@ ob_start(); ?>
                 localStorage.setItem('darkMode', this.darkMode);
             },
             initCharts() {
-                const transactionsCtx = document.getElementById('transactionsChart');
-                if (transactionsCtx) {
+                const activityCtx = document.getElementById('activityChart');
+                if (activityCtx) {
                     const monthlyData = this.getMonthlyData();
-                    new Chart(transactionsCtx, {
+                    new Chart(activityCtx, {
                         type: 'line',
                         data: {
                             labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
                             datasets: [{
-                                    label: 'Offres',
+                                    label: 'Mes Offres',
                                     data: monthlyData.offers,
                                     borderColor: '#10B981',
                                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                                     tension: 0.4
                                 },
                                 {
-                                    label: 'Demandes',
+                                    label: 'Mes Demandes',
                                     data: monthlyData.requests,
                                     borderColor: '#F59E0B',
                                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -238,6 +258,7 @@ ob_start(); ?>
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: true,
                             plugins: {
                                 legend: {
                                     position: 'top'
@@ -247,19 +268,20 @@ ob_start(); ?>
                     });
                 }
 
-                const typeCtx = document.getElementById('typeChart');
-                if (typeCtx) {
-                    new Chart(typeCtx, {
+                const distributionCtx = document.getElementById('distributionChart');
+                if (distributionCtx) {
+                    new Chart(distributionCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Offres', 'Demandes'],
+                            labels: ['Mes Offres', 'Mes Demandes'],
                             datasets: [{
-                                data: [this.stats.activeOffers, this.stats.activeRequests],
+                                data: [this.stats.myOffers, this.stats.myRequests],
                                 backgroundColor: ['#10B981', '#F59E0B']
                             }]
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: true,
                             plugins: {
                                 legend: {
                                     position: 'bottom'
@@ -270,8 +292,9 @@ ob_start(); ?>
                 }
             },
             getMonthlyData() {
-                const offers = [12, 18, 25, 32, 38, this.stats.activeOffers];
-                const requests = [8, 15, 20, 28, 35, this.stats.activeRequests];
+                // Calculate monthly data from myListings
+                const offers = [0, 0, 0, 0, 0, this.stats.myOffers];
+                const requests = [0, 0, 0, 0, 0, this.stats.myRequests];
                 return {
                     offers,
                     requests
@@ -282,8 +305,14 @@ ob_start(); ?>
                     minimumFractionDigits: 0
                 }).format(amount);
             },
-            printList() {
-                window.print();
+            getStatusClass(status) {
+                const statusClasses = {
+                    'Active': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+                    'En attente': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
+                    'Terminé': 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
+                    'Annulé': 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                };
+                return statusClasses[status] || statusClasses['Active'];
             }
         }
     }).mount('#app');
@@ -349,33 +378,6 @@ ob_start(); ?>
         background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
 
-    .indicator-green {
-        width: 12px;
-        height: 12px;
-        background-color: #10B981;
-        border-radius: 50%;
-        display: inline-block;
-        animation: pulse 2s infinite;
-    }
-
-    .indicator-yellow {
-        width: 12px;
-        height: 12px;
-        background-color: #F59E0B;
-        border-radius: 50%;
-        display: inline-block;
-    }
-
-    .indicator-wheel {
-        width: 12px;
-        height: 12px;
-        border: 2px solid #3B82F6;
-        border-top-color: transparent;
-        border-radius: 50%;
-        display: inline-block;
-        animation: spin 1s linear infinite;
-    }
-
     @keyframes pulse {
 
         0%,
@@ -411,57 +413,6 @@ ob_start(); ?>
         .sidebar.open {
             transform: translateX(0);
         }
-
-        table,
-        thead,
-        tbody,
-        th,
-        td,
-        tr {
-            display: block;
-        }
-
-        thead tr {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-        }
-
-        tr {
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            background: white;
-        }
-
-        td {
-            border: none;
-            position: relative;
-            padding-left: 50% !important;
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-
-        td:before {
-            content: attr(data-label) ": ";
-            position: absolute;
-            left: 6px;
-            width: 45%;
-            padding-right: 10px;
-            white-space: nowrap;
-            font-weight: bold;
-            color: #374151;
-        }
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
-        border-left: 4px solid var(--primary);
-    }
-
-    .dark-mode i {
-        color: inherit;
     }
 
     @media print {
