@@ -43,6 +43,6 @@ switch ($action) {
         break;
 
     default:
-        echo json_encode(['error' => 'Action non reconnue']);
+        echo json_encode(['error' => 'Action non ronnue']);
         break;
 }

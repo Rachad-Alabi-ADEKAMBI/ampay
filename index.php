@@ -49,8 +49,17 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             myTransactionsPage();
             break;
 
+        case 'myTransactionsList':
+            myTransactionsList();
+            exit;
+            break;
+
         case 'mySponsorshipsPage':
             mySponsorshipsPage();
+            break;
+
+        case 'mySponsorshipsList':
+            mySponsorshipsList();
             break;
 
         case 'sponsorships':

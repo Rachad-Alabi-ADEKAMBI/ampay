@@ -29,8 +29,13 @@ ob_start(); ?>
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-                Referral Link Section
-                <div class="mb-8 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-8 text-white">
+                <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                    Bonjour
+                    <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                        {{ capitalizeFirstLetter(user_first_name ) }} {{ capitalizeFirstLetter( user_last_name) }}
+                    </span>
+                </div>
+                <div class="mb-8 mt-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-xl p-8 text-white">
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h2 class="text-3xl font-bold mb-2">Parrainez vos amis!</h2>
@@ -78,7 +83,7 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                Stats Cards
+
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between mb-2">
@@ -141,8 +146,8 @@ ob_start(); ?>
                                     </div>
                                 </div>
                             </div>
-                            <span :class="['px-3 py-1 rounded-full text-xs font-semibold', sponsorship.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
-                                {{ sponsorship.status === 'active' ? 'Actif' : 'Inactif' }}
+                            <span :class="['px-3 py-1 rounded-full text-xs font-semibold', sponsorship.status === 'actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
+                                {{ sponsorship.status === 'Actif' ? 'Actif' : 'Inactif' }}
                             </span>
                         </div>
                     </div>
@@ -157,7 +162,7 @@ ob_start(); ?>
         createApp
     } = Vue;
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'http://127.0.0.1/ampay/index.php'
     });
 
     createApp({
@@ -167,7 +172,10 @@ ob_start(); ?>
                 sidebarOpen: false,
                 mySponsorships: [],
                 userId: null,
-                copied: false
+                copied: false,
+                userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
+                user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
+                user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
             };
         },
         computed: {
@@ -175,7 +183,7 @@ ob_start(); ?>
                 return `https://ampay.com/register?ref=${this.userId || 'USER123'}`;
             },
             activeSponsored() {
-                return this.mySponsorships.filter(s => s.status === 'active').length;
+                return this.mySponsorships.filter(s => s.status === 'Actif').length;
             },
             totalRewards() {
                 return this.mySponsorships.length * 100; // 100 points per referral
@@ -187,20 +195,45 @@ ob_start(); ?>
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
-            this.userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
+            this.userId = <?php echo isset($_SESSION['id']) ? $_SESSION['id'] : 'null'; ?>;
             if (this.userId) await this.fetchMySponsorships();
         },
         methods: {
             async fetchMySponsorships() {
                 try {
-                    const response = await api.get('?action=allSponsorships');
-                    const allSponsorships = response.data || [];
-                    this.mySponsorships = allSponsorships.filter(s => s.sponsor_id == this.userId);
+                    const response = await api.get('?action=mySponsorshipsList');
+
+                    // Vérifie que la réponse est bien un objet JSON
+                    let backendData = {};
+                    if (response && response.data && typeof response.data === 'object') {
+                        backendData = response.data;
+                    } else {
+                        console.error('Erreur backend: réponse invalide', response.data);
+                        this.mySponsorships = [];
+                        return;
+                    }
+
+                    console.log("Raw backend response:", backendData);
+
+                    if (backendData.success === true) {
+                        this.mySponsorships = backendData.data || [];
+                        console.log("Filtered mySponsorships:", this.mySponsorships);
+                    } else {
+                        console.error('Erreur backend:', backendData.message || 'Message backend non défini');
+                        this.mySponsorships = [];
+                    }
+
                 } catch (error) {
-                    console.error('Erreur:', error);
+                    console.error('Erreur réseau ou backend:', error);
                     this.mySponsorships = [];
                 }
             },
+
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');

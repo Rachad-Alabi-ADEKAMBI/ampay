@@ -33,7 +33,7 @@
                         </a>
                     <?php else: ?>
                         <a href="index.php?action=loginPage" class="px-6 py-2 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-user-login mr-1"></i> Commencer
+                            <i class="fas fa-sign-in-alt mr-1"></i> Connexion
                         </a>
                     <?php endif; ?>
                 </div>

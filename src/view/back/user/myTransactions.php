@@ -90,7 +90,7 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                Filters
+
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
@@ -322,6 +322,7 @@ ob_start(); ?>
     const {
         createApp
     } = Vue;
+
     const api = axios.create({
         baseURL: 'http://127.0.0.1/ampay/api/index.php'
     });
@@ -344,6 +345,7 @@ ob_start(); ?>
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
+
                 newListing: {
                     type: 'Offre',
                     amount: '',
@@ -383,11 +385,11 @@ ob_start(); ?>
                 return Math.ceil(this.filteredListings.length / this.itemsPerPage);
             },
             visiblePages() {
-                const pages = [],
-                    total = this.totalPages,
-                    current = this.currentPage;
-                for (let i = 1; i <= total; i++) {
-                    if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) pages.push(i);
+                const pages = [];
+                for (let i = 1; i <= this.totalPages; i++) {
+                    if (i === 1 || i === this.totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
+                        pages.push(i);
+                    }
                 }
                 return pages;
             }
@@ -398,21 +400,35 @@ ob_start(); ?>
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
-            this.userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
-            if (this.userId) await this.fetchMyListings();
+
+            if (this.userId) {
+                await this.fetchMyListings();
+            } else {
+                console.warn('Aucun utilisateur connecté.');
+            }
         },
         methods: {
             async fetchMyListings() {
                 try {
-                    const response = await api.get('?action=allListings');
-                    const allListings = response.data || [];
-                    this.myListings = allListings.filter(l => l.user_id == this.userId);
-                    console.log('user id:' + this.userId);
+                    const res = await fetch('index.php?action=myTransactionsList');
+                    const data = await res.json();
+
+                    console.log('Réponse du backend:', data);
+
+                    if (data.success && Array.isArray(data.data)) {
+                        this.myListings = data.data;
+                    } else {
+                        this.myListings = [];
+                        console.error('Réponse invalide du serveur:', data);
+                    }
+
                 } catch (error) {
-                    console.error('Erreur:', error);
+                    console.error("Erreur backend:", error);
                     this.myListings = [];
                 }
             },
+
+
             capitalizeFirstLetter(word) {
                 if (!word) return '';
                 return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -458,18 +474,12 @@ ob_start(); ?>
                         user_id: this.userId
                     });
 
-                    // Vérifie la réponse renvoyée par le backend
-                    if (response.data.error) {
-                        alert(response.data.error);
-                        return;
-                    }
-
                     if (response.data.success) {
                         alert(response.data.success);
                         this.closeCreateModal();
                         await this.fetchMyListings();
                     } else {
-                        alert('Réponse inattendue du serveur.');
+                        alert(response.data.error || 'Erreur serveur.');
                     }
 
                 } catch (error) {
@@ -479,7 +489,6 @@ ob_start(); ?>
                     this.submitting = false;
                 }
             },
-
             viewDetails(listing) {
                 this.selectedListing = listing;
                 this.showDetailsModal = true;
@@ -512,6 +521,7 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
+
 
 <style>
     :root {
