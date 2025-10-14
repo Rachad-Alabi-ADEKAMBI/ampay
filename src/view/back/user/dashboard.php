@@ -1,5 +1,6 @@
 <?php $title = "AmPay - Mon Tableau de bord"; ?>
 
+
 <?php
 ob_start(); ?>
 
@@ -18,22 +19,35 @@ ob_start(); ?>
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Mon Tableau de bord
+                                Tableau de bord
                             </h1>
                         </div>
+
                         <div class="flex items-center space-x-4">
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
                         </div>
                     </div>
-                </div>
+
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
-                <div class="p-4 sm:p-6">
-                    Stats Cards
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
+
+                <!-- Message de bienvenue -->
+                <div class="px-4 sm:px-6 pb-2 pt-4">
+                    <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                        Bonjour
+                        <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                            {{ capitalizeFirstLetter(user_first_name ) }} {{ capitalizeFirstLetter( user_last_name) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Reste du dashboard -->
+                <div class="px-4 sm:px-6 pt-2">
+
+                    <div class=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
                                 <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
@@ -88,7 +102,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    Charts
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mon activité mensuelle</h3>
@@ -104,7 +117,7 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    Recent Activity
+
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-8">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mon activité récente</h3>
                         <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -152,7 +165,9 @@ ob_start(); ?>
                 myListings: [],
                 mySponsorships: [],
                 recentActivities: [],
-                userId: null,
+                userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
+                user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
+                user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>
             };
         },
         computed: {
@@ -185,6 +200,8 @@ ob_start(); ?>
             if (this.userId) {
                 this.fetchMyData();
             }
+
+            console.log(this.user_first_name);
         },
         methods: {
             async fetchMyData() {
@@ -215,6 +232,12 @@ ob_start(); ?>
                     console.error('Erreur lors du chargement de mes données:', error);
                 }
             },
+
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+
             formatTimeAgo(dateString) {
                 const date = new Date(dateString);
                 const now = new Date();

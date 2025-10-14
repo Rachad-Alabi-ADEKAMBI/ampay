@@ -1,5 +1,9 @@
 <?php $title = "AmPay - Mes Transactions"; ?>
 
+<script>
+    const USER_ID = <?= json_encode($_SESSION['user_id'] ?? 0); ?>;
+</script>
+
 <?php
 ob_start(); ?>
 
@@ -29,17 +33,21 @@ ob_start(); ?>
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+
+                <!-- Message de bienvenue -->
                 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Mes Transactions</h1>
-                        <p class="text-gray-600 dark:text-gray-400">Gérez vos offres et demandes</p>
+                    <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                        Bonjour
+                        <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                            {{ capitalizeFirstLetter(user_first_name ) }} {{ capitalizeFirstLetter( user_last_name) }}
+                        </span>
                     </div>
                     <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
                         <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
                     </button>
                 </div>
 
-                Stats Cards
+
                 <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6 mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
                         <div class="flex items-center justify-between mb-2">
@@ -101,7 +109,6 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                Listings Grid
                 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                     <div v-for="listing in paginatedListings" :key="listing.id"
                         class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden card-hover"
@@ -160,7 +167,6 @@ ob_start(); ?>
                     </button>
                 </div>
 
-                Pagination
                 <div v-if="totalPages > 1" class="flex justify-center">
                     <nav class="inline-flex rounded-lg shadow-sm">
                         <button @click="previousPage" :disabled="currentPage === 1"
@@ -335,7 +341,9 @@ ob_start(); ?>
                 selectedListing: null,
                 submitting: false,
                 myListings: [],
-                userId: null,
+                userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
+                user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
+                user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
                 newListing: {
                     type: 'Offre',
                     amount: '',
@@ -399,10 +407,15 @@ ob_start(); ?>
                     const response = await api.get('?action=allListings');
                     const allListings = response.data || [];
                     this.myListings = allListings.filter(l => l.user_id == this.userId);
+                    console.log('user id:' + this.userId);
                 } catch (error) {
                     console.error('Erreur:', error);
                     this.myListings = [];
                 }
+            },
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             },
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
@@ -440,20 +453,33 @@ ob_start(); ?>
             async submitListing() {
                 this.submitting = true;
                 try {
-                    await api.post('?action=createListing', {
+                    const response = await api.post('?action=createListing', {
                         ...this.newListing,
                         user_id: this.userId
                     });
-                    alert('Annonce créée avec succès!');
-                    this.closeCreateModal();
-                    await this.fetchMyListings();
+
+                    // Vérifie la réponse renvoyée par le backend
+                    if (response.data.error) {
+                        alert(response.data.error);
+                        return;
+                    }
+
+                    if (response.data.success) {
+                        alert(response.data.success);
+                        this.closeCreateModal();
+                        await this.fetchMyListings();
+                    } else {
+                        alert('Réponse inattendue du serveur.');
+                    }
+
                 } catch (error) {
                     console.error('Erreur:', error);
-                    alert('Erreur lors de la création');
+                    alert('Erreur lors de la création de l’annonce.');
                 } finally {
                     this.submitting = false;
                 }
             },
+
             viewDetails(listing) {
                 this.selectedListing = listing;
                 this.showDetailsModal = true;

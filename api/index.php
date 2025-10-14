@@ -26,6 +26,11 @@ switch ($action) {
         register($pdo, $data);
         break;
 
+    case 'createListing':
+        $data = json_decode(file_get_contents("php://input"), true);
+        createListing($pdo, $data);
+        break;
+
 
     case 'login':
         // Récupérer les données POST

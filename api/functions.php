@@ -155,6 +155,63 @@ function register($pdo, $data)
     }
 }
 
+//creer un nouveau listing
+function createListing($pdo, $data)
+{
+    header('Content-Type: application/json');
+
+    // Extraction et nettoyage des données reçues
+    $user_id = intval($data['user_id'] ?? 0);
+    $type = trim($data['type'] ?? '');
+    $amount = floatval($data['amount'] ?? 0);
+    $currency = trim($data['currency'] ?? '');
+    $country = trim($data['country'] ?? '');
+    $city = trim($data['city'] ?? '');
+
+    // Vérification des champs obligatoires
+    if (!$user_id || !$type || !$amount || !$currency || !$country || !$city) {
+        echo json_encode(['error' => 'Tous les champs sont obligatoires']);
+        exit;
+    }
+
+    // Vérification du type d’annonce
+    if (!in_array($type, ['Offre', 'Demande'])) {
+        echo json_encode(['error' => "Type d'annonce invalide"]);
+        exit;
+    }
+
+    // Vérifier que l’utilisateur existe
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    if ($stmt->rowCount() === 0) {
+        echo json_encode(['error' => 'Utilisateur introuvable']);
+        exit;
+    }
+
+    // Insertion de l’annonce
+    $stmt = $pdo->prepare("
+        INSERT INTO listings (user_id, type, amount, currency, country, city, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())
+    ");
+
+    $result = $stmt->execute([
+        $user_id,
+        $type,
+        $amount,
+        $currency,
+        $country,
+        $city
+    ]);
+
+    if ($result) {
+        echo json_encode(['success' => 'Annonce créée avec succès']);
+    } else {
+        $errorInfo = $stmt->errorInfo();
+        echo json_encode(['error' => $errorInfo[2] ?? 'Erreur lors de la création de l’annonce']);
+    }
+    exit;
+}
+
 
 
 // Connexion d'un utilisateur
