@@ -20,11 +20,11 @@ require_once 'src/controller/login.php';
 require_once 'src/controller/register.php';
 
 require_once 'src/controller/dashboard.php';
-require_once 'src/controller/transactions.php';
+require_once 'src/controller/admin/transactions.php';
 require_once 'src/controller/mytransactions.php';
 require_once 'src/controller/mysponsorships.php';
-require_once 'src/controller/users.php';
-require_once 'src/controller/sponsorships.php';
+require_once 'src/controller/admin/users.php';
+require_once 'src/controller/admin/sponsorships.php';
 require_once 'src/controller/profile.php';
 
 if (isset($_GET['action']) && !empty($_GET['action'])) {
@@ -54,6 +54,11 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             exit;
             break;
 
+        case 'createTransaction':
+            createTransaction();
+            exit;
+            break;
+
         case 'mySponsorshipsPage':
             mySponsorshipsPage();
             break;
@@ -62,11 +67,11 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             mySponsorshipsList();
             break;
 
-        case 'sponsorships':
+        case 'sponsorshipsPage':
             sponsorshipsPage();
             break;
 
-        case 'users':
+        case 'usersPage':
             usersPage();
             break;
 

@@ -224,19 +224,37 @@ ob_start(); ?>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fas fa-money-bill-wave mr-1 text-primary"></i>Montant
                         </label>
-                        <input v-model.number="newListing.amount" type="number" required min="1" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="10000">
+                        <input v-model.number="newListing.amount" type="number" required min="1"
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            placeholder="10000">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fas fa-coins mr-1 text-primary"></i>Devise
                         </label>
-                        <select v-model="newListing.currency" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <select v-model="newListing.currency" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <option value="">Sélectionner</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="USD">USD ($)</option>
-                            <option value="XAF">XAF (FCFA)</option>
-                            <option value="GNF">GNF (Franc guinéen)</option>
+                            <!-- Devises internationales majeures -->
+                            <option value="USD">USD ($) - Dollar américain</option>
+                            <option value="EUR">EUR (€) - Euro</option>
+                            <option value="GBP">GBP (£) - Livre sterling</option>
+                            <option value="JPY">JPY (¥) - Yen japonais</option>
+                            <option value="CHF">CHF (₣) - Franc suisse</option>
+                            <option value="CAD">CAD ($) - Dollar canadien</option>
+                            <option value="AUD">AUD ($) - Dollar australien</option>
+                            <option value="CNY">CNY (¥) - Yuan chinois</option>
+                            <option value="INR">INR (₹) - Roupie indienne</option>
+
+                            <!-- Devises africaines -->
+                            <option value="XAF">XAF (FCFA) - Franc CFA (Afrique centrale)</option>
+                            <option value="XOF">XOF (FCFA) - Franc CFA (Afrique de l’Ouest)</option>
+                            <option value="NGN">NGN (₦) - Naira nigérian</option>
+                            <option value="GHS">GHS (₵) - Cedi ghanéen</option>
+                            <option value="KES">KES (Sh) - Shilling kényan</option>
+                            <option value="GNF">GNF (FG) - Franc guinéen</option>
                         </select>
+
                     </div>
                 </div>
 
@@ -245,21 +263,41 @@ ob_start(); ?>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fas fa-globe-africa mr-1 text-primary"></i>Pays
                         </label>
-                        <input v-model="newListing.country" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="France">
+                        <input v-model="newListing.country" type="text" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            placeholder="France">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
                         </label>
-                        <input v-model="newListing.city" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Paris">
+                        <input v-model="newListing.city" type="text" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                            placeholder="Paris">
                     </div>
                 </div>
 
+                <!-- Champ Délai ajouté -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-hourglass-half mr-1 text-primary"></i>Délai
+                    </label>
+                    <select v-model="newListing.delay" required
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <option value="">Sélectionner</option>
+                        <option value="Urgent">Urgent</option>
+                        <option value="Deux semaines">Dans deux semaines</option>
+                        <option value="Nulle">Nulle</option>
+                    </select>
+                </div>
+
                 <div class="flex gap-4">
-                    <button type="button" @click="closeCreateModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button type="button" @click="closeCreateModal"
+                        class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                         Annuler
                     </button>
-                    <button type="submit" :disabled="submitting" class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                    <button type="submit" :disabled="submitting"
+                        class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                         <i class="fas fa-check mr-2"></i>
                         {{ submitting ? 'Création...' : 'Créer l\'annonce' }}
                     </button>
@@ -267,6 +305,7 @@ ob_start(); ?>
             </form>
         </div>
     </div>
+
 
 
     <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeDetailsModal">
@@ -324,7 +363,7 @@ ob_start(); ?>
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'http://127.0.0.1/ampay/index.php'
     });
 
     createApp({
@@ -345,13 +384,13 @@ ob_start(); ?>
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
-
                 newListing: {
                     type: 'Offre',
                     amount: '',
                     currency: '',
                     country: '',
-                    city: ''
+                    city: '',
+                    delay: ''
                 }
             };
         },
@@ -456,10 +495,11 @@ ob_start(); ?>
             openCreateModal() {
                 this.newListing = {
                     type: 'Offre',
-                    amount: '',
-                    currency: '',
-                    country: '',
-                    city: ''
+                    amount: '20000',
+                    currency: 'XOF',
+                    country: 'Benin',
+                    city: 'Cotonou',
+                    delay: 'Nulle'
                 };
                 this.showCreateModal = true;
             },
@@ -469,22 +509,29 @@ ob_start(); ?>
             async submitListing() {
                 this.submitting = true;
                 try {
-                    const response = await api.post('?action=createListing', {
+                    const response = await api.post('?action=createTransaction', {
                         ...this.newListing,
                         user_id: this.userId
                     });
 
-                    if (response.data.success) {
-                        alert(response.data.success);
+                    console.log('Réponse brute Axios :', response);
+
+                    // Vérifie uniquement si success est vrai
+                    if (response.data?.success) {
+                        alert(response.data.message || 'Annonce créée avec succès.');
                         this.closeCreateModal();
-                        await this.fetchMyListings();
-                    } else {
-                        alert(response.data.error || 'Erreur serveur.');
+                        await this.fetchMyData();
                     }
 
+                    // Ne fait rien si success est false mais pas d'erreur côté Axios
+                    // Les erreurs serveur ou de validation seront gérées dans catch
+
                 } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de la création de l’annonce.');
+                    console.error('Erreur Axios :', error.response?.data || error);
+                    alert(
+                        error.response?.data?.error ||
+                        'Erreur lors de la création de l’annonce.'
+                    );
                 } finally {
                     this.submitting = false;
                 }

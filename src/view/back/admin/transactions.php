@@ -10,7 +10,7 @@ ob_start(); ?>
     <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
     <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-        <?php include 'sidebar.php'; ?>
+        <?php include __DIR__ . '/../sidebar.php'; ?>
 
         <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">

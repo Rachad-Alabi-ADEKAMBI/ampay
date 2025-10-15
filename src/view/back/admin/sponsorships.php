@@ -10,7 +10,7 @@ ob_start(); ?>
 
     <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         <!-- Sidebar code -->
-        <?php include 'sidebar.php'; ?>
+        <?php include __DIR__ . '/../sidebar.php'; ?>
 
         <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
@@ -35,9 +35,11 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
                 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Parrainages</h1>
-                        <p class="text-gray-600 dark:text-gray-400">Liste de tous les parrainages effectués</p>
+                    <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                        Bonjour
+                        <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                            admin
+                        </span>
                     </div>
                     <button
                         @click="printList"

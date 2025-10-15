@@ -34,7 +34,6 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
 
-
                 <div class="px-4 sm:px-6 pb-2 pt-4">
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
                         Bonjour
