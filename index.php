@@ -41,7 +41,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             dashboardPage();
             break;
 
-        case 'transactions':
+        case 'transactionsPage':
             transactionsPage();
             break;
 
@@ -75,7 +75,7 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             usersPage();
             break;
 
-        case 'profile':
+        case 'profilePage':
             profilePage();
             break;
 

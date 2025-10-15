@@ -13,7 +13,8 @@ ob_start(); ?>
     <!-- Fixed sidebar layout with independent scrolling -->
     <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         <!-- Sidebar -->
-        <?php include 'sidebar.php'; ?>
+        <?php include __DIR__ . '/../sidebar.php'; ?>
+
 
         <!-- Main Content -->
         <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
@@ -39,9 +40,11 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
                 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Utilisateurs</h1>
-                        <p class="text-gray-600 dark:text-gray-400">Liste de tous les utilisateurs</p>
+                    <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                        Bonjour
+                        <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                            Admin
+                        </span>
                     </div>
                     <button @click="printList" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
                         <i class="fas fa-print mr-2"></i>Imprimer la liste
