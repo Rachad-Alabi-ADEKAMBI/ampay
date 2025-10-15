@@ -5,7 +5,9 @@ Cahier des charges – Application Web de mise en relation financière
 
 1. Objectif
 
-Créer une plateforme sécurisée pour mettre en relation des utilisateurs disposant de fonds (« donneurs ») et des utilisateurs souhaitant recevoir des fonds (« demandeurs »). Chaque interaction est facturée par une commission.
+Créer une plateforme sécurisée pour mettre en relation des utilisateurs disposant de fonds (« donneurs ») 
+et des utilisateurs souhaitant recevoir des fonds (« demandeurs »). Chaque interaction est facturée par 
+une commission.
 
 
 ---

@@ -34,7 +34,7 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
 
-                <!-- Message de bienvenue -->
+
                 <div class="px-4 sm:px-6 pb-2 pt-4">
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
                         Bonjour
@@ -44,7 +44,7 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                <!-- Reste du dashboard -->
+
                 <div class="px-4 sm:px-6 pt-2">
 
                     <div class=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
@@ -154,7 +154,7 @@ ob_start(); ?>
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'http://127.0.0.1/ampay/index.php'
     });
 
     createApp({
@@ -172,16 +172,21 @@ ob_start(); ?>
         },
         computed: {
             stats() {
-                const offers = this.myListings.filter(l => l.type === 'Offre');
-                const requests = this.myListings.filter(l => l.type === 'Demande');
-                const totalVolume = this.myListings.reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
+                // Sécurité : s'assurer que les données sont bien des tableaux
+                const listings = Array.isArray(this.myListings) ? this.myListings : [];
+                const sponsorships = Array.isArray(this.mySponsorships) ? this.mySponsorships : [];
+
+                // Comptage des offres et demandes sans filtrage supplémentaire côté front
+                const myOffers = listings.filter(l => l.type === 'Offre').length;
+                const myRequests = listings.filter(l => l.type === 'Demande').length;
+                const totalVolume = listings.reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
 
                 return {
-                    myOffers: offers.length,
-                    myRequests: requests.length,
-                    myTransactions: this.myListings.length,
-                    mySponsorships: this.mySponsorships.length,
-                    totalVolume: totalVolume,
+                    myOffers,
+                    myRequests,
+                    myTransactions: listings.length,
+                    mySponsorships: sponsorships.length,
+                    totalVolume,
                     myOffersChange: 12,
                     myRequestsChange: 8,
                     myTransactionsChange: 15
@@ -195,27 +200,26 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
 
-            this.userId = <?php echo isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'null'; ?>;
+            this.userId = <?= isset($_SESSION['id']) ? $_SESSION['id'] : 'null'; ?>;
 
             if (this.userId) {
                 this.fetchMyData();
             }
-
-            console.log(this.user_first_name);
         },
         methods: {
             async fetchMyData() {
                 try {
-                    // Fetch all listings and filter by user_id
-                    const listingsResponse = await api.get('?action=allListings');
-                    const allListings = listingsResponse.data || [];
-                    this.myListings = allListings.filter(l => l.user_id == this.userId);
+                    // Transactions utilisateur directement depuis l’API
+                    const transactionsResponse = await api.get('http://127.0.0.1/ampay/index.php?action=myTransactionsList');
+                    this.myListings = Array.isArray(transactionsResponse.data.data) ? transactionsResponse.data.data : [];
+                    console.log('Transactions:', this.myListings);
 
-                    // Fetch sponsorships
-                    const sponsorshipsResponse = await api.get('?action=allSponsorships');
-                    const allSponsorships = sponsorshipsResponse.data || [];
-                    this.mySponsorships = allSponsorships.filter(s => s.sponsor_id == this.userId);
+                    // Parrainages utilisateur
+                    const sponsorshipsResponse = await api.get('http://127.0.0.1/ampay/index.php?action=mySponsorshipsList');
+                    this.mySponsorships = Array.isArray(sponsorshipsResponse.data.data) ? sponsorshipsResponse.data.data : [];
+                    console.log('Sponsorships:', this.mySponsorships);
 
+                    // Activité récente
                     this.recentActivities = this.myListings.slice(0, 5).map(listing => ({
                         id: listing.id,
                         type: listing.type,
@@ -232,6 +236,7 @@ ob_start(); ?>
                     console.error('Erreur lors du chargement de mes données:', error);
                 }
             },
+
 
             capitalizeFirstLetter(word) {
                 if (!word) return '';
@@ -250,11 +255,13 @@ ob_start(); ?>
                 if (diffHours < 24) return `Il y a ${diffHours}h`;
                 return `Il y a ${diffDays}j`;
             },
+
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
+
             initCharts() {
                 const activityCtx = document.getElementById('activityChart');
                 if (activityCtx) {
@@ -314,8 +321,8 @@ ob_start(); ?>
                     });
                 }
             },
+
             getMonthlyData() {
-                // Calculate monthly data from myListings
                 const offers = [0, 0, 0, 0, 0, this.stats.myOffers];
                 const requests = [0, 0, 0, 0, 0, this.stats.myRequests];
                 return {
@@ -323,11 +330,13 @@ ob_start(); ?>
                     requests
                 };
             },
+
             formatCurrency(amount) {
                 return new Intl.NumberFormat('fr-FR', {
                     minimumFractionDigits: 0
                 }).format(amount);
             },
+
             getStatusClass(status) {
                 const statusClasses = {
                     'Active': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
@@ -340,6 +349,7 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
+
 
 <style>
     :root {
