@@ -71,6 +71,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             sponsorshipsPage();
             break;
 
+        case 'getSponsor':
+            getSponsor();
+            break;
+
         case 'usersPage':
             usersPage();
             break;

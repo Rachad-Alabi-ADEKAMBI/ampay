@@ -1,5 +1,8 @@
 <?php $title = "AmPay - Inscription";
 
+$referral_link = isset($_GET['ref']) ? $_GET['ref'] : null;
+
+
 ob_start(); ?>
 
 <div id="app">
@@ -217,6 +220,36 @@ ob_start(); ?>
                     localStorage.setItem('darkMode', 'false');
                 }
             },
+            async getSponsor(referral_link) {
+                try {
+                    // Extract the 'ref' parameter from the referral link
+                    const urlParams = new URL(referral_link).searchParams;
+                    const ref = urlParams.get('ref');
+
+                    if (!ref) {
+                        throw new Error('No referral ID found in the link.');
+                    }
+
+                    // Make a request to your PHP endpoint
+                    const response = await fetch(`index.php?action=getSponsor&ref=${encodeURIComponent(ref)}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    // Return the sponsor info
+                    return {
+                        id: data.id,
+                        first_name: data.sponsor_first_name,
+                        last_name: data.sponsor_last_name
+                    };
+                } catch (error) {
+                    console.error('Error fetching sponsor:', error);
+                    return null;
+                }
+            },
+
             async loadCountries() {
                 try {
                     const response = await axios.get('https://restcountries.com/v3.1/independent?status=true');
