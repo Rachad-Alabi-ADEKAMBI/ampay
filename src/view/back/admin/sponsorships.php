@@ -38,7 +38,7 @@ ob_start(); ?>
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
                         Bonjour
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">
-                            admin
+                            Admin
                         </span>
                     </div>
                     <button

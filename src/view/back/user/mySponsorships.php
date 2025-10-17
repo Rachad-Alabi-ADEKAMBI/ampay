@@ -263,6 +263,7 @@ ob_start(); ?>
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
+                user_referral_link: <?= json_encode($_SESSION['referral_link'] ?? ''); ?>,
                 searchQuery: '',
                 statusFilter: 'all',
                 sortBy: 'date-desc',
@@ -272,8 +273,9 @@ ob_start(); ?>
         },
         computed: {
             referralLink() {
-                return `https://ampay.com/register?ref=${this.userId || 'USER123'}`;
+                return (this.user_referral_link);
             },
+
             activeSponsored() {
                 return this.mySponsorships.filter(s => s.status === 'Actif').length;
             },
@@ -282,12 +284,6 @@ ob_start(); ?>
             },
             filteredSponsorships() {
                 let filtered = [...this.mySponsorships];
-
-                console.log('[v0] Total sponsorships:', this.mySponsorships.length);
-                console.log('[v0] Search query:', this.searchQuery);
-                console.log('[v0] Status filter:', this.statusFilter);
-                console.log('[v0] Sort by:', this.sortBy);
-
                 // Apply search filter
                 if (this.searchQuery) {
                     const query = this.searchQuery.toLowerCase();
@@ -296,13 +292,11 @@ ob_start(); ?>
                         s.sponsored_last_name.toLowerCase().includes(query) ||
                         s.sponsored_email.toLowerCase().includes(query)
                     );
-                    console.log('[v0] After search filter:', filtered.length);
                 }
 
                 // Apply status filter
                 if (this.statusFilter !== 'all') {
                     filtered = filtered.filter(s => s.status === this.statusFilter);
-                    console.log('[v0] After status filter:', filtered.length);
                 }
 
                 // Apply sorting
@@ -386,6 +380,7 @@ ob_start(); ?>
             }
             this.userId = <?php echo isset($_SESSION['id']) ? $_SESSION['id'] : 'null'; ?>;
             if (this.userId) await this.fetchMySponsorships();
+            console.log(this.referralLink);
         },
         methods: {
             async fetchMySponsorships() {
@@ -405,7 +400,6 @@ ob_start(); ?>
 
                     if (backendData.success === true) {
                         this.mySponsorships = backendData.data || [];
-                        console.log("[v0] Loaded sponsorships:", this.mySponsorships.length);
                     } else {
                         console.error('Erreur backend:', backendData.message || 'Message backend non défini');
                         this.mySponsorships = [];

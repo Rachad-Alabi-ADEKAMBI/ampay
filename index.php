@@ -14,18 +14,18 @@ error_reporting(E_ALL & ~E_WARNING);
 ini_set('display_errors', 1);
 
 // Inclusion des contrôleurs nécessaires
-require_once 'src/controller/home.php';
-require_once 'src/controller/marketplace.php';
-require_once 'src/controller/login.php';
-require_once 'src/controller/register.php';
+require_once 'src/controller/front/home.php';
+require_once 'src/controller/front/marketplace.php';
+require_once 'src/controller/front/login.php';
+require_once 'src/controller/front/register.php';
 
-require_once 'src/controller/dashboard.php';
-require_once 'src/controller/admin/transactions.php';
-require_once 'src/controller/mytransactions.php';
-require_once 'src/controller/mysponsorships.php';
-require_once 'src/controller/admin/users.php';
-require_once 'src/controller/admin/sponsorships.php';
-require_once 'src/controller/profile.php';
+require_once 'src/controller/back/dashboard.php';
+require_once 'src/controller/back/admin/transactions.php';
+require_once 'src/controller/back/user/mytransactions.php';
+require_once 'src/controller/back/user/mysponsorships.php';
+require_once 'src/controller/back/admin/users.php';
+require_once 'src/controller/back/admin/sponsorships.php';
+require_once 'src/controller/back/profile.php';
 
 if (isset($_GET['action']) && !empty($_GET['action'])) {
     switch ($_GET['action']) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 07 oct. 2025 à 00:59
+-- Généré le : ven. 17 oct. 2025 à 15:01
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -37,17 +37,25 @@ CREATE TABLE `listings` (
   `currency` varchar(5) NOT NULL,
   `country` varchar(10) NOT NULL,
   `city` varchar(10) NOT NULL,
-  `status` varchar(10) NOT NULL
+  `status` varchar(10) DEFAULT NULL,
+  `delay` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `listings`
 --
 
-INSERT INTO `listings` (`id`, `created_at`, `user_id`, `type`, `ratings`, `amount`, `currency`, `country`, `city`, `status`) VALUES
-(1, '2025-10-03 23:03:45', 3, 'Offre', 4.0, 4000000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif'),
-(2, '2025-10-02 23:03:45', 3, 'Offre', 4.0, 100000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif'),
-(3, '2025-10-02 23:03:45', 3, 'Demande', 4.0, 2000000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif');
+INSERT INTO `listings` (`id`, `created_at`, `user_id`, `type`, `ratings`, `amount`, `currency`, `country`, `city`, `status`, `delay`) VALUES
+(1, '2025-10-03 23:03:45', 3, 'Offre', 4.0, 4000000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif', ''),
+(2, '2025-10-02 23:03:45', 3, 'Offre', 4.0, 100000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif', ''),
+(3, '2025-10-02 23:03:45', 3, 'Demande', 4.0, 2000000.00, 'XOF', 'Bénin', 'Cotonou', 'Actif', ''),
+(4, '2025-10-15 13:57:32', 3, 'Offre', 0.0, 454.00, 'NGN', 'ery', 'fgdf', NULL, 'Deux semaines'),
+(5, '2025-10-15 14:02:55', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle'),
+(6, '2025-10-15 14:04:29', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle'),
+(7, '2025-10-15 14:07:25', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle'),
+(8, '2025-10-15 14:10:20', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle'),
+(9, '2025-10-15 14:11:28', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle'),
+(10, '2025-10-15 14:13:34', 3, 'Offre', 0.0, 20000.00, 'XOF', 'Benin', 'Cotonou', NULL, 'Nulle');
 
 -- --------------------------------------------------------
 
@@ -83,15 +91,16 @@ CREATE TABLE `sponsorships` (
   `id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `sponsor_id` int(11) NOT NULL,
-  `sponsored_id` int(11) NOT NULL
+  `sponsored_id` int(11) NOT NULL,
+  `status` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `sponsorships`
 --
 
-INSERT INTO `sponsorships` (`id`, `created_at`, `sponsor_id`, `sponsored_id`) VALUES
-(1, '2025-10-04 10:11:09', 3, 4);
+INSERT INTO `sponsorships` (`id`, `created_at`, `sponsor_id`, `sponsored_id`, `status`) VALUES
+(1, '2025-10-04 10:11:09', 3, 4, 'Actif');
 
 -- --------------------------------------------------------
 
@@ -124,7 +133,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `created_at`, `first_name`, `last_name`, `phone`, `email`, `username`, `password`, `ratings`, `status`, `ref_link`, `role`, `phone_prefix`, `account_verified`, `country`, `city`) VALUES
 (1, '0000-00-00 00:00:00', 'admin', 'admin', '0196228863', 'admin@ampay.com', 'admin', '$2a$12$ad6HzfdVzAgUYUgNeRWVXO2lFHo4tUEE7wStEm5gABj59dNb6QGbu', '4', 'Actif', NULL, 'admin', '', '', '', ''),
-(3, '2025-10-03 23:01:30', 'rachad', 'adekambi', '0196228860', 'rach@ampay.com', 'rachad', '$2a$12$ad6HzfdVzAgUYUgNeRWVXO2lFHo4tUEE7wStEm5gABj59dNb6QGbu', '4', 'Actif', NULL, 'user', '', '', '', ''),
+(3, '2025-10-03 23:01:30', 'rachad', 'adekambi', '0196228860', 'rachad@ampay.com', 'rachad', '$2a$12$ad6HzfdVzAgUYUgNeRWVXO2lFHo4tUEE7wStEm5gABj59dNb6QGbu', '4', 'Actif', NULL, 'user', '', '', '', ''),
 (4, '2025-10-03 23:01:30', 'ray', 'liota', '0196228860', 'ray@ampay.com', 'rachad', '$2a$12$ad6HzfdVzAgUYUgNeRWVXO2lFHo4tUEE7wStEm5gABj59dNb6QGbu', '4', 'Actif', NULL, 'user', '', '', '', ''),
 (5, '2025-10-03 23:01:30', 'hohn', 'way', '0155228860', 'john@ampay.com', 'john', '$2a$12$ad6HzfdVzAgUYUgNeRWVXO2lFHo4tUEE7wStEm5gABj59dNb6QGbu', '4', 'Actif', NULL, 'user', '', '', '', ''),
 (6, '2025-10-05 15:10:40', 'john', 'wayne', '54788544', 'test@tes.fr', '', '$2y$10$hWLfa1v3nr/nyxLIdhSmK.r00v.egtyQEQK4tSbyuwy4N4p9n08zO', '', '', NULL, 'user', '+355', 'no', 'AL', 'yhgfo'),
@@ -166,7 +175,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `listings`
 --
 ALTER TABLE `listings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT pour la table `messages`

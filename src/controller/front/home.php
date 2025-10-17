@@ -1,5 +1,5 @@
 <?php
-require_once './src/model/home.php';
+require_once './src/model/front/home.php';
 
 function homePage()
 {

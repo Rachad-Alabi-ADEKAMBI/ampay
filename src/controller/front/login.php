@@ -1,5 +1,5 @@
 <?php
-require_once './src/model/login.php';
+require_once './src/model/front/login.php';
 
 function loginPage()
 {

@@ -1,5 +1,5 @@
 <?php
-require_once './src/model/marketplace.php';
+require_once './src/model/front/marketplace.php';
 
 function marketplacePage()
 {

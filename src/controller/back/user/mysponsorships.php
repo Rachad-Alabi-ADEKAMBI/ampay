@@ -1,5 +1,5 @@
 <?php
-require_once './src/model/mySponsorships.php';
+require_once './src/model/back/user/mySponsorships.php';
 
 function mySponsorshipsPage()
 {

@@ -1,5 +1,5 @@
 <?php
-require_once './src/model/myTransactions.php';
+require_once './src/model/back/user/myTransactions.php';
 
 
 function myTransactionsPage()

@@ -1,7 +1,6 @@
 <?php
 //session_start();
-include_once 'config.php';
-
+include __DIR__ . '/../config.php';
 // Connexion d'un utilisateur
 function loginUser()
 {
@@ -39,6 +38,7 @@ function loginUser()
 
         $_SESSION['phone_prefix'] = $user['phone_prefix'];
         $_SESSION['phone'] = $user['phone'];
+        $_SESSION['referral_link'] = $user['referral_link'];
 
         echo json_encode([
             'success' => true,
