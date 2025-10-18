@@ -2,8 +2,13 @@
 
 $referral_link = isset($_GET['ref']) ? $_GET['ref'] : null;
 
-
 ob_start(); ?>
+
+<script>
+    const referralLinkFromPHP = <?= json_encode($referral_link) ?>;
+</script>
+
+
 
 <div id="app">
     <!-- Added theme toggle button in top-right corner -->
@@ -30,6 +35,12 @@ ob_start(); ?>
                     </a>
                 </p>
             </div>
+
+
+            <p class="text-center" v-if="sponsor_first_name && sponsor_last_name">
+                Vous avez été invité par <strong>{{ capitalizeFirstLetter(sponsor_first_name) }} {{ capitalizeFirstLetter(sponsor_last_name) }}</strong>
+            </p>
+
 
             <form @submit.prevent="handleRegister"
                 class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
@@ -199,7 +210,12 @@ ob_start(); ?>
                 success: '',
                 countries: [],
                 cities: [],
-                searchTimeout: null
+                searchTimeout: null,
+                is_sponsored: null,
+                referral_link: referralLinkFromPHP || '',
+                sponsor_first_name: '',
+                sponsor_last_name: '',
+                sponsor_id: ''
             };
         },
         async mounted() {
@@ -209,6 +225,10 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
             await this.loadCountries();
+
+            if (this.referral_link) {
+                this.getSponsor(this.referral_link); // utilise this.referral_link
+            }
         },
         methods: {
             toggleDarkMode() {
@@ -221,25 +241,21 @@ ob_start(); ?>
                     localStorage.setItem('darkMode', 'false');
                 }
             },
-            async getSponsor(referral_link) {
+            async getSponsor(ref) {
                 try {
-                    // Extract the 'ref' parameter from the referral link
-                    const urlParams = new URL(referral_link).searchParams;
-                    const ref = urlParams.get('ref');
+                    if (!ref) throw new Error('No referral ID found in the link.');
 
-                    if (!ref) {
-                        throw new Error('No referral ID found in the link.');
-                    }
-
-                    // Make a request to your PHP endpoint
                     const response = await fetch(`index.php?action=getSponsor&ref=${encodeURIComponent(ref)}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                    if (!response.ok) throw new Error('Network response was not ok');
 
                     const data = await response.json();
 
-                    // Return the sponsor info
+                    console.log('Sponsor data:', data);
+
+                    this.sponsor_first_name = data.sponsor_first_name;
+                    this.sponsor_last_name = data.sponsor_last_name;
+                    this.sponsor_id_name = data.sponsor_id;
+
                     return {
                         id: data.id,
                         first_name: data.sponsor_first_name,
@@ -250,7 +266,10 @@ ob_start(); ?>
                     return null;
                 }
             },
-
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
             async loadCountries() {
                 try {
                     const response = await axios.get('https://restcountries.com/v3.1/independent?status=true');
