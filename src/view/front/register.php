@@ -188,7 +188,8 @@ ob_start(); ?>
                     confirmPassword: '',
                     role: 'user',
                     account_verified: 'no',
-                    acceptTerms: true
+                    acceptTerms: true,
+                    is_sponsored: false
                 },
                 showPassword: false,
                 showConfirmPassword: false,
