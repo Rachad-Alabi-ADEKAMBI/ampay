@@ -4,7 +4,6 @@ require_once './src/model/front/register.php';
 
 function registerPage()
 {
-
     require './src/view/front/register.php';
 }
 
@@ -21,4 +20,10 @@ function getSponsor()
 
     // Appelle la fonction fetchSponsor en lui passant le paramètre
     fetchSponsor($ref);
+}
+
+
+function register()
+{
+    registerUser();
 }

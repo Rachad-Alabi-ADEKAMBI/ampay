@@ -38,7 +38,7 @@ ob_start(); ?>
 
 
             <p class="text-center" v-if="sponsor_first_name && sponsor_last_name">
-                Vous avez été invité par <strong>{{ capitalizeFirstLetter(sponsor_first_name) }} {{ capitalizeFirstLetter(sponsor_last_name) }}</strong>
+                Vous avez été invité par <strong>{{ capitalizeFirstLetter(sponsor_first_name) }} {{ capitalizeAll(sponsor_last_name) }}</strong>
             </p>
 
 
@@ -188,15 +188,15 @@ ob_start(); ?>
             return {
                 isDarkMode: false,
                 registerForm: {
-                    firstName: '',
-                    lastName: '',
-                    email: '',
-                    country: '',
-                    city: '',
-                    phonePrefix: '',
-                    phone: '',
-                    password: '',
-                    confirmPassword: '',
+                    firstName: 'john',
+                    lastName: 'Wick',
+                    email: 'johnw@gmail.com',
+                    country: 'Benin',
+                    city: 'Cotonou',
+                    phonePrefix: '229',
+                    phone: '514569870',
+                    password: 'password',
+                    confirmPassword: 'password',
                     role: 'user',
                     account_verified: 'no',
                     acceptTerms: true,
@@ -270,6 +270,11 @@ ob_start(); ?>
                 if (!word) return '';
                 return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             },
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
+            },
+
             async loadCountries() {
                 try {
                     const response = await axios.get('https://restcountries.com/v3.1/independent?status=true');
@@ -331,35 +336,63 @@ ob_start(); ?>
                 this.error = '';
                 this.success = '';
 
+                // Vérification que l'utilisateur a accepté les conditions
+                if (!this.registerForm.acceptTerms) {
+                    this.loading = false;
+                    this.error = "Vous devez accepter les conditions d'utilisation.";
+                    alert(this.error);
+                    return;
+                }
+
+                // Préparer les données à envoyer
+                const payload = {
+                    ...this.registerForm,
+                    referral_link: this.referral_link || '',
+                    sponsor_first_name: this.registerForm.sponsor_first_name || '',
+                    sponsor_last_name: this.registerForm.sponsor_last_name || '',
+                    sponsor_id: this.registerForm.sponsor_id || null,
+                    is_sponsored: this.registerForm.is_sponsored || false
+                };
+
                 try {
                     const response = await axios.post(
-                        'http://127.0.0.1/ampay/api/index.php?action=register',
-                        this.registerForm
+                        'index.php?action=register',
+                        payload, {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }
                     );
 
                     if (response.data?.success) {
-                        // Affiche uniquement le message de succès
-                        alert(response.data.success);
-                        console.log(response.data.success);
+                        this.success = response.data.success;
+                        alert(this.success);
+
+                        // Redirection vers /dashboard après 1 seconde
+                        setTimeout(() => {
+                            window.location.href = '/dashboard';
+                        }, 1000);
+
                     } else if (response.data?.error) {
-                        // Affiche uniquement le message d'erreur si le backend renvoie error
-                        console.log(response.data.error);
-                        alert(response.data.error);
+                        this.error = response.data.error;
+                        alert(this.error);
                     } else {
-                        // Cas inattendu
-                        console.log('Réponse inattendue du serveur:', response.data);
-                        alert('Une erreur est survenue');
+                        this.error = "Réponse inattendue du serveur.";
+                        console.log("Réponse inattendue du serveur:", response.data);
+                        alert(this.error);
                     }
 
                 } catch (err) {
-                    // Erreur réseau ou serveur
-                    const errorMessage = err.response?.data?.error || 'Erreur inconnue lors de l\'inscription';
+                    const errorMessage = err.response?.data?.error || "Erreur inconnue lors de l'inscription.";
+                    this.error = errorMessage;
                     console.log(errorMessage);
                     alert(errorMessage);
                 } finally {
                     this.loading = false;
                 }
             }
+
+
         }
     }).mount('#app');
 </script>

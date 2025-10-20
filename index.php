@@ -91,6 +91,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             login();
             break;
 
+        case 'register':
+            register();
+            break;
+
         case 'logout':
             // Vérifie si une session est active
             if (session_status() === PHP_SESSION_NONE) {
