@@ -1,4 +1,6 @@
 <?php
+require_once './src/model/back/dashboard.php';
+
 
 function dashboardPage()
 {
@@ -13,4 +15,9 @@ function dashboardPage()
     } else {
         require './src/view/back/user/dashboard.php';
     }
+}
+
+function getAllMessages()
+{
+    fetchAllMessages();
 }

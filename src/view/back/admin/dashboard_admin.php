@@ -108,27 +108,7 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Activité récente</h3>
-                        <div v-if="recentActivities.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
-                            <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
-                            <p>Chargement des activités...</p>
-                        </div>
-                        <div v-else class="space-y-4">
-                            <div v-for="activity in recentActivities" :key="activity.id" class="flex items-center space-x-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div :class="['w-10 h-10 rounded-full flex items-center justify-center', activity.type === 'Offre' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600']">
-                                    <i :class="activity.icon"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ activity.title }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ activity.time }}</div>
-                                </div>
-                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ formatCurrency(activity.amount) }} {{ activity.currency }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -141,7 +121,7 @@ ob_start(); ?>
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'http://127.0.0.1/ampay/index.php'
     });
 
     createApp({

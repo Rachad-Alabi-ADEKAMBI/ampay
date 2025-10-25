@@ -24,7 +24,6 @@
                     'index.php?action=transactionsPage' => ['Transactions', 'fas fa-exchange-alt'],
                     'index.php?action=sponsorshipsPage' => ['Parrainages', 'fas fa-hand-holding-usd'],
                     'index.php?action=usersPage' => ['Utilisateurs', 'fas fa-users'],
-                    'index.php?action=notificationsPage' => ['Notifications', 'fas fa-bell'],
                     'index.php?action=profilePage' => ['Profil', 'fas fa-user'],
                     'index.php?action=home' => ['Accueil', 'fas fa-home'],
                     'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
@@ -33,9 +32,8 @@
                 $links = [
                     'index.php?action=dashboard' => ['Tableau de bord', 'fas fa-user-shield'],
                     'index.php?action=myTransactionsPage' => ['Mes transactions', 'fas fa-exchange-alt'],
-                    'index.php?action=mySponsorshipsPage' => ['Mes parrainages', 'fas fa-hand-holding-usd'],
-                    'index.php?action=notifications' => ['Notifications', 'fas fa-bell'],
-                    'index.php?action=profile' => ['Profil', 'fas fa-user'],
+                    'index.php?action=mySponsorshipsPage' => ['Mes parrainages', 'fas fa-users'],
+                    'index.php?action=profilePage' => ['Profil', 'fas fa-user'],
                     'index.php?action=home' => ['Accueil', 'fas fa-home'],
                     'index.php?action=marketplace' => ['Marketplace', 'fas fa-store'],
                 ];

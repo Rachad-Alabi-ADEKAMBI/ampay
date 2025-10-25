@@ -23,12 +23,12 @@
                 </button>
 
                 <div class="hidden sm:flex items-center space-x-3">
-                    <?php if (isset($_SESSION['user'])): ?>
+                    <?php if (isset($_SESSION['id'])): ?>
                         <a href="index.php?action=dashboard" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
                             <i class="fas fa-user-shield mr-1"></i> Tableau de bord
                         </a>
 
-                        <a href="index.php?action=login" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
+                        <a href="index.php?action=logout" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
                             <i class="fas fa-user-logout mr-1"></i> Déconnexion
                         </a>
                     <?php else: ?>
@@ -52,12 +52,17 @@
                 <i class="fas fa-store mr-2"></i> Marketplace
             </a>
 
-            <?php if (isset($_SESSION['user'])): ?>
+            <?php if (isset($_SESSION['id'])): ?>
                 <a href="index.php?action=dashboard" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <i class="fas fa-user-shield mr-2"></i> Tableau de bord
                 </a>
-                <a href="index.php?action=login" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <a href="index.php?action=logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                     <i class="fas fa-user-logout mr-1"></i> Déconnexion
+                </a>
+
+            <?php else: ?>
+                <a href="index.php?action=loginPage" @click="mobileMenuOpen = false" class="block px-4 py-2 primary-gradient text-white rounded-lg font-semibold text-center hover:opacity-90 transition-opacity">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Connexion
                 </a>
             <?php endif; ?>
         </div>

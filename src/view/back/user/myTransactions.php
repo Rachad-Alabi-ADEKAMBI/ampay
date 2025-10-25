@@ -8,12 +8,14 @@
 ob_start(); ?>
 
 <div id="app">
+    <!-- <CHANGE> Overlay pour le sidebar en mobile, identique au dashboard -->
     <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-    <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
         <?php include __DIR__ . '/../sidebar.php'; ?>
 
-        <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
+        <!-- <CHANGE> Structure identique au dashboard avec md:ml-64 et flex-col -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                 <div class="px-4 sm:px-6 py-4">
                     <div class="flex items-center justify-between">
@@ -32,163 +34,180 @@ ob_start(); ?>
                 </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
-
-                <!-- Message de bienvenue -->
-                <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
-                        Bonjour
-                        <span class="ml-1 font-semibold text-gray-900 dark:text-white">
-                            {{ capitalizeFirstLetter(user_first_name ) }} {{ capitalizeFirstLetter( user_last_name) }}
-                        </span>
-                    </div>
-                    <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
-                        <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
-                    </button>
-                </div>
-
-
-                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6 mb-8">
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-list text-xl"></i>
-                            </div>
+            <div class="flex-1 overflow-y-auto overflow-x-hidden">
+                <div class="px-4 sm:px-6 pb-2 pt-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                        <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
+                            Bonjour
+                            <span class="ml-1 font-semibold text-gray-900 dark:text-white">
+                                {{ capitalizeFirstLetter(user_first_name) }} {{ capitalizeAll(user_last_name) }}
+                            </span>
                         </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ myListings.length }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Total Annonces</div>
-                    </div>
-
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-hand-holding-usd text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ offerCount }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Mes Offres</div>
-                    </div>
-
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-hand-holding-heart text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ requestCount }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Mes Demandes</div>
-                    </div>
-
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
-                                <i class="fas fa-check-circle text-xl"></i>
-                            </div>
-                        </div>
-                        <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ activeCount }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Actives</div>
+                        <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                            <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
+                        </button>
                     </div>
                 </div>
 
-
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-
-                        <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <option value="">Tous les types</option>
-                            <option value="Offre">Offres</option>
-                            <option value="Demande">Demandes</option>
-                        </select>
-
-                        <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <option value="">Tous les statuts</option>
-                            <option value="Actif">Actif</option>
-                            <option value="Inactif">Inactif</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div v-for="listing in paginatedListings" :key="listing.id"
-                        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden card-hover"
-                        :class="listing.type === 'Offre' ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'">
-                        <div class="p-6">
+                <div class="px-4 sm:px-6 pt-2">
+                    <!-- Statistiques -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
-                                <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'" class="px-3 py-1 rounded-full text-sm font-semibold">
-                                    <i :class="listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
-                                    {{ listing.type }}
-                                </span>
-                                <span :class="listing.status === 'Actif' ? 'text-green-600' : 'text-gray-400'">
-                                    <i :class="listing.status === 'Actif' ? 'fas fa-circle' : 'fas fa-circle'" class="text-xs"></i>
-                                </span>
-                            </div>
-
-                            <div class="mb-4">
-                                <div class="flex items-center text-gray-700 dark:text-gray-300 mb-2">
-                                    <i class="fas fa-map-marker-alt w-5 text-primary"></i>
-                                    <span class="font-medium">{{ listing.city }}, {{ listing.country }}</span>
+                                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-list text-xl"></i>
                                 </div>
                             </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ myListings.length }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Annonces</div>
+                        </div>
 
-                            <div class="mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                                <div class="flex items-center justify-between mb-1">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">Montant</span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ listing.currency }}</span>
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-hand-holding-usd text-xl"></i>
                                 </div>
-                                <div class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                    {{ formatCurrency(listing.amount) }}
+                            </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ offerCount }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Offres</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-hand-holding-heart text-xl"></i>
                                 </div>
                             </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ requestCount }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Demandes</div>
+                        </div>
 
-                            <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                <i class="fas fa-clock mr-1"></i>{{ formatDate(listing.created_at) }}
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-check-circle text-xl"></i>
+                                </div>
                             </div>
-
-                            <div class="flex gap-2">
-                                <button @click="viewDetails(listing)" class="flex-1 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors">
-                                    <i class="fas fa-eye mr-1"></i>Voir
-                                </button>
-                                <button @click="toggleStatus(listing)" :class="listing.status === 'Actif' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'" class="flex-1 py-2 text-white rounded-lg font-medium transition-colors">
-                                    <i :class="listing.status === 'Actif' ? 'fas fa-pause' : 'fas fa-play'" class="mr-1"></i>
-                                    {{ listing.status === 'Actif' ? 'Désactiver' : 'Activer' }}
-                                </button>
-                            </div>
+                            <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ activeCount }}</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Actives</div>
                         </div>
                     </div>
-                </div>
 
-                <div v-if="filteredListings.length === 0" class="text-center py-16">
-                    <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                    <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction trouvée</h3>
-                    <p class="text-gray-600 dark:text-gray-400 mb-6">Créez votre première annonce pour commencer</p>
-                    <button @click="openCreateModal" class="px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                        <i class="fas fa-plus mr-2"></i>Créer une annonce
-                    </button>
-                </div>
+                    <!-- Filtres -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
 
-                <div v-if="totalPages > 1" class="flex justify-center">
-                    <nav class="inline-flex rounded-lg shadow-sm">
-                        <button @click="previousPage" :disabled="currentPage === 1"
-                            class="relative inline-flex items-center px-4 py-2 rounded-l-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button v-for="page in visiblePages" :key="page" @click="goToPage(page)"
-                            :class="['relative inline-flex items-center px-4 py-2 border text-sm font-medium', 
-                                     currentPage === page ? 'z-10 primary-gradient border-primary text-white' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50']">
-                            {{ page }}
-                        </button>
-                        <button @click="nextPage" :disabled="currentPage === totalPages"
-                            class="relative inline-flex items-center px-4 py-2 rounded-r-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </nav>
+                            <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Tous les types</option>
+                                <option value="Offre">Offres</option>
+                                <option value="Demande">Demandes</option>
+                            </select>
+
+                            <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                <option value="">Tous les statuts</option>
+                                <option value="Actif">Actif</option>
+                                <option value="Inactif">Inactif</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- <CHANGE> Tableau au lieu de grille avec colonnes d'actions -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montant</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Localisation</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Délai</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Statut</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <tr v-for="listing in paginatedListings" :key="listing.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                <i :class="listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
+                                                {{ listing.type }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-gray-100">
+                                                <i class="fas fa-map-marker-alt text-primary mr-1"></i>
+                                                {{ listing.city }}, {{ listing.country }}
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-gray-100">{{ listing.delay || 'N/A' }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span :class="listing.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                {{ listing.status }}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div class="flex gap-2">
+                                                <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Voir">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button @click="editListing(listing)" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300" title="Modifier">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button @click="deleteListing(listing)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" title="Supprimer">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Message si aucune transaction -->
+                        <div v-if="filteredListings.length === 0" class="text-center py-16">
+                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction trouvée</h3>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6">Créez votre première annonce pour commencer</p>
+                            <button @click="openCreateModal" class="px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                <i class="fas fa-plus mr-2"></i>Créer une annonce
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div v-if="totalPages > 1" class="flex justify-center mb-8">
+                        <nav class="inline-flex rounded-lg shadow-sm">
+                            <button @click="previousPage" :disabled="currentPage === 1"
+                                class="relative inline-flex items-center px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button v-for="page in visiblePages" :key="page" @click="goToPage(page)"
+                                :class="['relative inline-flex items-center px-4 py-2 border text-sm font-medium', 
+                                         currentPage === page ? 'z-10 primary-gradient border-primary text-white' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700']">
+                                {{ page }}
+                            </button>
+                            <button @click="nextPage" :disabled="currentPage === totalPages"
+                                class="relative inline-flex items-center px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-
+    <!-- Modal de création -->
     <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" @click.self="closeCreateModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
@@ -235,7 +254,6 @@ ob_start(); ?>
                         <select v-model="newListing.currency" required
                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                             <option value="">Sélectionner</option>
-                            <!-- Devises internationales majeures -->
                             <option value="USD">USD ($) - Dollar américain</option>
                             <option value="EUR">EUR (€) - Euro</option>
                             <option value="GBP">GBP (£) - Livre sterling</option>
@@ -245,16 +263,13 @@ ob_start(); ?>
                             <option value="AUD">AUD ($) - Dollar australien</option>
                             <option value="CNY">CNY (¥) - Yuan chinois</option>
                             <option value="INR">INR (₹) - Roupie indienne</option>
-
-                            <!-- Devises africaines -->
                             <option value="XAF">XAF (FCFA) - Franc CFA (Afrique centrale)</option>
-                            <option value="XOF">XOF (FCFA) - Franc CFA (Afrique de l’Ouest)</option>
+                            <option value="XOF">XOF (FCFA) - Franc CFA (Afrique de l'Ouest)</option>
                             <option value="NGN">NGN (₦) - Naira nigérian</option>
                             <option value="GHS">GHS (₵) - Cedi ghanéen</option>
                             <option value="KES">KES (Sh) - Shilling kényan</option>
                             <option value="GNF">GNF (FG) - Franc guinéen</option>
                         </select>
-
                     </div>
                 </div>
 
@@ -277,7 +292,6 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                <!-- Champ Délai ajouté -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         <i class="fas fa-hourglass-half mr-1 text-primary"></i>Délai
@@ -306,53 +320,212 @@ ob_start(); ?>
         </div>
     </div>
 
+    <!-- <CHANGE> Modal de détails professionnel avec cartes colorées et boutons d'action -->
+    <div v-if="showDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeDetailsModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- En-tête avec gradient -->
+            <div class="bg-gradient-to-r from-primary to-green-600 p-6 rounded-t-2xl">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-1">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>Détails de l'annonce
+                        </h3>
+                        <p class="text-green-100 text-sm">Annonce #{{ selectedListing?.id }}</p>
+                    </div>
+                    <button @click="closeDetailsModal" class="text-white hover:text-gray-200 transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+            </div>
 
+            <div v-if="selectedListing" class="p-6 space-y-6">
+                <!-- Cartes d'informations -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Type -->
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                <i :class="selectedListing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Type</p>
+                                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ selectedListing.type }}</p>
+                            </div>
+                        </div>
+                    </div>
 
-    <div v-if="showDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeDetailsModal">
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-2xl w-full p-6">
+                    <!-- Montant -->
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl border border-green-200 dark:border-green-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-money-bill-wave text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-green-600 dark:text-green-400 font-medium">Montant</p>
+                                <p class="text-lg font-bold text-green-900 dark:text-green-100">{{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Localisation -->
+                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-map-marker-alt text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">Localisation</p>
+                                <p class="text-lg font-bold text-purple-900 dark:text-purple-100">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Délai -->
+                    <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl border border-orange-200 dark:border-orange-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-hourglass-half text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-orange-600 dark:text-orange-400 font-medium">Délai</p>
+                                <p class="text-lg font-bold text-orange-900 dark:text-orange-100">{{ selectedListing.delay || 'N/A' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date de création -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 p-4 rounded-xl border border-indigo-200 dark:border-indigo-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-calendar-alt text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">Date de création</p>
+                                <p class="text-lg font-bold text-indigo-900 dark:text-indigo-100">{{ formatDate(selectedListing.created_at) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statut -->
+                    <div class="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 p-4 rounded-xl border border-teal-200 dark:border-teal-700">
+                        <div class="flex items-center mb-2">
+                            <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mr-3">
+                                <i class="fas fa-info-circle text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-teal-600 dark:text-teal-400 font-medium">Statut</p>
+                                <p class="text-lg font-bold text-teal-900 dark:text-teal-100">{{ selectedListing.status }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- <CHANGE> Boutons d'action dans le modal -->
+                <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button @click="editListing(selectedListing)" class="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-edit mr-2"></i>Modifier
+                    </button>
+                    <button @click="deleteListing(selectedListing)" class="flex-1 px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-trash mr-2"></i>Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <CHANGE> Modal de modification -->
+    <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" @click.self="closeEditModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-info-circle text-primary mr-2"></i>Détails de l'annonce
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-edit text-yellow-500 mr-2"></i>Modifier l'annonce
                 </h3>
-                <button @click="closeDetailsModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
-                    <i class="fas fa-times text-xl"></i>
+                <button @click="closeEditModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
                 </button>
             </div>
 
-            <div v-if="selectedListing" class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Type</p>
-                        <span :class="['inline-block px-3 py-1 text-sm font-semibold rounded-full', selectedListing.type === 'Offre' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700']">
-                            {{ selectedListing.type }}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Statut</p>
-                        <span :class="['inline-block px-3 py-1 text-sm font-semibold rounded-full', selectedListing.status === 'Actif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700']">
-                            {{ selectedListing.status }}
-                        </span>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Montant</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Localisation</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Date de création</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ formatDate(selectedListing.created_at) }}</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Note</p>
-                        <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                            <i class="fas fa-star text-yellow-400"></i> {{ selectedListing.ratings || 5 }}/5
-                        </p>
+            <form @submit.prevent="updateListing" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-tag mr-1 text-primary"></i>Type d'annonce
+                    </label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" @click="editingListing.type = 'Offre'" :class="['p-4 rounded-lg border-2 transition-all', editingListing.type === 'Offre' ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-300 dark:border-gray-600']">
+                            <i class="fas fa-hand-holding-usd text-2xl mb-2" :class="editingListing.type === 'Offre' ? 'text-green-600' : 'text-gray-400'"></i>
+                            <div class="font-semibold" :class="editingListing.type === 'Offre' ? 'text-green-700 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'">Offre</div>
+                        </button>
+                        <button type="button" @click="editingListing.type = 'Demande'" :class="['p-4 rounded-lg border-2 transition-all', editingListing.type === 'Demande' ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : 'border-gray-300 dark:border-gray-600']">
+                            <i class="fas fa-hand-holding-heart text-2xl mb-2" :class="editingListing.type === 'Demande' ? 'text-yellow-600' : 'text-gray-400'"></i>
+                            <div class="font-semibold" :class="editingListing.type === 'Demande' ? 'text-yellow-700 dark:text-yellow-400' : 'text-gray-700 dark:text-gray-300'">Demande</div>
+                        </button>
                     </div>
                 </div>
-            </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-money-bill-wave mr-1 text-primary"></i>Montant
+                        </label>
+                        <input v-model.number="editingListing.amount" type="number" required min="1"
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-coins mr-1 text-primary"></i>Devise
+                        </label>
+                        <select v-model="editingListing.currency" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="XOF">XOF</option>
+                            <option value="XAF">XAF</option>
+                            <option value="GNF">GNF</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-globe-africa mr-1 text-primary"></i>Pays
+                        </label>
+                        <input v-model="editingListing.country" type="text" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
+                        </label>
+                        <input v-model="editingListing.city" type="text" required
+                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-hourglass-half mr-1 text-primary"></i>Délai
+                    </label>
+                    <select v-model="editingListing.delay" required
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <option value="Urgent">Urgent</option>
+                        <option value="Deux semaines">Dans deux semaines</option>
+                        <option value="Nulle">Nulle</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4">
+                    <button type="button" @click="closeEditModal"
+                        class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Annuler
+                    </button>
+                    <button type="submit" :disabled="submitting"
+                        class="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors disabled:opacity-50">
+                        <i class="fas fa-save mr-2"></i>
+                        {{ submitting ? 'Enregistrement...' : 'Enregistrer' }}
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -375,10 +548,12 @@ ob_start(); ?>
                 filterType: '',
                 filterStatus: '',
                 currentPage: 1,
-                itemsPerPage: 9,
+                itemsPerPage: 10,
                 showCreateModal: false,
                 showDetailsModal: false,
+                showEditModal: false,
                 selectedListing: null,
+                editingListing: null,
                 submitting: false,
                 myListings: [],
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
@@ -442,8 +617,6 @@ ob_start(); ?>
 
             if (this.userId) {
                 await this.fetchMyListings();
-            } else {
-                console.warn('Aucun utilisateur connecté.');
             }
         },
         methods: {
@@ -451,26 +624,23 @@ ob_start(); ?>
                 try {
                     const res = await fetch('index.php?action=myTransactionsList');
                     const data = await res.json();
-
-                    console.log('Réponse du backend:', data);
-
                     if (data.success && Array.isArray(data.data)) {
                         this.myListings = data.data;
                     } else {
                         this.myListings = [];
-                        console.error('Réponse invalide du serveur:', data);
                     }
-
                 } catch (error) {
                     console.error("Erreur backend:", error);
                     this.myListings = [];
                 }
             },
-
-
             capitalizeFirstLetter(word) {
                 if (!word) return '';
                 return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
             },
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
@@ -495,11 +665,11 @@ ob_start(); ?>
             openCreateModal() {
                 this.newListing = {
                     type: 'Offre',
-                    amount: '20000',
-                    currency: 'XOF',
-                    country: 'Benin',
-                    city: 'Cotonou',
-                    delay: 'Nulle'
+                    amount: '',
+                    currency: '',
+                    country: '',
+                    city: '',
+                    delay: ''
                 };
                 this.showCreateModal = true;
             },
@@ -513,25 +683,14 @@ ob_start(); ?>
                         ...this.newListing,
                         user_id: this.userId
                     });
-
-                    console.log('Réponse brute Axios :', response);
-
-                    // Vérifie uniquement si success est vrai
                     if (response.data?.success) {
                         alert(response.data.message || 'Annonce créée avec succès.');
                         this.closeCreateModal();
-                        await this.fetchMyData();
+                        await this.fetchMyListings();
                     }
-
-                    // Ne fait rien si success est false mais pas d'erreur côté Axios
-                    // Les erreurs serveur ou de validation seront gérées dans catch
-
                 } catch (error) {
-                    console.error('Erreur Axios :', error.response?.data || error);
-                    alert(
-                        error.response?.data?.error ||
-                        'Erreur lors de la création de l’annonce.'
-                    );
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la création de l\'annonce.');
                 } finally {
                     this.submitting = false;
                 }
@@ -544,6 +703,49 @@ ob_start(); ?>
                 this.showDetailsModal = false;
                 this.selectedListing = null;
             },
+            editListing(listing) {
+                this.editingListing = {
+                    ...listing
+                };
+                this.showDetailsModal = false;
+                this.showEditModal = true;
+            },
+            closeEditModal() {
+                this.showEditModal = false;
+                this.editingListing = null;
+            },
+            async updateListing() {
+                this.submitting = true;
+                try {
+                    const response = await api.post('?action=updateTransaction', this.editingListing);
+                    if (response.data?.success) {
+                        alert('Annonce modifiée avec succès.');
+                        this.closeEditModal();
+                        await this.fetchMyListings();
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la modification.');
+                } finally {
+                    this.submitting = false;
+                }
+            },
+            async deleteListing(listing) {
+                if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
+                try {
+                    const response = await api.post('?action=deleteTransaction', {
+                        id: listing.id
+                    });
+                    if (response.data?.success) {
+                        alert('Annonce supprimée avec succès.');
+                        this.closeDetailsModal();
+                        await this.fetchMyListings();
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la suppression.');
+                }
+            },
             async toggleStatus(listing) {
                 const newStatus = listing.status === 'Actif' ? 'Inactif' : 'Actif';
                 try {
@@ -552,6 +754,9 @@ ob_start(); ?>
                         status: newStatus
                     });
                     listing.status = newStatus;
+                    if (this.selectedListing && this.selectedListing.id === listing.id) {
+                        this.selectedListing.status = newStatus;
+                    }
                 } catch (error) {
                     console.error('Erreur:', error);
                 }
@@ -568,7 +773,6 @@ ob_start(); ?>
         }
     }).mount('#app');
 </script>
-
 
 <style>
     :root {
@@ -590,6 +794,10 @@ ob_start(); ?>
         background-color: var(--bg-dark) !important;
     }
 
+    .dark-mode .bg-gray-100 {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
     .dark-mode .text-gray-900 {
         color: #F9FAFB !important;
     }
@@ -602,8 +810,24 @@ ob_start(); ?>
         color: #94A3B8 !important;
     }
 
+    .dark-mode .text-gray-500 {
+        color: #64748B !important;
+    }
+
+    .dark-mode .border-gray-200 {
+        border-color: #334155 !important;
+    }
+
     .dark-mode .border-gray-300 {
         border-color: #475569 !important;
+    }
+
+    .dark-mode .shadow-sm {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
     }
 
     .dark-mode input,
@@ -616,18 +840,61 @@ ob_start(); ?>
         background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
 
-    .card-hover {
-        transition: all 0.3s ease;
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
     }
 
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* <CHANGE> Sidebar responsive identique au dashboard */
+    .sidebar {
+        transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
     }
 
     @media print {
         .no-print {
             display: none !important;
+        }
+
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        .bg-white {
+            background: white !important;
+        }
+
+        .shadow-sm,
+        .shadow-md {
+            box-shadow: none !important;
         }
     }
 </style>

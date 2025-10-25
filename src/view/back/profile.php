@@ -1,21 +1,28 @@
-<?php $title = "AmPay - Profil"; ?>
+<?php $title = "AmPay - Profil";
 
+$first_name = $_SESSION['first_name'];
+$last_name = $_SESSION['last_name'];
+$email = $_SESSION['email'] ?? '';
+$country = $_SESSION['country'];
+$city = $_SESSION['city'];
+$phone_prefix = $_SESSION['phone_prefix'];
+$phone = $_SESSION['phone'];
+$account_verified = $_SESSION['account_verified'];
+$user_id = $_SESSION['id'] ?? '';
+
+?>
 
 <?php
-
-
 ob_start(); ?>
 
 <div id="app">
-    <!-- Added mobile overlay for sidebar -->
     <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
-    <div class="flex min-h-screen bg-gray-50 dark:bg-gray-900">
-        <!-- Inline sidebar code from dashboard.php -->
+    <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
         <?php include 'sidebar.php'; ?>
 
-        <!-- Main Content -->
-        <div class="flex-1 md:ml-64 flex flex-col h-screen overflow-hidden">
+        <!-- <CHANGE> Structure identique au dashboard avec md:ml-64 et flex-col -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                 <div class="px-4 sm:px-6 py-4">
                     <div class="flex items-center justify-between">
@@ -47,16 +54,14 @@ ob_start(); ?>
                             <div class="w-32 h-32 primary-gradient rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-user text-white text-6xl"></i>
                             </div>
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ user.name }}</h2>
+                            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ capitalizeFirstLetter(user.first_name) }} {{ capitalizeAll(user.last_name) }}</h2>
                             <p class="text-gray-600 dark:text-gray-400 mb-4">{{ user.email }}</p>
                             <div class="flex items-center justify-center space-x-2 mb-4">
-                                <i class="fas fa-star text-yellow-500"></i>
-                                <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ user.rating }}</span>
-                                <span class="text-sm text-gray-600 dark:text-gray-400">({{ user.reviews }} avis)</span>
+                                <i :class="user.account_verified ? 'fas fa-check-circle text-green-500' : 'fas fa-times-circle text-red-500'"></i>
+                                <span class="text-sm font-semibold" :class="user.account_verified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
+                                    {{ user.account_verified ? 'Compte vérifié' : 'Compte non vérifié' }}
+                                </span>
                             </div>
-                            <span :class="['inline-block px-4 py-2 rounded-full text-sm font-semibold', user.type === 'offerer' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300']">
-                                {{ user.type === 'offerer' ? 'Offreur' : 'Demandeur' }}
-                            </span>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mt-6 card-hover">
@@ -93,28 +98,57 @@ ob_start(); ?>
                             </div>
 
                             <form @submit.prevent="saveProfile" class="space-y-4">
+                                <!-- <CHANGE> Champs séparés pour prénom et nom -->
                                 <div class="grid sm:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-user mr-1 text-primary"></i>Nom complet
+                                            <i class="fas fa-user mr-1 text-primary"></i>Prénom
                                         </label>
-                                        <input v-model="user.name" :disabled="!editMode" type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                        <input v-model="user.first_name" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                                            <i class="fas fa-user mr-1 text-primary"></i>Nom
                                         </label>
-                                        <input v-model="user.email" :disabled="!editMode" type="email" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                        <input v-model="user.last_name" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                        <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                                    </label>
+                                    <input v-model="user.email" :disabled="!editMode" type="email" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                </div>
+
+                                <!-- <CHANGE> Champs séparés pour préfixe et numéro de téléphone -->
+                                <div class="grid sm:grid-cols-3 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <i class="fas fa-phone mr-1 text-primary"></i>Préfixe
+                                        </label>
+                                        <select v-model="user.phone_prefix" :disabled="!editMode" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                            <option value="+33">+33 (France)</option>
+                                            <option value="+221">+221 (Sénégal)</option>
+                                            <option value="+225">+225 (Côte d'Ivoire)</option>
+                                            <option value="+234">+234 (Nigeria)</option>
+                                            <option value="+233">+233 (Ghana)</option>
+                                            <option value="+44">+44 (Royaume-Uni)</option>
+                                            <option value="+49">+49 (Allemagne)</option>
+                                            <option value="+229">+229 (Bénin)</option>
+                                            <option value="+228">+228 (Togo)</option>
+                                            <option value="+224">+224 (Guinée)</option>
+                                        </select>
+                                    </div>
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <i class="fas fa-phone mr-1 text-primary"></i>Numéro de téléphone
+                                        </label>
+                                        <input v-model="user.phone" :disabled="!editMode" type="tel" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="612345678">
                                     </div>
                                 </div>
 
                                 <div class="grid sm:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-phone mr-1 text-primary"></i>Téléphone
-                                        </label>
-                                        <input v-model="user.phone" :disabled="!editMode" type="tel" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                    </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             <i class="fas fa-flag mr-1 text-primary"></i>Pays
@@ -123,18 +157,17 @@ ob_start(); ?>
                                             <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
                                         </select>
                                     </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
-                                    </label>
-                                    <input v-model="user.city" :disabled="!editMode" type="text" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
+                                        </label>
+                                        <input v-model="user.city" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    </div>
                                 </div>
 
                                 <div v-if="editMode" class="pt-4">
-                                    <button type="submit" class="w-full sm:w-auto px-8 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                                        <i class="fas fa-save mr-2"></i>Enregistrer les modifications
+                                    <button type="submit" :disabled="submitting" class="w-full sm:w-auto px-8 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                                        <i class="fas fa-save mr-2"></i>{{ submitting ? 'Enregistrement...' : 'Enregistrer les modifications' }}
                                     </button>
                                 </div>
                             </form>
@@ -145,19 +178,24 @@ ob_start(); ?>
                                 <i class="fas fa-shield-alt text-primary mr-2"></i>Sécurité
                             </h3>
                             <div class="space-y-4">
-                                <button @click="changePassword" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <button @click="showPasswordModal = true" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <span class="flex items-center">
                                         <i class="fas fa-key text-primary mr-3"></i>
                                         <span class="font-medium text-gray-900 dark:text-gray-100">Changer le mot de passe</span>
                                     </span>
                                     <i class="fas fa-chevron-right text-gray-400"></i>
                                 </button>
-                                <button @click="enable2FA" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <button @click="show2FAModal = true" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <span class="flex items-center">
                                         <i class="fas fa-mobile-alt text-primary mr-3"></i>
                                         <span class="font-medium text-gray-900 dark:text-gray-100">Authentification à deux facteurs</span>
                                     </span>
-                                    <i class="fas fa-chevron-right text-gray-400"></i>
+                                    <div class="flex items-center gap-2">
+                                        <span :class="user.two_factor_enabled ? 'text-green-600 dark:text-green-400' : 'text-gray-400'" class="text-sm font-semibold">
+                                            {{ user.two_factor_enabled ? 'Activée' : 'Désactivée' }}
+                                        </span>
+                                        <i class="fas fa-chevron-right text-gray-400"></i>
+                                    </div>
                                 </button>
                             </div>
                         </div>
@@ -194,12 +232,114 @@ ob_start(); ?>
             </div>
         </div>
     </div>
+
+    <!-- <CHANGE> Modal pour changer le mot de passe -->
+    <div v-if="showPasswordModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closePasswordModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-key text-primary mr-2"></i>Changer le mot de passe
+                </h3>
+                <button @click="closePasswordModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form @submit.prevent="changePassword" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-lock mr-1 text-primary"></i>Mot de passe actuel
+                    </label>
+                    <input v-model="passwordForm.current" type="password" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-lock mr-1 text-primary"></i>Nouveau mot de passe
+                    </label>
+                    <input v-model="passwordForm.new" type="password" required minlength="8" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Minimum 8 caractères</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        <i class="fas fa-lock mr-1 text-primary"></i>Confirmer le nouveau mot de passe
+                    </label>
+                    <input v-model="passwordForm.confirm" type="password" required minlength="8" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                </div>
+
+                <div v-if="passwordError" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                    <p class="text-sm text-red-600 dark:text-red-400">{{ passwordError }}</p>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button type="button" @click="closePasswordModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                        Annuler
+                    </button>
+                    <button type="submit" :disabled="submitting" class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                        <i class="fas fa-check mr-2"></i>{{ submitting ? 'Modification...' : 'Modifier' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- <CHANGE> Modal pour la double authentification -->
+    <div v-if="show2FAModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="close2FAModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-mobile-alt text-primary mr-2"></i>Authentification 2FA
+                </h3>
+                <button @click="close2FAModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div>
+                        <p class="font-semibold text-gray-900 dark:text-gray-100">Statut actuel</p>
+                        <p :class="user.two_factor_enabled ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'" class="text-sm">
+                            {{ user.two_factor_enabled ? 'Activée' : 'Désactivée' }}
+                        </p>
+                    </div>
+                    <i :class="user.two_factor_enabled ? 'fas fa-check-circle text-green-500' : 'fas fa-times-circle text-gray-400'" class="text-3xl"></i>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                    {{ user.two_factor_enabled 
+                        ? 'La double authentification est actuellement activée. Vous pouvez la désactiver ci-dessous.' 
+                        : 'Activez la double authentification pour renforcer la sécurité de votre compte.' }}
+                </p>
+            </div>
+
+            <div v-if="twoFactorError" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4">
+                <p class="text-sm text-red-600 dark:text-red-400">{{ twoFactorError }}</p>
+            </div>
+
+            <div class="flex gap-4">
+                <button @click="close2FAModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    Annuler
+                </button>
+                <button @click="toggle2FA" :disabled="submitting" :class="user.two_factor_enabled ? 'bg-red-500 hover:bg-red-600' : 'primary-gradient'" class="flex-1 px-6 py-3 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                    <i :class="user.two_factor_enabled ? 'fas fa-times' : 'fas fa-check'" class="mr-2"></i>
+                    {{ submitting ? 'Traitement...' : (user.two_factor_enabled ? 'Désactiver' : 'Activer') }}
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     const {
         createApp
     } = Vue;
+    const api = axios.create({
+        baseURL: 'http://127.0.0.1/ampay/index.php'
+    });
 
     createApp({
         data() {
@@ -207,21 +347,34 @@ ob_start(); ?>
                 darkMode: false,
                 sidebarOpen: false,
                 editMode: false,
-                countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo'],
+                submitting: false,
+                showPasswordModal: false,
+                show2FAModal: false,
+                passwordError: '',
+                twoFactorError: '',
+                countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo', 'Guinée'],
+                // <CHANGE> Données initialisées depuis la session PHP
                 user: {
-                    name: 'Jean Dupont',
-                    email: 'jean.dupont@email.com',
-                    phone: '+33 6 12 34 56 78',
-                    country: 'France',
-                    city: 'Paris',
-                    type: 'offerer',
-                    rating: 4.8,
-                    reviews: 23,
+                    id: <?= json_encode($user_id); ?>,
+                    first_name: <?= json_encode($first_name); ?>,
+                    last_name: <?= json_encode($last_name); ?>,
+                    email: <?= json_encode($email); ?>,
+                    phone_prefix: <?= json_encode($phone_prefix); ?>,
+                    phone: <?= json_encode($phone); ?>,
+                    country: <?= json_encode($country); ?>,
+                    city: <?= json_encode($city); ?>,
+                    account_verified: <?= json_encode($account_verified); ?>,
+                    two_factor_enabled: false,
                     memberSince: 'Janvier 2025',
                     stats: {
-                        transactions: 45,
-                        totalAmount: 12500
+                        transactions: 0,
+                        totalAmount: 0
                     }
+                },
+                passwordForm: {
+                    current: '',
+                    new: '',
+                    confirm: ''
                 },
                 notifications: {
                     email: true,
@@ -235,6 +388,7 @@ ob_start(); ?>
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+            this.fetch2FAStatus();
         },
         methods: {
             toggleDarkMode() {
@@ -242,15 +396,127 @@ ob_start(); ?>
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
-            saveProfile() {
-                alert('Profil enregistré avec succès !');
-                this.editMode = false;
+            // <CHANGE> Fonction pour sauvegarder le profil avec appel API
+            async saveProfile() {
+                this.submitting = true;
+                try {
+                    const response = await api.post('?action=updateProfile', {
+                        user_id: this.user.id,
+                        first_name: this.user.first_name,
+                        last_name: this.user.last_name,
+                        email: this.user.email,
+                        phone_prefix: this.user.phone_prefix,
+                        phone: this.user.phone,
+                        country: this.user.country,
+                        city: this.user.city
+                    });
+
+                    if (response.data?.success) {
+                        alert('Profil mis à jour avec succès !');
+                        this.editMode = false;
+                    } else {
+                        alert(response.data?.message || 'Erreur lors de la mise à jour du profil');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    alert('Erreur lors de la mise à jour du profil');
+                } finally {
+                    this.submitting = false;
+                }
             },
-            changePassword() {
-                alert('Fonctionnalité de changement de mot de passe à venir');
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
             },
-            enable2FA() {
-                alert('Fonctionnalité d\'authentification à deux facteurs à venir');
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
+            },
+            // <CHANGE> Fonction pour changer le mot de passe avec validation
+            async changePassword() {
+                this.passwordError = '';
+
+                if (this.passwordForm.new !== this.passwordForm.confirm) {
+                    this.passwordError = 'Les mots de passe ne correspondent pas';
+                    return;
+                }
+
+                if (this.passwordForm.new.length < 8) {
+                    this.passwordError = 'Le mot de passe doit contenir au moins 8 caractères';
+                    return;
+                }
+
+                this.submitting = true;
+                try {
+                    const response = await api.post('?action=changePassword', {
+                        user_id: this.user.id,
+                        current_password: this.passwordForm.current,
+                        new_password: this.passwordForm.new
+                    });
+
+                    if (response.data?.success) {
+                        alert('Mot de passe modifié avec succès !');
+                        this.closePasswordModal();
+                    } else {
+                        this.passwordError = response.data?.message || 'Erreur lors du changement de mot de passe';
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.passwordError = 'Erreur lors du changement de mot de passe';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+            closePasswordModal() {
+                this.showPasswordModal = false;
+                this.passwordForm = {
+                    current: '',
+                    new: '',
+                    confirm: ''
+                };
+                this.passwordError = '';
+            },
+            // <CHANGE> Fonction pour récupérer le statut 2FA
+            async fetch2FAStatus() {
+                try {
+                    const response = await api.get(`?action=get2FAStatus&user_id=${this.user.id}`);
+                    if (response.data?.success) {
+                        this.user.two_factor_enabled = response.data.two_factor_enabled || false;
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la récupération du statut 2FA:', error);
+                }
+            },
+            // <CHANGE> Fonction pour activer/désactiver la 2FA
+            async toggle2FA() {
+                this.twoFactorError = '';
+                this.submitting = true;
+
+                try {
+                    const action = this.user.two_factor_enabled ? 'disable2FA' : 'enable2FA';
+                    const response = await api.post(`?action=${action}`, {
+                        user_id: this.user.id
+                    });
+
+                    if (response.data?.success) {
+                        this.user.two_factor_enabled = !this.user.two_factor_enabled;
+                        alert(this.user.two_factor_enabled ?
+                            'Authentification à deux facteurs activée avec succès !' :
+                            'Authentification à deux facteurs désactivée avec succès !');
+                        this.close2FAModal();
+                    } else {
+                        this.twoFactorError = response.data?.message || 'Erreur lors de la modification de la 2FA';
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    this.twoFactorError = 'Erreur lors de la modification de la 2FA';
+                } finally {
+                    this.submitting = false;
+                }
+            },
+            close2FAModal() {
+                this.show2FAModal = false;
+                this.twoFactorError = '';
             },
             formatCurrency(amount) {
                 return new Intl.NumberFormat('fr-FR', {
@@ -311,6 +577,12 @@ ob_start(); ?>
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
     }
 
+    .dark-mode input,
+    .dark-mode select {
+        background-color: var(--bg-dark-secondary) !important;
+        color: #F9FAFB !important;
+    }
+
     .primary-gradient {
         background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
@@ -324,11 +596,6 @@ ob_start(); ?>
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
-    .dark-mode i {
-        color: inherit;
-    }
-
-    /* Added sidebar styles */
     .sidebar {
         transition: transform 0.3s ease;
     }
@@ -347,28 +614,7 @@ ob_start(); ?>
             transform: translateX(0);
         }
     }
-
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-
-        body {
-            background: white !important;
-            color: black !important;
-        }
-
-        .bg-white {
-            background: white !important;
-        }
-
-        .shadow-sm,
-        .shadow-md {
-            box-shadow: none !important;
-        }
-    }
 </style>
 
 <?php $content = ob_get_clean(); ?>
-
 <?php require './src/view/layout.php'; ?>

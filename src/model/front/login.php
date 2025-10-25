@@ -35,6 +35,7 @@ function loginUser()
 
         $_SESSION['role'] = $user['role'];
         $_SESSION['country'] = $user['country'];
+        $_SESSION['city'] = $user['city'];
 
         $_SESSION['phone_prefix'] = $user['phone_prefix'];
         $_SESSION['phone'] = $user['phone'];

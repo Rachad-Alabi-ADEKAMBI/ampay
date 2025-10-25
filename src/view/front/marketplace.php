@@ -1,7 +1,17 @@
 <?php $title = "AmPay - Marketplace";
 
-ob_start(); ?>
+ob_start();
 
+
+$isAuthenticated = isset($_SESSION['id']); // true ou false
+echo $isAuthenticated;
+
+?>
+<script>
+    // Injecte une vraie valeur booléenne JS (pas une chaîne)
+    window.isAuthenticated = <?php echo json_encode($isAuthenticated); ?>;
+    console.log("Auth depuis PHP:", window.isAuthenticated);
+</script>
 
 <div id="app">
     <?php include 'header.php'; ?>
@@ -342,7 +352,7 @@ ob_start(); ?>
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'http://127.0.0.1/ampay/api/index.php?action='
     });
 
     createApp({
@@ -371,7 +381,8 @@ ob_start(); ?>
                 countries: [],
                 citiesByCountry: {},
                 currencies: [],
-                listings: []
+                listings: [],
+                isAuthenticated: !!window.isAuthenticated,
             };
         },
         computed: {
@@ -450,17 +461,23 @@ ob_start(); ?>
         },
         mounted() {
             const savedDarkMode = localStorage.getItem('darkMode');
+            console.log(this.isAuthenticated);
             if (savedDarkMode === 'true') {
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+            console.log('isAuthenticated (vue):', this.isAuthenticated);
 
             this.fetchListings();
         },
         methods: {
             async fetchListings() {
                 try {
-                    const response = await api.get('?action=allListings');
+                    const response = await api.get('', {
+                        params: {
+                            action: 'allListings'
+                        }
+                    });
                     const data = response.data || [];
 
                     // Process listings and add timeAgo
@@ -549,6 +566,10 @@ ob_start(); ?>
                 return listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart';
             },
             openContactModal(listing) {
+                if (!this.isAuthenticated) {
+                    alert('Veuillez vous connecter pour contacter un annonceur.');
+                    return;
+                }
                 this.selectedListing = listing;
                 this.showContactModal = true;
                 this.contactRequestSuccess = false;
@@ -562,15 +583,28 @@ ob_start(); ?>
                 this.contactRequestSuccess = false;
             },
             submitContactRequest() {
+                if (!this.contactRequest.message.trim() || !this.selectedListing) return;
+
                 this.contactRequestSubmitting = true;
-                setTimeout(() => {
-                    this.contactRequestSubmitting = false;
-                    this.contactRequestSuccess = true;
-                    setTimeout(() => {
-                        this.closeContactModal();
-                    }, 2000);
-                }, 1500);
+                this.contactRequestSuccess = false;
+
+                api.post('index.php?action=contactRequest', {
+                        message: this.contactRequest.message,
+                        listing_id: this.selectedListing.id
+                    })
+                    .then(response => {
+                        this.contactRequestSuccess = true;
+                        this.contactRequest.message = ''; // clear message after success
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de l’envoi de la demande de contact :', error);
+                        alert('Une erreur est survenue. Veuillez réessayer.');
+                    })
+                    .finally(() => {
+                        this.contactRequestSubmitting = false;
+                    });
             },
+
             previousPage() {
                 if (this.currentPage > 1) {
                     this.currentPage--;

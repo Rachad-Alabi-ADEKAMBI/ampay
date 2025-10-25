@@ -6,3 +6,8 @@ function marketplacePage()
 
     require './src/view/front/marketplace.php';
 }
+
+function contactRequest()
+{
+    contactRequestUser();
+}

@@ -37,12 +37,28 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             marketplacePage();
             break;
 
+        case 'allMessages':
+            getAllMessages();
+            break;
+
+        case 'allListings':
+            getAllListings();
+            break;
+
+        case 'allMessagesByListingId':
+            getAllMessagesByListingId();
+            break;
+
         case 'dashboard':
             dashboardPage();
             break;
 
         case 'transactionsPage':
             transactionsPage();
+            break;
+
+        case 'allUsers':
+            getAllUsers();
             break;
 
         case 'myTransactionsPage':
@@ -57,6 +73,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
         case 'createTransaction':
             createTransaction();
             exit;
+            break;
+
+        case 'updateTransaction':
+            updateTransaction();
             break;
 
         case 'mySponsorshipsPage':
@@ -77,6 +97,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
         case 'usersPage':
             usersPage();
+            break;
+
+        case 'contactRequest':
+            contactRequest();
             break;
 
         case 'profilePage':

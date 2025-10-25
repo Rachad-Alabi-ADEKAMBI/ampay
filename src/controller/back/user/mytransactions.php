@@ -25,3 +25,8 @@ function createTransaction()
     echo json_encode($result);
     exit;
 }
+
+function updateTransaction()
+{
+    updateListing();
+}
