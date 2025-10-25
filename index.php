@@ -61,6 +61,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             getAllUsers();
             break;
 
+        case 'allSponsorships':
+            getAllSponsorships();
+            break;
+
         case 'myTransactionsPage':
             myTransactionsPage();
             break;

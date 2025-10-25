@@ -41,14 +41,6 @@ ob_start(); ?>
                             Admin
                         </span>
                     </div>
-                    <button
-                        @click="printList"
-                        class="w-[200px] sm:w-auto px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 
-           hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium 
-           transition-all shadow-lg flex items-center justify-center gap-2 no-print">
-                        <i class="fas fa-print"></i>
-                        <span class="hidden sm:inline">Imprimer la liste</span>
-                    </button>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
@@ -90,7 +82,23 @@ ob_start(); ?>
                             <option value="date">Trier par date</option>
                             <option value="sponsor">Trier par parrain</option>
                             <option value="sponsored">Trier par filleul</option>
+                            <!-- Added sort by most sponsorships -->
+                            <option value="most_sponsorships">Trier par plus de parrainages</option>
                         </select>
+                    </div>
+                    <!-- Added filter by user section -->
+                    <div v-if="selectedUser" class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-filter text-blue-600 dark:text-blue-400"></i>
+                                <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                    Filtré par: {{ selectedUser.first_name }} {{ selectedUser.last_name }}
+                                </span>
+                            </div>
+                            <button @click="clearUserFilter" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -100,53 +108,39 @@ ob_start(); ?>
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parrain</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email Parrain</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filleul</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Email Filleul</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Téléphone</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="sponsorship in paginatedSponsorships" :key="sponsorship.id" class="hover:bg-gray-50 dark:hover:bg-slate-700">
+                                <!-- Updated hover state to match transactions page -->
+                                <tr v-for="sponsorship in paginatedSponsorships" :key="sponsorship.id" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                                     <td data-label="Parrain" class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center flex-shrink-0">
-                                                <i class="fas fa-user text-white"></i>
-                                            </div>
+                                        <!-- Made sponsor name clickable to filter -->
+                                        <div class="flex items-center gap-3 cursor-pointer" @click="filterByUser(sponsorship.sponsor_id, sponsorship.sponsor_first_name, sponsorship.sponsor_last_name)">
                                             <div class="min-w-0">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ sponsorship.sponsor_first_name }} {{ sponsorship.sponsor_last_name }}</div>
+                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate hover:text-primary transition-colors">
+                                                    {{ capitalizeFirstLetter(sponsorship.sponsor_first_name )}}
+                                                    {{ capitalizeAll(sponsorship.sponsor_last_name) }}
+                                                </div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td data-label="Email Parrain" class="px-6 py-4">
-                                        <div class="text-sm text-gray-600 dark:text-gray-400 break-all">{{ sponsorship.sponsor_email || 'N/A' }}</div>
                                     </td>
                                     <td data-label="Filleul" class="px-6 py-4">
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                                <i class="fas fa-user text-white"></i>
-                                            </div>
+                                        <!-- Made sponsored name clickable to filter -->
+                                        <div class="flex items-center gap-3 cursor-pointer" @click="filterByUser(sponsorship.sponsored_id, sponsorship.sponsored_first_name, sponsorship.sponsored_last_name)">
                                             <div class="min-w-0">
-                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{{ sponsorship.sponsored_first_name }} {{ sponsorship.sponsored_last_name }}</div>
+                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate hover:text-primary transition-colors">
+                                                    {{ capitalizeFirstLetter(sponsorship.sponsored_first_name) }}
+                                                    {{ capitalizeAll(sponsorship.sponsored_last_name) }}
+                                                </div>
                                             </div>
                                         </div>
-                                    </td>
-                                    <td data-label="Email Filleul" class="px-6 py-4">
-                                        <div class="text-sm text-gray-600 dark:text-gray-400 break-all">{{ sponsorship.sponsored_email || 'N/A' }}</div>
-                                    </td>
-                                    <td data-label="Téléphone" class="px-6 py-4">
-                                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ sponsorship.sponsored_phone || 'N/A' }}</div>
                                     </td>
                                     <td data-label="Date" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                         {{ formatDate(sponsorship.created_at) }}
                                     </td>
-                                    <td data-label="Statut" class="px-6 py-4">
-                                        <span :class="['px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full', sponsorship.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300']">
-                                            {{ sponsorship.status === 'active' ? 'Actif' : 'Inactif' }}
-                                        </span>
-                                    </td>
+
                                 </tr>
                             </tbody>
                         </table>
@@ -193,7 +187,7 @@ ob_start(); ?>
         createApp
     } = Vue;
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php'
+        baseURL: 'index.php'
     });
 
     createApp({
@@ -205,7 +199,8 @@ ob_start(); ?>
                 sidebarOpen: false,
                 currentPage: 1,
                 itemsPerPage: 10,
-                allSponsorships: []
+                allSponsorships: [],
+                selectedUser: null
             };
         },
         computed: {
@@ -217,6 +212,14 @@ ob_start(); ?>
             },
             filteredSponsorships() {
                 let filtered = this.allSponsorships;
+
+                if (this.selectedUser) {
+                    filtered = filtered.filter(s =>
+                        s.sponsor_id === this.selectedUser.id ||
+                        s.sponsored_id === this.selectedUser.id
+                    );
+                }
+
                 if (this.searchTerm) {
                     filtered = filtered.filter(s =>
                         s.sponsor_first_name?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -225,9 +228,26 @@ ob_start(); ?>
                         s.sponsored_last_name?.toLowerCase().includes(this.searchTerm.toLowerCase())
                     );
                 }
-                if (this.sortBy === 'date') filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                else if (this.sortBy === 'sponsor') filtered.sort((a, b) => a.sponsor_first_name.localeCompare(b.sponsor_first_name));
-                else if (this.sortBy === 'sponsored') filtered.sort((a, b) => a.sponsored_first_name.localeCompare(b.sponsored_first_name));
+
+                if (this.sortBy === 'date') {
+                    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                } else if (this.sortBy === 'sponsor') {
+                    filtered.sort((a, b) => a.sponsor_first_name.localeCompare(b.sponsor_first_name));
+                } else if (this.sortBy === 'sponsored') {
+                    filtered.sort((a, b) => a.sponsored_first_name.localeCompare(b.sponsored_first_name));
+                } else if (this.sortBy === 'most_sponsorships') {
+                    // Count sponsorships per sponsor and sort by count
+                    const sponsorCounts = {};
+                    this.allSponsorships.forEach(s => {
+                        sponsorCounts[s.sponsor_id] = (sponsorCounts[s.sponsor_id] || 0) + 1;
+                    });
+                    filtered.sort((a, b) => {
+                        const countA = sponsorCounts[a.sponsor_id] || 0;
+                        const countB = sponsorCounts[b.sponsor_id] || 0;
+                        return countB - countA;
+                    });
+                }
+
                 return filtered;
             },
             paginatedSponsorships() {
@@ -272,6 +292,14 @@ ob_start(); ?>
                     this.allSponsorships = [];
                 }
             },
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
+            },
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');
@@ -289,6 +317,18 @@ ob_start(); ?>
             },
             printList() {
                 window.print();
+            },
+            filterByUser(userId, firstName, lastName) {
+                this.selectedUser = {
+                    id: userId,
+                    first_name: firstName,
+                    last_name: lastName
+                };
+                this.currentPage = 1;
+            },
+            clearUserFilter() {
+                this.selectedUser = null;
+                this.currentPage = 1;
             },
             previousPage() {
                 if (this.currentPage > 1) this.currentPage--;
@@ -308,6 +348,7 @@ ob_start(); ?>
         --primary: #10B981;
         --bg-dark: #0F172A;
         --bg-dark-secondary: #1E293B;
+        --bg-gray-750: #1a2332;
     }
 
     body.dark-mode {
@@ -357,6 +398,18 @@ ob_start(); ?>
 
     .dark-mode .shadow-md {
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    /* Added input/select/textarea dark mode styles like transactions page */
+    .dark-mode input,
+    .dark-mode select,
+    .dark-mode textarea {
+        background-color: var(--bg-dark-secondary) !important;
+        color: #F9FAFB !important;
+    }
+
+    .dark-mode tr:hover {
+        background-color: var(--bg-gray-750) !important;
     }
 
     .primary-gradient {
@@ -472,10 +525,6 @@ ob_start(); ?>
     .stat-card {
         background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
         border-left: 4px solid var(--primary);
-    }
-
-    .dark-mode i {
-        color: inherit;
     }
 
     @media print {

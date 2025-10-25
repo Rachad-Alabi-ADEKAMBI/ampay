@@ -22,7 +22,7 @@ ob_start(); ?>
                         Transfert d'argent <span class="text-primary">sans intermédiaire</span>
                     </h1>
                     <p class="text-xl text-gray-300 leading-relaxed">
-                        Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et économique.
+                        Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et international.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         <a href="index.php?action=marketplace" class="px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity text-center shadow-lg">
@@ -196,59 +196,121 @@ ob_start(); ?>
                         <i class="fas fa-hand-holding-usd mr-3"></i>Offres Disponibles
                     </h4>
                     <div class="space-y-4">
-                        <div v-for="offer in recentOffers" :key="offer.id" class="bg-white rounded-xl shadow-sm p-6 hover-lift border-l-4 border-green-500">
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="flex items-center">
-                                    <div class="w-12 h-12 primary-gradient rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-white"></i>
+                        <div v-for="offer in recentOffers" :key="offer.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-green-500">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                        <i class="fas fa-hand-holding-usd mr-1"></i>
+                                        Offre
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-green-500 w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-hashtag text-white"></i>
                                     </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900">{{ offer.userName }}</p>
+                                    <div class="min-w-0">
+                                        <p class="font-semibold text-gray-900 truncate">Nouvelle offre</p>
                                         <p class="text-sm text-gray-500">
-                                            <i class="fas fa-star text-yellow-500 mr-1"></i>{{ offer.rating }}
+                                            <i class="fas fa-star text-yellow-500 mr-1"></i>{{ offer.ratings }}
                                         </p>
                                     </div>
                                 </div>
-                                <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
+
+                                <div class="mb-4">
+                                    <div class="country-badge mb-2">
+                                        <i class="fas fa-flag" style="color: var(--primary);"></i>
+                                        <span class="font-semibold text-gray-900">{{ offer.country }}</span>
+                                    </div>
+                                    <div class="flex items-center text-gray-700">
+                                        <i class="fas fa-map-marker-alt w-5" style="color: var(--primary);"></i>
+                                        <span class="font-medium">{{ offer.city }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Montant</span>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-coins text-primary mr-2"></i>
+                                            <span class="text-sm text-gray-600">{{ offer.currency }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-900 mt-1">
+                                        {{ formatCurrency(offer.amount) }}
+                                    </div>
+                                </div>
+
+                                <div class="text-sm text-gray-500 mb-4">
+                                    <i class="fas fa-clock mr-1"></i>{{ offer.timeAgo }}
+                                </div>
+
+                                <button @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
+                                    <i class="fas fa-comment mr-2"></i>Mettre en relation
+                                </button>
                             </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">
-                                    <i class="fas fa-map-marker-alt text-primary mr-1"></i>{{ offer.city }}, {{ offer.country }}
-                                </span>
-                                <span class="text-2xl font-bold text-gray-900">{{ formatCurrency(offer.amount) }} {{ offer.currency }}</span>
-                            </div>
-                            <p class="text-xs text-gray-500">{{ offer.timeAgo }}</p>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <h4 class="text-2xl font-bold text-blue-600 mb-6 flex items-center">
+                    <h4 class="text-2xl font-bold text-yellow-600 mb-6 flex items-center">
                         <i class="fas fa-hand-holding-heart mr-3"></i>Demandes Actives
                     </h4>
                     <div class="space-y-4">
-                        <div v-for="request in recentRequests" :key="request.id" class="bg-white rounded-xl shadow-sm p-6 hover-lift border-l-4 border-blue-500">
-                            <div class="flex items-start justify-between mb-3">
-                                <div class="flex items-center">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
-                                        <i class="fas fa-user text-white"></i>
+                        <div v-for="request in recentRequests" :key="request.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-yellow-500">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between mb-4">
+                                    <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                        <i class="fas fa-hand-holding-heart mr-1"></i>
+                                        Demande
+                                    </span>
+                                </div>
+
+                                <div class="flex items-center mb-4">
+                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-hashtag text-white"></i>
                                     </div>
-                                    <div>
-                                        <p class="font-semibold text-gray-900">{{ request.userName }}</p>
+                                    <div class="min-w-0">
+                                        <p class="font-semibold text-gray-900 truncate">Nouvelle demande</p>
                                         <p class="text-sm text-gray-500">
-                                            <i class="fas fa-star text-yellow-500 mr-1"></i>{{ request.rating }}
+                                            <i class="fas fa-star text-yellow-500 mr-1"></i>{{ request.ratings }}
                                         </p>
                                     </div>
                                 </div>
-                                <span class="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></span>
+
+                                <div class="mb-4">
+                                    <div class="country-badge mb-2">
+                                        <i class="fas fa-flag" style="color: var(--primary);"></i>
+                                        <span class="font-semibold text-gray-900">{{ request.country }}</span>
+                                    </div>
+                                    <div class="flex items-center text-gray-700">
+                                        <i class="fas fa-map-marker-alt w-5" style="color: var(--primary);"></i>
+                                        <span class="font-medium">{{ request.city }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-600">Montant</span>
+                                        <div class="flex items-center">
+                                            <i class="fas fa-coins text-primary mr-2"></i>
+                                            <span class="text-sm text-gray-600">{{ request.currency }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-2xl font-bold text-gray-900 mt-1">
+                                        {{ formatCurrency(request.amount) }}
+                                    </div>
+                                </div>
+
+                                <div class="text-sm text-gray-500 mb-4">
+                                    <i class="fas fa-clock mr-1"></i>{{ request.timeAgo }}
+                                </div>
+
+                                <button @click="openContactModal(request)" class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
+                                    <i class="fas fa-comment mr-2"></i>Mettre en relation
+                                </button>
                             </div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">
-                                    <i class="fas fa-map-marker-alt text-primary mr-1"></i>{{ request.city }}, {{ request.country }}
-                                </span>
-                                <span class="text-2xl font-bold text-gray-900">{{ formatCurrency(request.amount) }} {{ request.currency }}</span>
-                            </div>
-                            <p class="text-xs text-gray-500">{{ request.timeAgo }}</p>
                         </div>
                     </div>
                 </div>
@@ -294,7 +356,7 @@ ob_start(); ?>
                 <p class="text-xl text-gray-300 max-w-2xl mx-auto">Des fonctionnalités pensées pour votre sécurité et votre confort</p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
                 <div v-for="(feature, index) in features" :key="index" class="bg-white/10 backdrop-blur-md rounded-xl p-6 hover-lift border border-white/20" :style="`animation-delay: ${index * 0.1}s`">
                     <div class="w-16 h-16 primary-gradient rounded-lg flex items-center justify-center mb-4">
                         <i :class="feature.icon + ' text-white text-2xl'"></i>
@@ -316,7 +378,7 @@ ob_start(); ?>
                 <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
                     Invitez vos amis et bénéficiez de <span class="text-amber-600 font-bold text-2xl">-10%</span> de commission sur leur première opération !
                 </p>
-                <div class="grid sm:grid-cols-3 gap-6 mb-8">
+                <div class="grid sm:grid-cols-2 gap-6 mb-8">
                     <div class="stat-card rounded-xl p-6">
                         <div class="text-3xl font-bold text-primary mb-2">-10%</div>
                         <div class="text-sm text-gray-600">Commission réduite</div>
@@ -325,14 +387,7 @@ ob_start(); ?>
                         <div class="text-3xl font-bold text-primary mb-2">∞</div>
                         <div class="text-sm text-gray-600">Parrainages illimités</div>
                     </div>
-                    <div class="stat-card rounded-xl p-6">
-                        <div class="text-3xl font-bold text-primary mb-2">€€€</div>
-                        <div class="text-sm text-gray-600">Économies garanties</div>
-                    </div>
                 </div>
-                <a href="marketplace.html" class="inline-block px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-lg text-lg font-semibold transition-all shadow-lg">
-                    <i class="fas fa-user-plus mr-2"></i>Parrainer maintenant
-                </a>
             </div>
         </div>
     </section>
@@ -436,6 +491,59 @@ ob_start(); ?>
         </div>
     </section>
 
+    <div v-if="showContactModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" @click.self="closeContactModal">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900">
+                    <i class="fas fa-handshake text-primary mr-2"></i>Mise en relation
+                </h3>
+                <button @click="closeContactModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div v-if="selectedListing" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center mb-3">
+                    <div :class="selectedListing.type === 'Offre' ? 'bg-green-500' : 'bg-yellow-500'" class="w-12 h-12 rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-hashtag text-white"></i>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-900">Annonce #{{ selectedListing.id }}</p>
+                        <p class="text-sm text-gray-600">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span :class="selectedListing.type === 'Offre' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'" class="px-3 py-1 rounded-full text-sm font-semibold">
+                        {{ selectedListing.type }}
+                    </span>
+                    <span class="text-xl font-bold text-gray-900">
+                        {{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}
+                    </span>
+                </div>
+            </div>
+
+            <form @submit.prevent="submitContactRequest" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-comment mr-1 text-primary"></i>Message
+                    </label>
+                    <textarea v-model="contactRequest.message" rows="4" required style="color: black;"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary
+                      focus:border-transparent" placeholder="Votre message..."></textarea>
+                </div>
+
+                <button type="submit" :disabled="contactRequestSubmitting" class="w-full py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    {{ contactRequestSubmitting ? 'Envoi en cours...' : 'Envoyer la demande' }}
+                </button>
+
+                <div v-if="contactRequestSuccess" class="p-4 bg-green-100 text-green-700 rounded-lg text-sm">
+                    <i class="fas fa-check-circle mr-2"></i>Demande envoyée ! Nous vous mettrons en contact sous peu.
+                </div>
+            </form>
+        </div>
+    </div>
+
     <?php include 'footer.php'; ?>
 </div>
 
@@ -444,6 +552,10 @@ ob_start(); ?>
         createApp
     } = Vue;
 
+    const api = axios.create({
+        baseURL: 'index.php'
+    });
+
     createApp({
         data() {
             return {
@@ -451,6 +563,14 @@ ob_start(); ?>
                 mobileMenuOpen: false,
                 contactFormSubmitting: false,
                 contactFormSuccess: false,
+                showContactModal: false,
+                selectedListing: null,
+                contactRequestSubmitting: false,
+                contactRequestSuccess: false,
+                contactRequest: {
+                    message: ''
+                },
+                isAuthenticated: <?php echo json_encode(isset($_SESSION['id'])); ?>,
                 contactForm: {
                     name: '',
                     email: '',
@@ -474,77 +594,12 @@ ob_start(); ?>
                         description: 'Finalisez le transfert et recevez votre argent instantanément'
                     }
                 ],
-                recentOffers: [{
-                        id: 1,
-                        userName: 'Jean Dupont',
-                        rating: 4.8,
-                        amount: 500,
-                        currency: 'EUR',
-                        country: 'France',
-                        city: 'Paris',
-                        timeAgo: 'Il y a 2h'
-                    },
-                    {
-                        id: 2,
-                        userName: 'Kofi Mensah',
-                        rating: 4.7,
-                        amount: 2000,
-                        currency: 'GHS',
-                        country: 'Ghana',
-                        city: 'Accra',
-                        timeAgo: 'Il y a 5h'
-                    },
-                    {
-                        id: 3,
-                        userName: 'Fatou Sow',
-                        rating: 4.9,
-                        amount: 300000,
-                        currency: 'XOF',
-                        country: 'Côte d\'Ivoire',
-                        city: 'Abidjan',
-                        timeAgo: 'Il y a 2h'
-                    }
-                ],
-                recentRequests: [{
-                        id: 1,
-                        userName: 'Aminata Diallo',
-                        rating: 4.9,
-                        amount: 250000,
-                        currency: 'XOF',
-                        country: 'Sénégal',
-                        city: 'Dakar',
-                        timeAgo: 'Il y a 3h'
-                    },
-                    {
-                        id: 2,
-                        userName: 'Marie Laurent',
-                        rating: 5.0,
-                        amount: 800,
-                        currency: 'EUR',
-                        country: 'France',
-                        city: 'Paris',
-                        timeAgo: 'Il y a 1h'
-                    },
-                    {
-                        id: 3,
-                        userName: 'John Smith',
-                        rating: 4.7,
-                        amount: 600,
-                        currency: 'GBP',
-                        country: 'Royaume-Uni',
-                        city: 'Londres',
-                        timeAgo: 'Il y a 7h'
-                    }
-                ],
+                recentOffers: [],
+                recentRequests: [],
                 features: [{
                         icon: 'fas fa-shield-alt',
                         title: 'Sécurité maximale',
                         description: 'Vérification d\'identité, cryptage des données et protection contre la fraude'
-                    },
-                    {
-                        icon: 'fas fa-bolt',
-                        title: 'Transferts instantanés',
-                        description: 'Recevez votre argent en quelques minutes, pas en jours'
                     },
                     {
                         icon: 'fas fa-percentage',
@@ -555,11 +610,6 @@ ob_start(); ?>
                         icon: 'fas fa-globe-africa',
                         title: 'Multi-pays',
                         description: 'Disponible dans 15+ pays en Afrique et en Europe'
-                    },
-                    {
-                        icon: 'fas fa-mobile-alt',
-                        title: 'Application mobile',
-                        description: 'Interface intuitive optimisée pour mobile et desktop'
                     },
                     {
                         icon: 'fas fa-headset',
@@ -608,6 +658,8 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
 
+            this.fetchListings();
+
             // Intersection Observer for fade-in animations
             const observerOptions = {
                 threshold: 0.1,
@@ -629,6 +681,59 @@ ob_start(); ?>
             });
         },
         methods: {
+            async fetchListings() {
+                try {
+                    const response = await api.get('', {
+                        params: {
+                            action: 'allListings'
+                        }
+                    });
+                    const data = response.data || [];
+
+                    // Trier par created_at décroissant
+                    const sortedData = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                    // Ajouter timeAgo
+                    const processedListings = sortedData.map(listing => {
+                        const createdDate = new Date(listing.created_at);
+                        const now = new Date();
+                        const diffHours = Math.floor((now - createdDate) / (1000 * 60 * 60));
+                        const diffDays = Math.floor(diffHours / 24);
+
+                        return {
+                            ...listing,
+                            timeAgo: diffHours < 1 ?
+                                "Il y a moins d'1h" : diffHours < 24 ?
+                                `Il y a ${diffHours}h` : `Il y a ${diffDays} jour${diffDays > 1 ? 's' : ''}`
+                        };
+                    });
+
+                    // Séparer les derniers 2 offres et derniers 2 demandes
+                    this.recentOffers = processedListings.filter(l => l.type === 'Offre').slice(0, 2);
+                    this.recentRequests = processedListings.filter(l => l.type === 'Demande').slice(0, 2);
+
+                    // Optionnel : extraire les pays, villes, devises
+                    this.countries = [...new Set(data.map(l => l.country))].sort();
+                    this.citiesByCountry = {};
+                    data.forEach(listing => {
+                        if (!this.citiesByCountry[listing.country]) this.citiesByCountry[listing.country] = [];
+                        if (!this.citiesByCountry[listing.country].includes(listing.city)) {
+                            this.citiesByCountry[listing.country].push(listing.city);
+                        }
+                    });
+                    Object.keys(this.citiesByCountry).forEach(country => {
+                        this.citiesByCountry[country].sort();
+                    });
+                    this.currencies = [...new Set(data.map(l => l.currency))].sort();
+
+                } catch (error) {
+                    console.error('Erreur lors du chargement des listings:', error);
+                    this.listings = [];
+                    this.recentOffers = [];
+                    this.recentRequests = [];
+                }
+            },
+
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');
@@ -645,6 +750,56 @@ ob_start(); ?>
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0
                 }).format(amount);
+            },
+            openContactModal(listing) {
+                if (!this.isAuthenticated) {
+                    alert('Vous devez être connecté pour être mis en relation');
+                    return;
+                }
+                this.selectedListing = listing;
+                this.showContactModal = true;
+                this.contactRequestSuccess = false;
+            },
+            closeContactModal() {
+                this.showContactModal = false;
+                this.selectedListing = null;
+                this.contactRequest = {
+                    message: ''
+                };
+                this.contactRequestSuccess = false;
+            },
+            async submitContactRequest() {
+                if (!this.contactRequest.message.trim() || !this.selectedListing) return;
+
+                this.contactRequestSubmitting = true;
+                this.contactRequestSuccess = false;
+
+
+
+                try {
+                    const response = await api.post(
+                        '', // URL relative
+                        {
+                            message: this.contactRequest.message,
+                            listing_id: this.selectedListing.listing_id
+                        }, {
+                            params: {
+                                action: 'contactRequest'
+                            },
+                            headers: {
+                                'Content-Type': 'application/json'
+                            } // important
+                        }
+                    );
+
+                    this.contactRequestSuccess = true;
+                    this.contactRequest.message = ''; // Réinitialise le message après succès
+                } catch (error) {
+                    console.error('Erreur lors de l’envoi de la demande de contact :', error);
+                    alert('Une erreur est survenue. Veuillez réessayer.');
+                } finally {
+                    this.contactRequestSubmitting = false;
+                }
             },
             submitContactForm() {
                 this.contactFormSubmitting = true;
@@ -736,15 +891,28 @@ ob_start(); ?>
         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
     }
 
-    /* Added dark mode icon color fixes */
-    .dark-mode i.fa-moon,
-    .dark-mode i.fa-sun {
-        color: inherit !important;
+    /* Icons in colored backgrounds should be white */
+    .bg-green-100 i,
+    .bg-yellow-100 i,
+    .bg-blue-100 i,
+    .bg-green-500 i,
+    .bg-yellow-500 i,
+    .bg-blue-500 i,
+    .bg-green-600 i,
+    .bg-blue-600 i,
+    .bg-gradient-to-br i,
+    .primary-gradient i {
+        color: white !important;
     }
 
-    .dark-mode .text-gray-600 i,
-    .dark-mode .text-gray-700 i {
-        color: #94A3B8 !important;
+    /* Sun icon should be yellow */
+    .text-yellow-400 {
+        color: #FBBF24 !important;
+    }
+
+    /* Primary colored icons */
+    .text-primary i {
+        color: var(--primary) !important;
     }
 
     .primary-gradient {
@@ -780,6 +948,21 @@ ob_start(); ?>
     .parallax-content {
         position: relative;
         z-index: 1;
+    }
+
+    .country-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+        border-radius: 9999px;
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
     }
 
     @keyframes fadeInUp {
@@ -840,6 +1023,22 @@ ob_start(); ?>
         50% {
             box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
         }
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-content {
+        animation: modalSlideIn 0.3s ease-out;
     }
 
     .fade-in-up {

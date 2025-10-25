@@ -30,8 +30,8 @@ echo $isAuthenticated;
                             <p class="text-xs sm:text-sm text-gray-600 mb-1">Total Offres</p>
                             <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ stats.totalOffers }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-hand-holding-usd text-xl sm:text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-hand-holding-usd text-white text-xl sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
@@ -41,8 +41,8 @@ echo $isAuthenticated;
                             <p class="text-xs sm:text-sm text-gray-600 mb-1">Total Demandes</p>
                             <p class="text-2xl sm:text-3xl font-bold text-yellow-600">{{ stats.totalRequests }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center">
-                            <i class="fas fa-hand-holding-heart text-xl sm:text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-hand-holding-heart text-white text-xl sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
@@ -52,8 +52,8 @@ echo $isAuthenticated;
                             <p class="text-xs sm:text-sm text-gray-600 mb-1">Pays actifs</p>
                             <p class="text-2xl sm:text-3xl font-bold text-primary">{{ stats.activeCountries }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-primary rounded-full flex items-center justify-center">
-                            <i class="fas fa-globe-africa text-xl sm:text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-globe-africa text-white text-xl sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
@@ -63,8 +63,8 @@ echo $isAuthenticated;
                             <p class="text-xs sm:text-sm text-gray-600 mb-1">Villes actives</p>
                             <p class="text-2xl sm:text-3xl font-bold text-primary">{{ stats.activeCities }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 text-primary rounded-full flex items-center justify-center">
-                            <i class="fas fa-city text-xl sm:text-2xl"></i>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-city text-white text-xl sm:text-2xl"></i>
                         </div>
                     </div>
                 </div>
@@ -133,22 +133,26 @@ echo $isAuthenticated;
                 <!-- Updated color filter to use green for offers and yellow for demands -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-3">
-                        <i class="fas fa-palette mr-1"></i>Filtrer par type
+                        <i class="fas fa-clock mr-1"></i>Filtrer par délai
                     </label>
                     <div class="flex flex-wrap gap-3">
-                        <button @click="toggleColorFilter('all')" :class="['color-filter-btn', filters.color === 'all' ? 'active' : '']" style="background: linear-gradient(135deg, #10B981, #F59E0B);" title="Tous">
+                        <button @click="toggleDeadlineFilter('all')" :class="['color-filter-btn', filters.deadline === 'all' ? 'active' : '']" style="background: linear-gradient(135deg, #10B981, #F59E0B, #EF4444);" title="Tous">
                             <span class="sr-only">Tous</span>
                         </button>
-                        <button @click="toggleColorFilter('green')" :class="['color-filter-btn', filters.color === 'green' ? 'active' : '']" style="background-color: #10B981;" title="Offres">
-                            <span class="sr-only">Vert</span>
+                        <button @click="toggleDeadlineFilter('Urgent')" :class="['color-filter-btn', filters.deadline === 'Urgent' ? 'active' : '']" style="background-color: #10B981;" title="Urgent">
+                            <span class="sr-only">Urgent</span>
                         </button>
-                        <button @click="toggleColorFilter('yellow')" :class="['color-filter-btn', filters.color === 'yellow' ? 'active' : '']" style="background-color: #F59E0B;" title="Demandes">
-                            <span class="sr-only">Jaune</span>
+                        <button @click="toggleDeadlineFilter('Deux semaines')" :class="['color-filter-btn', filters.deadline === 'Deux semaines' ? 'active' : '']" style="background-color: #F59E0B;" title="Deux semaines">
+                            <span class="sr-only">Deux semaines</span>
+                        </button>
+                        <button @click="toggleDeadlineFilter('Nulle')" :class="['color-filter-btn', filters.deadline === 'Nulle' ? 'active' : '']" style="background-color: #EF4444;" title="Nulle">
+                            <span class="sr-only">Nulle</span>
                         </button>
                     </div>
                     <p class="text-xs text-gray-500 mt-2">
-                        <span class="inline-block w-3 h-3 rounded-full bg-green-500 mr-1"></span> Offres
-                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500 ml-3 mr-1"></span> Demandes
+                        <span class="inline-block w-3 h-3 rounded-full bg-green-500 mr-1"></span> Urgent
+                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500 ml-3 mr-1"></span> Deux semaines
+                        <span class="inline-block w-3 h-3 rounded-full bg-red-500 ml-3 mr-1"></span> Nulle
                     </p>
                 </div>
             </div>
@@ -171,7 +175,8 @@ echo $isAuthenticated;
                                 <i class="fas fa-hashtag text-white"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="font-semibold text-gray-900 truncate">Annonce #{{ listing.id }}</p>
+                                <!-- Changed from "Annonce #{{ listing.id }}" to just listing.id -->
+                                <p class="font-semibold text-gray-900 truncate">{{ listing.id }}</p>
                                 <p class="text-sm text-gray-500">
                                     <i class="fas fa-star text-yellow-500 mr-1"></i>{{ listing.ratings }}
                                 </p>
@@ -374,7 +379,7 @@ echo $isAuthenticated;
                     currency: '',
                     type: '',
                     maxAmount: null,
-                    color: 'all'
+                    deadline: 'all'
                 },
                 currentPage: 1,
                 itemsPerPage: 9,
@@ -419,15 +424,8 @@ echo $isAuthenticated;
                     filtered = filtered.filter(l => parseFloat(l.amount) <= this.filters.maxAmount);
                 }
 
-                if (this.filters.color !== 'all') {
-                    filtered = filtered.filter(l => {
-                        if (this.filters.color === 'green') {
-                            return l.type === 'Offre';
-                        } else if (this.filters.color === 'yellow') {
-                            return l.type === 'Demande';
-                        }
-                        return true;
-                    });
+                if (this.filters.deadline !== 'all') {
+                    filtered = filtered.filter(l => l.deadline === this.filters.deadline);
                 }
 
                 return filtered;
@@ -534,8 +532,8 @@ echo $isAuthenticated;
             applyFilters() {
                 this.currentPage = 1;
             },
-            toggleColorFilter(color) {
-                this.filters.color = color;
+            toggleDeadlineFilter(deadline) {
+                this.filters.deadline = deadline;
                 this.applyFilters();
             },
             resetFilters() {
@@ -546,7 +544,7 @@ echo $isAuthenticated;
                     currency: '',
                     type: '',
                     maxAmount: null,
-                    color: 'all'
+                    deadline: 'all'
                 };
                 this.applyFilters();
             },
@@ -714,18 +712,21 @@ echo $isAuthenticated;
         color: #64748B !important;
     }
 
-    /* Fix dark mode icon visibility */
-    .dark-mode i {
-        color: #94A3B8 !important;
+    /* Fixed icon colors - white icons stay white, sun icon stays yellow */
+    .bg-green-100 i,
+    .bg-yellow-100 i,
+    .bg-green-500 i,
+    .bg-yellow-500 i,
+    .primary-gradient i {
+        color: white !important;
     }
 
-    .dark-mode .text-primary i,
-    .dark-mode .primary-gradient i {
-        color: #10B981 !important;
+    .text-yellow-400 {
+        color: #FBBF24 !important;
     }
 
-    .dark-mode .bg-white i {
-        color: #94A3B8 !important;
+    .text-primary i {
+        color: var(--primary) !important;
     }
 
     .primary-gradient {

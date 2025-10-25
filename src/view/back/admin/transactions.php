@@ -136,7 +136,9 @@ ob_start(); ?>
                                     <tr v-for="listing in paginatedListings" :key="listing.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                                         <td data-label="Annonceur" class="px-6 py-4 whitespace-nowrap">
                                             <div>
-                                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ listing.first_name }} {{ listing.last_name }}</div>
+                                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(listing.first_name) }}
+                                                    {{ capitalizeAll(listing.last_name) }}
+                                                </div>
                                                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ listing.email }}</div>
                                             </div>
                                         </td>
@@ -321,7 +323,9 @@ ob_start(); ?>
             <div v-if="selectedListing" class="space-y-4">
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
                     <p class="text-sm text-gray-600 dark:text-gray-400">Destinataire</p>
-                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedListing.first_name }} {{ selectedListing.last_name }}</p>
+                    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(selectedListing.first_name) }}
+                        {{ capitalizeAll(selectedListing.last_name) }}
+                    </p>
                     <p class="text-sm text-gray-500 dark:text-gray-400">{{ selectedListing.email }}</p>
                 </div>
 
@@ -727,6 +731,14 @@ ob_start(); ?>
                     console.error('Erreur:', error);
                     alert('Erreur lors de l\'envoi de la réponse');
                 }
+            },
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
             },
             previousPage() {
                 if (this.currentPage > 1) this.currentPage--;

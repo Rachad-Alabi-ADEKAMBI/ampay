@@ -11,7 +11,7 @@ function contactRequestUser()
     header('Content-Type: application/json; charset=utf-8');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Pour capturer les données JSON envoyées par Axios
+    // Capturer les données JSON envoyées par Axios
     $input = json_decode(file_get_contents('php://input'), true);
     if ($input) {
         $_POST = array_merge($_POST, $input);
@@ -19,9 +19,14 @@ function contactRequestUser()
 
     file_put_contents('debug_log.txt', print_r($_POST, true), FILE_APPEND);
 
-    if (!isset($_POST['message'], $_POST['listing_id'])) {
+    // Vérification des champs requis
+    $missingFields = [];
+    if (!isset($_POST['message'])) $missingFields[] = 'message';
+    if (!isset($_POST['listing_id'])) $missingFields[] = 'listing_id';
+
+    if (!empty($missingFields)) {
         http_response_code(400);
-        echo json_encode(['error' => 'Champs manquants.']);
+        echo json_encode(['error' => 'Champs manquants : ' . implode(', ', $missingFields)]);
         exit;
     }
 
@@ -45,11 +50,11 @@ function contactRequestUser()
 
     try {
         $stmt = $pdo->prepare("
-            INSERT INTO messages (created_at, transaction_id, user_id, message, status)
-            VALUES (NOW(), :transaction_id, :user_id, :message, 'envoyé')
+            INSERT INTO messages (created_at, listing_id, user_id, message, status)
+            VALUES (NOW(), :listing_id, :user_id, :message, 'Envoyé')
         ");
         $stmt->execute([
-            ':transaction_id' => $listing_id,
+            ':listing_id' => $listing_id,
             ':user_id' => $user_id,
             ':message' => $message
         ]);
@@ -59,8 +64,4 @@ function contactRequestUser()
         http_response_code(500);
         echo json_encode(['error' => 'Erreur serveur : ' . $e->getMessage()]);
     }
-}
-
-function fetchMesssageByListingId(){
-
 }

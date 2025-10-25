@@ -46,9 +46,6 @@ ob_start(); ?>
                             Admin
                         </span>
                     </div>
-                    <button @click="printList" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
-                        <i class="fas fa-print mr-2"></i>Imprimer la liste
-                    </button>
                 </div>
                 <!-- Stats -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
@@ -117,16 +114,12 @@ ob_start(); ?>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <!-- Updated hover to use gray-750 like transactions page, removed user icon, restructured user display -->
+                                <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-750">
                                     <td class="px-6 py-4 whitespace-nowrap" data-label="Utilisateur">
-                                        <div class="flex items-center">
-                                            <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
-                                                <i class="fas fa-user text-white"></i>
-                                            </div>
-                                            <div>
-                                                <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ user.name }}</div>
-                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</div>
-                                            </div>
+                                        <div>
+                                            <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(user.first_name) }} {{ capitalizeAll(user.last_name) }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" data-label="Pays">
@@ -497,6 +490,14 @@ ob_start(); ?>
                     day: 'numeric'
                 });
             },
+            capitalizeFirstLetter(word) {
+                if (!word) return '';
+                return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+            },
+            capitalizeAll(word) {
+                if (!word) return '';
+                return word.toString().toUpperCase();
+            },
             previousPage() {
                 if (this.currentPage > 1) this.currentPage--;
             },
@@ -518,6 +519,8 @@ ob_start(); ?>
         --primary: #10B981;
         --bg-dark: #0F172A;
         --bg-dark-secondary: #1E293B;
+        /* Added custom gray-750 color for better dark mode hover like transactions page */
+        --bg-gray-750: #1a2332;
     }
 
     body.dark-mode {
@@ -582,8 +585,9 @@ ob_start(); ?>
         color: #64748B !important;
     }
 
-    .dark-mode i {
-        color: inherit;
+    /* Added custom dark mode hover color like transactions page */
+    .dark-mode tr:hover {
+        background-color: var(--bg-gray-750) !important;
     }
 
     .primary-gradient {
