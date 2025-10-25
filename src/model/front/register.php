@@ -127,8 +127,15 @@ function registerUser()
         $userId = $pdo->lastInsertId();
 
         // Création du lien de parrainage : 2 premières lettres du nom de famille + jour + 'am25'
-        $day = date('d');
-        $referral_link = strtoupper(substr($lastName, 0, 2)) . $day . 'am25';
+        $day = date('d');          // Jour actuel, ex: 25
+        $hour = date('H');         // Heure actuelle au format 24h, ex: 14
+        $minute = date('i');       // Minute actuelle, ex: 37
+
+        $referral_link = strtoupper(substr($lastName, 0, 3)) . $day . $minute . 'am25' . $hour;
+
+        // Exemple : $lastName = "Dupont", jour = 25, minute = 37, heure = 14
+        // Résultat : DUP2537am2514
+
 
         // Mise à jour du lien de parrainage
         $stmt = $pdo->prepare("UPDATE users SET referral_link = ? WHERE id = ?");

@@ -7,6 +7,10 @@ ob_start(); ?>
 
 
 <div class="app" id="app">
+    <!-- Added theme and language toggle buttons -->
+
+   
+
     <?php include 'header.php'; ?>
 
 
@@ -16,34 +20,34 @@ ob_start(); ?>
                 <div class="text-white space-y-6 slide-in-left">
                     <div class="inline-block px-4 py-2 bg-primary/20 backdrop-blur-sm rounded-full text-primary-light border border-primary/30">
                         <i class="fas fa-star mr-2"></i>
-                        <span class="font-semibold">Transferts d'argent instantané </span>
+                        <span class="font-semibold">{{ t.hero_badge }}</span>
                     </div>
                     <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
-                        Transfert d'argent <span class="text-primary">sans intermédiaire</span>
+                        {{ t.hero_title }} <span class="text-primary">{{ t.hero_title_highlight }}</span>
                     </h1>
                     <p class="text-xl text-gray-300 leading-relaxed">
-                        Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et international.
+                        {{ t.hero_description }}
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4 pt-4">
                         <a href="index.php?action=marketplace" class="px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity text-center shadow-lg">
-                            <i class="fas fa-rocket mr-2"></i>Commencer maintenant
+                            <i class="fas fa-rocket mr-2"></i>{{ t.cta_start }}
                         </a>
                         <a href="#how-it-works" class="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white/30 rounded-lg text-lg font-semibold hover:bg-white/20 transition-colors text-center">
-                            <i class="fas fa-play-circle mr-2"></i>Découvrir
+                            <i class="fas fa-play-circle mr-2"></i>{{ t.cta_discover }}
                         </a>
                     </div>
                     <div class="grid grid-cols-3 gap-4 pt-8">
                         <div class="text-center">
                             <div class="text-3xl font-bold text-primary">2.5K+</div>
-                            <div class="text-sm text-gray-400">Utilisateurs</div>
+                            <div class="text-sm text-gray-400">{{ t.stats_users }}</div>
                         </div>
                         <div class="text-center">
                             <div class="text-3xl font-bold text-primary">15+</div>
-                            <div class="text-sm text-gray-400">Pays</div>
+                            <div class="text-sm text-gray-400">{{ t.stats_countries }}</div>
                         </div>
                         <div class="text-center">
                             <div class="text-3xl font-bold text-primary">€2M+</div>
-                            <div class="text-sm text-gray-400">Transférés</div>
+                            <div class="text-sm text-gray-400">{{ t.stats_transferred }}</div>
                         </div>
                     </div>
                 </div>
@@ -84,19 +88,19 @@ ob_start(); ?>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
                 <div class="text-center fade-in-up">
                     <i class="fas fa-shield-alt text-4xl text-primary mb-2"></i>
-                    <div class="font-semibold text-gray-900">100% Sécurisé</div>
+                    <div class="font-semibold text-gray-900">{{ t.feature_secure }}</div>
                 </div>
                 <div class="text-center fade-in-up" style="animation-delay: 0.1s;">
                     <i class="fas fa-bolt text-4xl text-primary mb-2"></i>
-                    <div class="font-semibold text-gray-900">Instantané</div>
+                    <div class="font-semibold text-gray-900">{{ t.feature_instant }}</div>
                 </div>
                 <div class="text-center fade-in-up" style="animation-delay: 0.2s;">
                     <i class="fas fa-coins text-4xl text-primary mb-2"></i>
-                    <div class="font-semibold text-gray-900">Frais réduits</div>
+                    <div class="font-semibold text-gray-900">{{ t.feature_low_fees }}</div>
                 </div>
                 <div class="text-center fade-in-up" style="animation-delay: 0.3s;">
                     <i class="fas fa-headset text-4xl text-primary mb-2"></i>
-                    <div class="font-semibold text-gray-900">Support 24/7</div>
+                    <div class="font-semibold text-gray-900">{{ t.feature_support }}</div>
                 </div>
             </div>
         </div>
@@ -105,8 +109,8 @@ ob_start(); ?>
     <section id="services" class="py-20 bg-gray-50">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Nos Services</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Deux profils, une solution innovante pour vos transferts d'argent</p>
+                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.services_title }}</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ t.services_subtitle }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
@@ -116,33 +120,34 @@ ob_start(); ?>
                         <i class="fas fa-hand-holding-usd text-white text-6xl relative z-10"></i>
                     </div>
                     <div class="p-8">
+                        <!-- Translated service card content -->
                         <div class="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
-                            Pour Offreurs
+                            {{ t.for_providers }}
                         </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-4">Proposez vos espèces</h3>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4">{{ t.provider_title }}</h3>
                         <p class="text-gray-600 mb-6 leading-relaxed">
-                            Vous avez de l'argent en espèces ? Proposez-le et gagnez une commission sur chaque transaction.
+                            {{ t.provider_description }}
                         </p>
                         <ul class="space-y-3 mb-6">
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Définissez votre montant disponible</span>
+                                <span class="text-gray-700">{{ t.provider_feature_1 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Choisissez votre devise et localisation</span>
+                                <span class="text-gray-700">{{ t.provider_feature_2 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Recevez des demandes instantanément</span>
+                                <span class="text-gray-700">{{ t.provider_feature_3 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Gagnez des commissions attractives</span>
+                                <span class="text-gray-700">{{ t.provider_feature_4 }}</span>
                             </li>
                         </ul>
                         <a href="marketplace.html" class="block w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-center transition-colors">
-                            Devenir offreur
+                            {{ t.become_provider }}
                         </a>
                     </div>
                 </div>
@@ -153,47 +158,50 @@ ob_start(); ?>
                         <i class="fas fa-hand-holding-heart text-white text-6xl relative z-10"></i>
                     </div>
                     <div class="p-8">
+                        <!-- Translated requester card content -->
                         <div class="inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
-                            Pour Demandeurs
+                            {{ t.for_requesters }}
                         </div>
-                        <h3 class="text-3xl font-bold text-gray-900 mb-4">Recevez des espèces</h3>
+                        <h3 class="text-3xl font-bold text-gray-900 mb-4">{{ t.requester_title }}</h3>
                         <p class="text-gray-600 mb-6 leading-relaxed">
-                            Besoin d'argent en espèces rapidement ? Trouvez un offreur près de chez vous en quelques clics.
+                            {{ t.requester_description }}
                         </p>
                         <ul class="space-y-3 mb-6">
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Indiquez le montant souhaité</span>
+                                <span class="text-gray-700">{{ t.requester_feature_1 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Précisez votre localisation</span>
+                                <span class="text-gray-700">{{ t.requester_feature_2 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Connectez-vous avec un offreur vérifié</span>
+                                <span class="text-gray-700">{{ t.requester_feature_3 }}</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
-                                <span class="text-gray-700">Recevez votre argent rapidement</span>
+                                <span class="text-gray-700">{{ t.requester_feature_4 }}</span>
                             </li>
                         </ul>
                         <a href="marketplace.html" class="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-center transition-colors">
-                            Faire une demande
+                            {{ t.make_request }}
                         </a>
                     </div>
                 </div>
             </div>
 
             <div class="text-center mb-12 fade-in-up">
-                <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Offres et Demandes Récentes</h3>
-                <p class="text-lg text-gray-600">Découvrez les dernières opportunités disponibles</p>
+                <!-- Translated recent offers section -->
+                <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ t.recent_offers_title }}</h3>
+                <p class="text-lg text-gray-600">{{ t.recent_offers_subtitle }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 <div>
+                    <!-- Translated offers heading -->
                     <h4 class="text-2xl font-bold text-green-600 mb-6 flex items-center">
-                        <i class="fas fa-hand-holding-usd mr-3"></i>Offres Disponibles
+                        <i class="fas fa-hand-holding-usd mr-3"></i>{{ t.available_offers }}
                     </h4>
                     <div class="space-y-4">
                         <div v-for="offer in recentOffers" :key="offer.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-green-500">
@@ -201,7 +209,7 @@ ob_start(); ?>
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
                                         <i class="fas fa-hand-holding-usd mr-1"></i>
-                                        Offre
+                                        {{ t.offer }}
                                     </span>
                                 </div>
 
@@ -210,7 +218,7 @@ ob_start(); ?>
                                         <i class="fas fa-hashtag text-white"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="font-semibold text-gray-900 truncate">Nouvelle offre</p>
+                                        <p class="font-semibold text-gray-900 truncate">{{ t.new_offer }}</p>
                                         <p class="text-sm text-gray-500">
                                             <i class="fas fa-star text-yellow-500 mr-1"></i>{{ offer.ratings }}
                                         </p>
@@ -230,7 +238,7 @@ ob_start(); ?>
 
                                 <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">Montant</span>
+                                        <span class="text-sm text-gray-600">{{ t.amount }}</span>
                                         <div class="flex items-center">
                                             <i class="fas fa-coins text-primary mr-2"></i>
                                             <span class="text-sm text-gray-600">{{ offer.currency }}</span>
@@ -246,7 +254,7 @@ ob_start(); ?>
                                 </div>
 
                                 <button @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
-                                    <i class="fas fa-comment mr-2"></i>Mettre en relation
+                                    <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
                         </div>
@@ -254,8 +262,9 @@ ob_start(); ?>
                 </div>
 
                 <div>
+                    <!-- Translated requests heading -->
                     <h4 class="text-2xl font-bold text-yellow-600 mb-6 flex items-center">
-                        <i class="fas fa-hand-holding-heart mr-3"></i>Demandes Actives
+                        <i class="fas fa-hand-holding-heart mr-3"></i>{{ t.active_requests }}
                     </h4>
                     <div class="space-y-4">
                         <div v-for="request in recentRequests" :key="request.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-yellow-500">
@@ -263,7 +272,7 @@ ob_start(); ?>
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
                                         <i class="fas fa-hand-holding-heart mr-1"></i>
-                                        Demande
+                                        {{ t.request }}
                                     </span>
                                 </div>
 
@@ -272,7 +281,7 @@ ob_start(); ?>
                                         <i class="fas fa-hashtag text-white"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <p class="font-semibold text-gray-900 truncate">Nouvelle demande</p>
+                                        <p class="font-semibold text-gray-900 truncate">{{ t.new_request }}</p>
                                         <p class="text-sm text-gray-500">
                                             <i class="fas fa-star text-yellow-500 mr-1"></i>{{ request.ratings }}
                                         </p>
@@ -292,7 +301,7 @@ ob_start(); ?>
 
                                 <div class="mb-4 p-4 bg-gray-50 rounded-lg">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">Montant</span>
+                                        <span class="text-sm text-gray-600">{{ t.amount }}</span>
                                         <div class="flex items-center">
                                             <i class="fas fa-coins text-primary mr-2"></i>
                                             <span class="text-sm text-gray-600">{{ request.currency }}</span>
@@ -308,7 +317,7 @@ ob_start(); ?>
                                 </div>
 
                                 <button @click="openContactModal(request)" class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
-                                    <i class="fas fa-comment mr-2"></i>Mettre en relation
+                                    <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
                         </div>
@@ -317,8 +326,9 @@ ob_start(); ?>
             </div>
 
             <div class="text-center mt-12">
+                <!-- Translated view all button -->
                 <a href="index.php?action=marketplace" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
-                    <i class="fas fa-store mr-2"></i>Voir toutes les offres
+                    <i class="fas fa-store mr-2"></i>{{ t.view_all_offers }}
                 </a>
             </div>
         </div>
@@ -327,8 +337,9 @@ ob_start(); ?>
     <section id="how-it-works" class="py-20 bg-white">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Comment ça marche ?</h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">Un processus simple en 3 étapes</p>
+                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.how_it_works }}</h2>
+                <!-- Translated subtitle -->
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ t.how_it_works_subtitle }}</p>
             </div>
 
             <div class="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -352,8 +363,9 @@ ob_start(); ?>
     <section id="features" class="parallax py-20" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&h=800&fit=crop');">
         <div class="parallax-content container mx-auto px-4 sm:px-6">
             <div class="text-center mb-16 text-white fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold mb-4">Pourquoi choisir AMPAY ?</h2>
-                <p class="text-xl text-gray-300 max-w-2xl mx-auto">Des fonctionnalités pensées pour votre sécurité et votre confort</p>
+                <h2 class="text-4xl sm:text-5xl font-bold mb-4">{{ t.why_choose }}</h2>
+                <!-- Translated subtitle -->
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">{{ t.why_choose_subtitle }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
@@ -374,18 +386,19 @@ ob_start(); ?>
                 <div class="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i class="fas fa-gift text-white text-4xl"></i>
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Programme de Parrainage</h2>
+                <!-- Translated referral program section -->
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ t.referral_title }}</h2>
                 <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
-                    Invitez vos amis et bénéficiez de <span class="text-amber-600 font-bold text-2xl">-10%</span> de commission sur leur première opération !
+                    {{ t.referral_description }}
                 </p>
                 <div class="grid sm:grid-cols-2 gap-6 mb-8">
                     <div class="stat-card rounded-xl p-6">
                         <div class="text-3xl font-bold text-primary mb-2">-10%</div>
-                        <div class="text-sm text-gray-600">Commission réduite</div>
+                        <div class="text-sm text-gray-600">{{ t.reduced_commission }}</div>
                     </div>
                     <div class="stat-card rounded-xl p-6">
                         <div class="text-3xl font-bold text-primary mb-2">∞</div>
-                        <div class="text-sm text-gray-600">Parrainages illimités</div>
+                        <div class="text-sm text-gray-600">{{ t.unlimited_referrals }}</div>
                     </div>
                 </div>
             </div>
@@ -395,8 +408,9 @@ ob_start(); ?>
     <section id="faq" class="py-20 bg-white">
         <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
             <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Questions Fréquentes</h2>
-                <p class="text-xl text-gray-600">Tout ce que vous devez savoir sur AMPAY</p>
+                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.faq_title }}</h2>
+                <!-- Translated subtitle -->
+                <p class="text-xl text-gray-600">{{ t.faq_subtitle }}</p>
             </div>
 
             <div class="space-y-4">
@@ -416,61 +430,63 @@ ob_start(); ?>
     <section id="contact" class="py-20 bg-white">
         <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
             <div class="text-center mb-16 fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">Contactez-nous</h2>
-                <p class="text-xl text-gray-600">Une question ? Notre équipe est là pour vous aider</p>
+                <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.contact_title }}</h2>
+                <!-- Translated subtitle -->
+                <p class="text-xl text-gray-600">{{ t.contact_subtitle }}</p>
             </div>
 
             <div class="bg-white rounded-2xl shadow-xl p-8">
                 <form @submit.prevent="submitContactForm" class="space-y-6">
                     <div class="grid sm:grid-cols-2 gap-6">
                         <div>
+                            <!-- Translated form labels -->
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-user mr-1 text-primary"></i>Nom complet
+                                <i class="fas fa-user mr-1 text-primary"></i>{{ t.full_name }}
                             </label>
-                            <input v-model="contactForm.name" type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Jean Dupont">
+                            <input v-model="contactForm.name" type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.full_name_placeholder">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                                <i class="fas fa-envelope mr-1 text-primary"></i>{{ t.email }}
                             </label>
-                            <input v-model="contactForm.email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="jean@example.com">
+                            <input v-model="contactForm.email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.email_placeholder">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-phone mr-1 text-primary"></i>Téléphone
+                            <i class="fas fa-phone mr-1 text-primary"></i>{{ t.phone }}
                         </label>
-                        <input v-model="contactForm.phone" type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="+33 6 12 34 56 78">
+                        <input v-model="contactForm.phone" type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.phone_placeholder">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-tag mr-1 text-primary"></i>Sujet
+                            <i class="fas fa-tag mr-1 text-primary"></i>{{ t.subject }}
                         </label>
                         <select v-model="contactForm.subject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Sélectionnez un sujet</option>
-                            <option value="general">Question générale</option>
-                            <option value="support">Support technique</option>
-                            <option value="partnership">Partenariat</option>
-                            <option value="other">Autre</option>
+                            <option value="">{{ t.select_subject }}</option>
+                            <option value="general">{{ t.subject_general }}</option>
+                            <option value="support">{{ t.subject_support }}</option>
+                            <option value="partnership">{{ t.subject_partnership }}</option>
+                            <option value="other">{{ t.subject_other }}</option>
                         </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-comment mr-1 text-primary"></i>Message
+                            <i class="fas fa-comment mr-1 text-primary"></i>{{ t.message }}
                         </label>
-                        <textarea v-model="contactForm.message" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Votre message..."></textarea>
+                        <textarea v-model="contactForm.message" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.message_placeholder"></textarea>
                     </div>
 
                     <button type="submit" :disabled="contactFormSubmitting" class="w-full px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                         <i class="fas fa-paper-plane mr-2"></i>
-                        {{ contactFormSubmitting ? 'Envoi en cours...' : 'Envoyer le message' }}
+                        {{ contactFormSubmitting ? t.sending : t.send_message }}
                     </button>
 
                     <div v-if="contactFormSuccess" class="p-4 bg-green-100 text-green-700 rounded-lg">
-                        <i class="fas fa-check-circle mr-2"></i>Message envoyé avec succès ! Nous vous répondrons bientôt.
+                        <i class="fas fa-check-circle mr-2"></i>{{ t.message_sent_success }}
                     </div>
                 </form>
             </div>
@@ -480,12 +496,13 @@ ob_start(); ?>
     <section class="py-20 hero-gradient">
         <div class="container mx-auto px-4 sm:px-6 text-center">
             <div class="max-w-3xl mx-auto text-white fade-in-up">
-                <h2 class="text-4xl sm:text-5xl font-bold mb-6">Prêt à commencer ?</h2>
+                <h2 class="text-4xl sm:text-5xl font-bold mb-6">{{ t.ready_title }}</h2>
+                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-300 mb-8 leading-relaxed">
-                    Rejoignez des milliers d'utilisateurs qui font confiance à AMPAY pour leurs transferts d'argent
+                    {{ t.ready_subtitle }}
                 </p>
                 <a href="index.php?action=marketplace" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
-                    <i class="fas fa-rocket mr-2"></i>Accéder à la Marketplace
+                    <i class="fas fa-rocket mr-2"></i>{{ t.access_marketplace }}
                 </a>
             </div>
         </div>
@@ -494,8 +511,9 @@ ob_start(); ?>
     <div v-if="showContactModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" @click.self="closeContactModal">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 modal-content">
             <div class="flex justify-between items-center mb-6">
+                <!-- Translated modal title -->
                 <h3 class="text-2xl font-bold text-gray-900">
-                    <i class="fas fa-handshake text-primary mr-2"></i>Mise en relation
+                    <i class="fas fa-handshake text-primary mr-2"></i>{{ t.connection_modal_title }}
                 </h3>
                 <button @click="closeContactModal" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -508,13 +526,13 @@ ob_start(); ?>
                         <i class="fas fa-hashtag text-white"></i>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900">Annonce #{{ selectedListing.id }}</p>
+                        <p class="font-semibold text-gray-900">{{ t.listing_number }} #{{ selectedListing.id }}</p>
                         <p class="text-sm text-gray-600">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
                     </div>
                 </div>
                 <div class="flex items-center justify-between">
                     <span :class="selectedListing.type === 'Offre' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'" class="px-3 py-1 rounded-full text-sm font-semibold">
-                        {{ selectedListing.type }}
+                        {{ selectedListing.type === 'Offre' ? t.offer : t.request }}
                     </span>
                     <span class="text-xl font-bold text-gray-900">
                         {{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}
@@ -525,20 +543,20 @@ ob_start(); ?>
             <form @submit.prevent="submitContactRequest" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-comment mr-1 text-primary"></i>Message
+                        <i class="fas fa-comment mr-1 text-primary"></i>{{ t.message }}
                     </label>
                     <textarea v-model="contactRequest.message" rows="4" required style="color: black;"
                         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary
-                      focus:border-transparent" placeholder="Votre message..."></textarea>
+                      focus:border-transparent" :placeholder="t.message_placeholder"></textarea>
                 </div>
 
                 <button type="submit" :disabled="contactRequestSubmitting" class="w-full py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                     <i class="fas fa-paper-plane mr-2"></i>
-                    {{ contactRequestSubmitting ? 'Envoi en cours...' : 'Envoyer la demande' }}
+                    {{ contactRequestSubmitting ? t.sending : t.send_request }}
                 </button>
 
                 <div v-if="contactRequestSuccess" class="p-4 bg-green-100 text-green-700 rounded-lg text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>Demande envoyée ! Nous vous mettrons en contact sous peu.
+                    <i class="fas fa-check-circle mr-2"></i>{{ t.request_sent_success }}
                 </div>
             </form>
         </div>
@@ -560,6 +578,7 @@ ob_start(); ?>
         data() {
             return {
                 darkMode: false,
+                currentLang: 'fr',
                 mobileMenuOpen: false,
                 contactFormSubmitting: false,
                 contactFormSuccess: false,
@@ -647,8 +666,175 @@ ob_start(); ?>
                         answer: 'Invitez un ami avec votre code de parrainage unique. Lorsqu\'il effectue sa première transaction, vous bénéficiez tous les deux d\'une réduction de 10% sur les commissions. Aucune limite de parrainages !',
                         open: false
                     }
-                ]
+                ],
+                translations: {
+                    fr: {
+                        hero_badge: 'Transferts d\'argent instantané',
+                        hero_title: 'Transfert d\'argent',
+                        hero_title_highlight: 'sans intermédiaire',
+                        hero_description: 'Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et international.',
+                        cta_start: 'Commencer maintenant',
+                        cta_discover: 'Découvrir',
+                        stats_users: 'Utilisateurs',
+                        stats_countries: 'Pays',
+                        stats_transferred: 'Transférés',
+                        feature_secure: '100% Sécurisé',
+                        feature_instant: 'Instantané',
+                        feature_low_fees: 'Frais réduits',
+                        feature_support: 'Support 24/7',
+                        services_title: 'Nos Services',
+                        services_subtitle: 'Deux profils, une solution innovante pour vos transferts d\'argent',
+                        for_providers: 'Pour Offreurs',
+                        provider_title: 'Proposez vos espèces',
+                        provider_description: 'Vous avez de l\'argent en espèces ? Proposez-le et gagnez une commission sur chaque transaction.',
+                        provider_feature_1: 'Définissez votre montant disponible',
+                        provider_feature_2: 'Choisissez votre devise et localisation',
+                        provider_feature_3: 'Recevez des demandes instantanément',
+                        provider_feature_4: 'Gagnez des commissions attractives',
+                        become_provider: 'Devenir offreur',
+                        for_requesters: 'Pour Demandeurs',
+                        requester_title: 'Recevez des espèces',
+                        requester_description: 'Besoin d\'argent en espèces rapidement ? Trouvez un offreur près de chez vous en quelques clics.',
+                        requester_feature_1: 'Indiquez le montant souhaité',
+                        requester_feature_2: 'Précisez votre localisation',
+                        requester_feature_3: 'Connectez-vous avec un offreur vérifié',
+                        requester_feature_4: 'Recevez votre argent rapidement',
+                        make_request: 'Faire une demande',
+                        recent_offers_title: 'Offres et Demandes Récentes',
+                        recent_offers_subtitle: 'Découvrez les dernières opportunités disponibles',
+                        available_offers: 'Offres Disponibles',
+                        active_requests: 'Demandes Actives',
+                        offer: 'Offre',
+                        request: 'Demande',
+                        new_offer: 'Nouvelle offre',
+                        new_request: 'Nouvelle demande',
+                        amount: 'Montant',
+                        connect: 'Mettre en relation',
+                        view_all_offers: 'Voir toutes les offres',
+                        how_it_works: 'Comment ça marche ?',
+                        how_it_works_subtitle: 'Un processus simple en 3 étapes',
+                        why_choose: 'Pourquoi choisir AMPAY ?',
+                        why_choose_subtitle: 'Des fonctionnalités pensées pour votre sécurité et votre confort',
+                        referral_title: 'Programme de Parrainage',
+                        referral_description: 'Invitez vos amis et bénéficiez de -10% de commission sur leur première opération !',
+                        reduced_commission: 'Commission réduite',
+                        unlimited_referrals: 'Parrainages illimités',
+                        faq_title: 'Questions Fréquentes',
+                        faq_subtitle: 'Tout ce que vous devez savoir sur AMPAY',
+                        contact_title: 'Contactez-nous',
+                        contact_subtitle: 'Une question ? Notre équipe est là pour vous aider',
+                        full_name: 'Nom complet',
+                        full_name_placeholder: 'Jean Dupont',
+                        email: 'Email',
+                        email_placeholder: 'jean@example.com',
+                        phone: 'Téléphone',
+                        phone_placeholder: '+33 6 12 34 56 78',
+                        subject: 'Sujet',
+                        select_subject: 'Sélectionnez un sujet',
+                        subject_general: 'Question générale',
+                        subject_support: 'Support technique',
+                        subject_partnership: 'Partenariat',
+                        subject_other: 'Autre',
+                        message: 'Message',
+                        message_placeholder: 'Votre message...',
+                        sending: 'Envoi en cours...',
+                        send_message: 'Envoyer le message',
+                        message_sent_success: 'Message envoyé avec succès ! Nous vous répondrons bientôt.',
+                        ready_title: 'Prêt à commencer ?',
+                        ready_subtitle: 'Rejoignez des milliers d\'utilisateurs qui font confiance à AMPAY pour leurs transferts d\'argent',
+                        access_marketplace: 'Accéder à la Marketplace',
+                        connection_modal_title: 'Mise en relation',
+                        listing_number: 'Annonce',
+                        send_request: 'Envoyer la demande',
+                        request_sent_success: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
+                    },
+                    en: {
+                        hero_badge: 'Instant money transfers',
+                        hero_title: 'Money transfer',
+                        hero_title_highlight: 'without intermediary',
+                        hero_description: 'Connect directly with people who have complementary needs. Fast, secure and international.',
+                        cta_start: 'Start now',
+                        cta_discover: 'Discover',
+                        stats_users: 'Users',
+                        stats_countries: 'Countries',
+                        stats_transferred: 'Transferred',
+                        feature_secure: '100% Secure',
+                        feature_instant: 'Instant',
+                        feature_low_fees: 'Low fees',
+                        feature_support: '24/7 Support',
+                        services_title: 'Our Services',
+                        services_subtitle: 'Two profiles, one innovative solution for your money transfers',
+                        for_providers: 'For Providers',
+                        provider_title: 'Offer your cash',
+                        provider_description: 'Do you have cash? Offer it and earn a commission on each transaction.',
+                        provider_feature_1: 'Set your available amount',
+                        provider_feature_2: 'Choose your currency and location',
+                        provider_feature_3: 'Receive requests instantly',
+                        provider_feature_4: 'Earn attractive commissions',
+                        become_provider: 'Become a provider',
+                        for_requesters: 'For Requesters',
+                        requester_title: 'Receive cash',
+                        requester_description: 'Need cash quickly? Find a provider near you in just a few clicks.',
+                        requester_feature_1: 'Indicate the desired amount',
+                        requester_feature_2: 'Specify your location',
+                        requester_feature_3: 'Connect with a verified provider',
+                        requester_feature_4: 'Receive your money quickly',
+                        make_request: 'Make a request',
+                        recent_offers_title: 'Recent Offers and Requests',
+                        recent_offers_subtitle: 'Discover the latest available opportunities',
+                        available_offers: 'Available Offers',
+                        active_requests: 'Active Requests',
+                        offer: 'Offer',
+                        request: 'Request',
+                        new_offer: 'New offer',
+                        new_request: 'New request',
+                        amount: 'Amount',
+                        connect: 'Connect',
+                        view_all_offers: 'View all offers',
+                        how_it_works: 'How does it work?',
+                        how_it_works_subtitle: 'A simple 3-step process',
+                        why_choose: 'Why choose AMPAY?',
+                        why_choose_subtitle: 'Features designed for your security and comfort',
+                        referral_title: 'Referral Program',
+                        referral_description: 'Invite your friends and get -10% commission on their first transaction!',
+                        reduced_commission: 'Reduced commission',
+                        unlimited_referrals: 'Unlimited referrals',
+                        faq_title: 'Frequently Asked Questions',
+                        faq_subtitle: 'Everything you need to know about AMPAY',
+                        contact_title: 'Contact us',
+                        contact_subtitle: 'Have a question? Our team is here to help',
+                        full_name: 'Full name',
+                        full_name_placeholder: 'John Doe',
+                        email: 'Email',
+                        email_placeholder: 'john@example.com',
+                        phone: 'Phone',
+                        phone_placeholder: '+1 234 567 8900',
+                        subject: 'Subject',
+                        select_subject: 'Select a subject',
+                        subject_general: 'General question',
+                        subject_support: 'Technical support',
+                        subject_partnership: 'Partnership',
+                        subject_other: 'Other',
+                        message: 'Message',
+                        message_placeholder: 'Your message...',
+                        sending: 'Sending...',
+                        send_message: 'Send message',
+                        message_sent_success: 'Message sent successfully! We will respond soon.',
+                        ready_title: 'Ready to start?',
+                        ready_subtitle: 'Join thousands of users who trust AMPAY for their money transfers',
+                        access_marketplace: 'Access Marketplace',
+                        connection_modal_title: 'Connection',
+                        listing_number: 'Listing',
+                        send_request: 'Send request',
+                        request_sent_success: 'Request sent! We will connect you shortly.'
+                    }
+                }
             };
+        },
+        computed: {
+            t() {
+                return this.translations[this.currentLang];
+            }
         },
         mounted() {
             // Check for saved dark mode preference
@@ -658,7 +844,10 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
 
-            this.fetchListings();
+            const savedLang = localStorage.getItem('language');
+            if (savedLang) {
+                this.currentLang = savedLang;
+            }
 
             // Intersection Observer for fade-in animations
             const observerOptions = {
@@ -679,6 +868,8 @@ ob_start(); ?>
                 el.style.opacity = '0';
                 observer.observe(el);
             });
+
+            this.fetchListings();
         },
         methods: {
             async fetchListings() {
@@ -708,7 +899,7 @@ ob_start(); ?>
                         };
                     });
 
-                    // Séparer les derniers 2 offres et derniers 2 demandes
+                    // Séparer les derniers 2 offres et derniers 2 demande
                     this.recentOffers = processedListings.filter(l => l.type === 'Offre').slice(0, 2);
                     this.recentRequests = processedListings.filter(l => l.type === 'Demande').slice(0, 2);
 
@@ -738,6 +929,10 @@ ob_start(); ?>
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
+            },
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
             },
             toggleMobileMenu() {
                 this.mobileMenuOpen = !this.mobileMenuOpen;

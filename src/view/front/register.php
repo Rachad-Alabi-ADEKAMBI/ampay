@@ -8,14 +8,18 @@ ob_start(); ?>
     const referralLinkFromPHP = <?= json_encode($referral_link) ?>;
 </script>
 
-
-
 <div id="app">
-    <!-- Added theme toggle button in top-right corner -->
-    <button @click="toggleDarkMode"
-        class="fixed top-4 right-4 z-50 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
-        <i :class="isDarkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-700'" class="text-xl"></i>
-    </button>
+    <!-- Updated language toggle to show flag emojis and theme icon to yellow -->
+    <div class="fixed top-4 right-4 z-50 flex gap-2">
+        <button @click="toggleLanguage"
+            class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:scale-110 transition-transform text-2xl">
+            {{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}
+        </button>
+        <button @click="toggleDarkMode"
+            class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:scale-110 transition-transform">
+            <i :class="isDarkMode ? 'fas fa-sun' : 'fas fa-moon'" class="text-yellow-400 text-xl"></i>
+        </button>
+    </div>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-2xl w-full space-y-8">
@@ -27,83 +31,89 @@ ob_start(); ?>
                         </a>
                     </div>
                 </div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Créer un compte AMPAY</h2>
+                <!-- Using translations for title and subtitle -->
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t.title }}</h2>
                 <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Déjà inscrit?
+                    {{ t.alreadyRegistered }}
                     <a href="index.php?action=loginPage" class="font-medium text-primary hover:text-primary-dark">
-                        Connectez-vous
+                        {{ t.login }}
                     </a>
                 </p>
             </div>
 
-
             <p class="text-center" v-if="sponsor_first_name && sponsor_last_name">
-                Vous avez été invité par <strong>{{ capitalizeFirstLetter(sponsor_first_name) }} {{ capitalizeAll(sponsor_last_name) }}</strong>
+                {{ t.invitedBy }} <strong>{{ capitalizeFirstLetter(sponsor_first_name) }} {{ capitalizeAll(sponsor_last_name) }}</strong>
             </p>
-
 
             <form @submit.prevent="handleRegister"
                 class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-user mr-1 text-primary"></i>Prénom
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-user mr-1 text-gray-900 dark:text-white"></i>{{ t.firstName }}
                         </label>
                         <input v-model="registerForm.firstName" type="text" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="Jean">
+                            :placeholder="t.firstNamePlaceholder">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-user mr-1 text-primary"></i>Nom
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-user mr-1 text-gray-900 dark:text-white"></i>{{ t.lastName }}
                         </label>
                         <input v-model="registerForm.lastName" type="text" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="Dupont">
+                            :placeholder="t.lastNamePlaceholder">
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-envelope mr-1 text-gray-900 dark:text-white"></i>{{ t.email }}
                         </label>
                         <input v-model="registerForm.email" type="email" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="jean.dupont@example.com">
+                            :placeholder="t.emailPlaceholder">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-flag mr-1 text-primary"></i>Pays
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-flag mr-1 text-gray-900 dark:text-white"></i>{{ t.country }}
                         </label>
                         <select v-model="registerForm.country" @change="onCountryChange" required
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Sélectionnez un pays</option>
-                            <option v-for="country in countries" :key="country.cca2" :value="country.cca2">
+                            <option value="">{{ t.selectCountry }}</option>
+                            <option v-for="country in countries" :key="country.cca2" :value="country.name.common">
                                 {{ country.name.common }}
                             </option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-city mr-1 text-primary"></i>Ville
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-city mr-1 text-gray-900 dark:text-white"></i>{{ t.city }}
                         </label>
                         <input v-model="registerForm.city" type="text" list="cities-list"
                             :disabled="!registerForm.country || loadingCities"
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:opacity-50"
-                            placeholder="Tapez pour rechercher une ville" @input="searchCities">
+                            :placeholder="t.cityPlaceholder" @input="searchCities">
                         <datalist id="cities-list">
                             <option v-for="city in cities" :key="city.id" :value="city.name">{{ city.name }}</option>
                         </datalist>
                         <p v-if="loadingCities" class="text-xs text-gray-500 mt-1">
-                            <i class="fas fa-spinner fa-spin mr-1"></i>Chargement des villes...
+                            <!-- Updated icon color to be black in light mode, white in dark mode -->
+                            <i class="fas fa-spinner fa-spin mr-1 text-gray-900 dark:text-white"></i>{{ t.loadingCities }}
                         </p>
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-phone mr-1 text-primary"></i>Téléphone
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-phone mr-1 text-gray-900 dark:text-white"></i>{{ t.phone }}
                         </label>
                         <div class="flex gap-2">
                             <input type="text" v-model="registerForm.phonePrefix" readonly
@@ -116,8 +126,9 @@ ob_start(); ?>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-lock mr-1 text-primary"></i>Mot de passe
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-lock mr-1 text-gray-900 dark:text-white"></i>{{ t.password }}
                         </label>
                         <div class="relative">
                             <input v-model="registerForm.password" :type="showPassword ? 'text' : 'password'"
@@ -126,17 +137,19 @@ ob_start(); ?>
                                 placeholder="••••••••">
                             <button type="button" @click="showPassword = !showPassword"
                                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                <!-- Updated icon color to be black in light mode, white in dark mode -->
+                                <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-gray-900 dark:text-white"></i>
                             </button>
                         </div>
                         <p v-if="registerForm.password && registerForm.password.length < 8" class="text-red-600 text-sm mt-1">
-                            Le mot de passe doit contenir au moins 8 caractères
+                            {{ t.passwordMinLength }}
                         </p>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-lock mr-1 text-primary"></i>Confirmer le mot de passe
+                        <!-- Updated label and icon colors to be black in light mode, white in dark mode -->
+                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-lock mr-1 text-gray-900 dark:text-white"></i>{{ t.confirmPassword }}
                         </label>
                         <div class="relative">
                             <input v-model="registerForm.confirmPassword" :type="showConfirmPassword ? 'text' : 'password'"
@@ -145,7 +158,8 @@ ob_start(); ?>
                                 placeholder="••••••••">
                             <button type="button" @click="showConfirmPassword = !showConfirmPassword"
                                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-                                <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                                <!-- Updated icon color to be black in light mode, white in dark mode -->
+                                <i :class="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'" class="text-gray-900 dark:text-white"></i>
                             </button>
                         </div>
                     </div>
@@ -155,23 +169,25 @@ ob_start(); ?>
                     <input v-model="registerForm.acceptTerms" id="terms" type="checkbox" required
                         class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
                     <label for="terms" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                        J'accepte les <a href="index.php?action=terms" class="text-primary hover:text-primary-dark">conditions d'utilisation</a>
-                        et la <a href="index.php?action=policy" class="text-primary hover:text-primary-dark">politique de confidentialité</a>
+                        {{ t.acceptTerms }} <a href="index.php?action=terms" class="text-primary hover:text-primary-dark">{{ t.termsOfUse }}</a>
+                        {{ t.and }} <a href="index.php?action=policy" class="text-primary hover:text-primary-dark">{{ t.privacyPolicy }}</a>
                     </label>
                 </div>
 
                 <button type="submit" :disabled="loading"
                     class="w-full px-4 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                     <i class="fas fa-user-plus mr-2"></i>
-                    {{ loading ? 'Inscription...' : 'Créer mon compte' }}
+                    {{ loading ? t.registering : t.createAccount }}
                 </button>
 
                 <div v-if="error" class="p-4 bg-red-100 text-red-700 rounded-lg text-sm">
-                    <i class="fas fa-exclamation-circle mr-2"></i>{{ error }}
+                    <!-- Updated icon color to be black in light mode, white in dark mode -->
+                    <i class="fas fa-exclamation-circle mr-2 text-gray-900 dark:text-white"></i>{{ error }}
                 </div>
 
                 <div v-if="success" class="p-4 bg-green-100 text-green-700 rounded-lg text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>{{ success }}
+                    <!-- Updated icon color to be black in light mode, white in dark mode -->
+                    <i class="fas fa-check-circle mr-2 text-gray-900 dark:text-white"></i>{{ success }}
                 </div>
             </form>
         </div>
@@ -187,16 +203,73 @@ ob_start(); ?>
         data() {
             return {
                 isDarkMode: false,
+                currentLang: 'fr',
+                translations: {
+                    fr: {
+                        title: 'Créer un compte AMPAY',
+                        alreadyRegistered: 'Déjà inscrit?',
+                        login: 'Connectez-vous',
+                        invitedBy: 'Vous avez été invité par',
+                        firstName: 'Prénom',
+                        firstNamePlaceholder: 'Jean',
+                        lastName: 'Nom',
+                        lastNamePlaceholder: 'Dupont',
+                        email: 'Email',
+                        emailPlaceholder: 'jean.dupont@example.com',
+                        country: 'Pays',
+                        selectCountry: 'Sélectionnez un pays',
+                        city: 'Ville',
+                        cityPlaceholder: 'Tapez pour rechercher une ville',
+                        loadingCities: 'Chargement des villes...',
+                        phone: 'Téléphone',
+                        password: 'Mot de passe',
+                        passwordMinLength: 'Le mot de passe doit contenir au moins 8 caractères',
+                        confirmPassword: 'Confirmer le mot de passe',
+                        acceptTerms: "J'accepte les",
+                        termsOfUse: "conditions d'utilisation",
+                        and: 'et la',
+                        privacyPolicy: 'politique de confidentialité',
+                        createAccount: 'Créer mon compte',
+                        registering: 'Inscription...'
+                    },
+                    en: {
+                        title: 'Create an AMPAY account',
+                        alreadyRegistered: 'Already registered?',
+                        login: 'Sign in',
+                        invitedBy: 'You were invited by',
+                        firstName: 'First Name',
+                        firstNamePlaceholder: 'John',
+                        lastName: 'Last Name',
+                        lastNamePlaceholder: 'Doe',
+                        email: 'Email',
+                        emailPlaceholder: 'john.doe@example.com',
+                        country: 'Country',
+                        selectCountry: 'Select a country',
+                        city: 'City',
+                        cityPlaceholder: 'Type to search for a city',
+                        loadingCities: 'Loading cities...',
+                        phone: 'Phone',
+                        password: 'Password',
+                        passwordMinLength: 'Password must contain at least 8 characters',
+                        confirmPassword: 'Confirm Password',
+                        acceptTerms: 'I accept the',
+                        termsOfUse: 'terms of use',
+                        and: 'and the',
+                        privacyPolicy: 'privacy policy',
+                        createAccount: 'Create my account',
+                        registering: 'Registering...'
+                    }
+                },
                 registerForm: {
-                    firstName: 'john',
-                    lastName: 'Wick',
-                    email: 'johnw@gmail.com',
-                    country: 'Benin',
-                    city: 'Cotonou',
-                    phonePrefix: '229',
-                    phone: '514569870',
-                    password: 'password',
-                    confirmPassword: 'password',
+                    firstName: '',
+                    lastName: '',
+                    email: '',
+                    country: '',
+                    city: '',
+                    phonePrefix: '',
+                    phone: '',
+                    password: '',
+                    confirmPassword: '',
                     role: 'user',
                     account_verified: 'no',
                     acceptTerms: true,
@@ -218,19 +291,34 @@ ob_start(); ?>
                 sponsor_id: ''
             };
         },
+        computed: {
+            t() {
+                return this.translations[this.currentLang];
+            }
+        },
         async mounted() {
             const savedDarkMode = localStorage.getItem('darkMode');
             if (savedDarkMode === 'true') {
                 this.isDarkMode = true;
                 document.body.classList.add('dark-mode');
             }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
+            }
+
             await this.loadCountries();
 
             if (this.referral_link) {
-                this.getSponsor(this.referral_link); // utilise this.referral_link
+                this.getSponsor(this.referral_link);
             }
         },
         methods: {
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+            },
             toggleDarkMode() {
                 this.isDarkMode = !this.isDarkMode;
                 if (this.isDarkMode) {
@@ -274,7 +362,6 @@ ob_start(); ?>
                 if (!word) return '';
                 return word.toString().toUpperCase();
             },
-
             async loadCountries() {
                 try {
                     const response = await axios.get('https://restcountries.com/v3.1/independent?status=true');
@@ -288,13 +375,13 @@ ob_start(); ?>
                 this.registerForm.city = '';
                 this.cities = [];
 
-                const selectedCountry = this.countries.find(c => c.cca2 === this.registerForm.country);
+                const selectedCountry = this.countries.find(c => c.name.common === this.registerForm.country);
                 if (selectedCountry) {
                     const idd = selectedCountry.idd;
                     this.registerForm.phonePrefix = idd && idd.root ? idd.root + (idd.suffixes?.[0] || '') : '';
                 }
 
-                this.loadCities(''); // Charge les villes principales du pays
+                this.loadCities('');
             },
             searchCities() {
                 clearTimeout(this.searchTimeout);
@@ -336,7 +423,6 @@ ob_start(); ?>
                 this.error = '';
                 this.success = '';
 
-                // Vérification que l'utilisateur a accepté les conditions
                 if (!this.registerForm.acceptTerms) {
                     this.loading = false;
                     this.error = "Vous devez accepter les conditions d'utilisation.";
@@ -344,7 +430,6 @@ ob_start(); ?>
                     return;
                 }
 
-                // Préparer les données à envoyer
                 const payload = {
                     ...this.registerForm,
                     referral_link: this.referral_link || '',
@@ -368,9 +453,8 @@ ob_start(); ?>
                         this.success = response.data.success;
                         alert(this.success);
 
-                        // Redirection vers /dashboard après 1 seconde
                         setTimeout(() => {
-                            window.location.href = '/dashboard';
+                            window.location.href = 'index.php?action=dashboard';
                         }, 1000);
 
                     } else if (response.data?.error) {
@@ -391,12 +475,9 @@ ob_start(); ?>
                     this.loading = false;
                 }
             }
-
-
         }
     }).mount('#app');
 </script>
-
 
 <style>
     :root {

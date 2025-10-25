@@ -2,7 +2,6 @@
 
 ob_start();
 
-
 $isAuthenticated = isset($_SESSION['id']); // true ou false
 echo $isAuthenticated;
 
@@ -14,96 +13,106 @@ echo $isAuthenticated;
 </script>
 
 <div id="app">
+
     <?php include 'header.php'; ?>
 
     <div class="pt-24 pb-12 bg-gray-50 min-h-screen">
         <div class="container mx-auto px-4 sm:px-6">
             <div class="mb-8 fade-in">
-                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Marketplace</h1>
-                <p class="text-lg sm:text-xl text-gray-600">Trouvez des offres et demandes de transfert près de chez vous</p>
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">{{ t.marketplace_title }}</h1>
+                <p class="text-lg sm:text-xl text-gray-600">{{ t.marketplace_subtitle }}</p>
             </div>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <!-- Total Offers -->
                 <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 card-hover">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Total Offres</p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">{{ t.total_offers }}</p>
                             <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ stats.totalOffers }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-hand-holding-usd text-white text-xl sm:text-2xl"></i>
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-200">
+                            <i class="fas fa-hand-holding-usd text-green-700 text-2xl"></i>
                         </div>
                     </div>
                 </div>
+
+                <!-- Total Requests -->
                 <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 card-hover">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Total Demandes</p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">{{ t.total_requests }}</p>
                             <p class="text-2xl sm:text-3xl font-bold text-yellow-600">{{ stats.totalRequests }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-yellow-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-hand-holding-heart text-white text-xl sm:text-2xl"></i>
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-yellow-200">
+                            <i class="fas fa-hand-holding-heart text-yellow-600 text-2xl"></i>
                         </div>
                     </div>
                 </div>
+
+                <!-- Active Countries -->
                 <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 card-hover">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Pays actifs</p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">{{ t.active_countries }}</p>
                             <p class="text-2xl sm:text-3xl font-bold text-primary">{{ stats.activeCountries }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-globe-africa text-white text-xl sm:text-2xl"></i>
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-200">
+                            <i class="fas fa-globe-africa text-blue-700 text-2xl"></i>
                         </div>
                     </div>
                 </div>
+
+                <!-- Active Cities -->
                 <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 card-hover">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs sm:text-sm text-gray-600 mb-1">Villes actives</p>
+                            <p class="text-xs sm:text-sm text-gray-600 mb-1">{{ t.active_cities }}</p>
                             <p class="text-2xl sm:text-3xl font-bold text-primary">{{ stats.activeCities }}</p>
                         </div>
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-green-100 rounded-full flex items-center justify-center">
-                            <i class="fas fa-city text-white text-xl sm:text-2xl"></i>
+                        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-purple-200">
+                            <i class="fas fa-city text-purple-700 text-2xl"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
+
+
             <div class="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-8">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                    <i class="fas fa-filter mr-2 text-primary"></i>Filtres
+                    <i class="fas fa-filter mr-2 text-primary"></i>{{ t.filters_title }}
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-search mr-1"></i>Rechercher
+                            <i class="fas fa-search mr-1"></i>{{ t.search_placeholder }}
                         </label>
                         <input v-model="filters.search" @input="applyFilters" type="text" placeholder="Ville..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-filter mr-1"></i>Type
+                            <i class="fas fa-filter mr-1"></i>{{ t.type_all }}
                         </label>
                         <select v-model="filters.type" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Tous</option>
-                            <option value="Offre">Offres</option>
-                            <option value="Demande">Demandes</option>
+                            <option value="">{{ t.type_all }}</option>
+                            <option value="Offre">{{ t.type_offers }}</option>
+                            <option value="Demande">{{ t.type_requests }}</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-coins mr-1"></i>Devise
+                            <i class="fas fa-coins mr-1"></i>{{ t.currency_all }}
                         </label>
                         <select v-model="filters.currency" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Toutes</option>
+                            <option value="">{{ t.currency_all }}</option>
                             <option v-for="currency in currencies" :key="currency" :value="currency">{{ currency }}</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-money-bill-wave mr-1"></i>Montant max
+                            <i class="fas fa-money-bill-wave mr-1"></i>{{ t.max_amount }}
                         </label>
                         <input v-model.number="filters.maxAmount" @input="applyFilters" type="number" placeholder="Illimité" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                     </div>
@@ -112,19 +121,19 @@ echo $isAuthenticated;
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-globe-africa mr-1"></i>Pays
+                            <i class="fas fa-globe-africa mr-1"></i>{{ t.country_all }}
                         </label>
                         <select v-model="filters.country" @change="onCountryChange" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                            <option value="">Tous les pays</option>
+                            <option value="">{{ t.country_all }}</option>
                             <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
-                            <i class="fas fa-map-marker-alt mr-1"></i>Ville
+                            <i class="fas fa-map-marker-alt mr-1"></i>{{ t.city_all }}
                         </label>
                         <select v-model="filters.city" @change="applyFilters" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :disabled="!filters.country">
-                            <option value="">Toutes les villes</option>
+                            <option value="">{{ t.city_all }}</option>
                             <option v-for="city in availableCities" :key="city" :value="city">{{ city }}</option>
                         </select>
                     </div>
@@ -133,19 +142,19 @@ echo $isAuthenticated;
                 <!-- Updated color filter to use green for offers and yellow for demands -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-3">
-                        <i class="fas fa-clock mr-1"></i>Filtrer par délai
+                        <i class="fas fa-clock mr-1"></i>{{ t.filter_delay }}
                     </label>
                     <div class="flex flex-wrap gap-3">
-                        <button @click="toggleDeadlineFilter('all')" :class="['color-filter-btn', filters.deadline === 'all' ? 'active' : '']" style="background: linear-gradient(135deg, #10B981, #F59E0B, #EF4444);" title="Tous">
+                        <button @click="toggledelayFilter('all')" :class="['color-filter-btn', filters.delay === 'all' ? 'active' : '']" style="background: linear-gradient(135deg, #10B981, #F59E0B, #EF4444);" title="Tous">
                             <span class="sr-only">Tous</span>
                         </button>
-                        <button @click="toggleDeadlineFilter('Urgent')" :class="['color-filter-btn', filters.deadline === 'Urgent' ? 'active' : '']" style="background-color: #10B981;" title="Urgent">
+                        <button @click="toggledelayFilter('Urgent')" :class="['color-filter-btn', filters.delay === 'Urgent' ? 'active' : '']" style="background-color: #10B981;" title="Urgent">
                             <span class="sr-only">Urgent</span>
                         </button>
-                        <button @click="toggleDeadlineFilter('Deux semaines')" :class="['color-filter-btn', filters.deadline === 'Deux semaines' ? 'active' : '']" style="background-color: #F59E0B;" title="Deux semaines">
+                        <button @click="toggledelayFilter('Deux semaines')" :class="['color-filter-btn', filters.delay === 'Deux semaines' ? 'active' : '']" style="background-color: #F59E0B;" title="Deux semaines">
                             <span class="sr-only">Deux semaines</span>
                         </button>
-                        <button @click="toggleDeadlineFilter('Nulle')" :class="['color-filter-btn', filters.deadline === 'Nulle' ? 'active' : '']" style="background-color: #EF4444;" title="Nulle">
+                        <button @click="toggledelayFilter('Nulle')" :class="['color-filter-btn', filters.delay === 'Nulle' ? 'active' : '']" style="background-color: #EF4444;" title="Nulle">
                             <span class="sr-only">Nulle</span>
                         </button>
                     </div>
@@ -176,7 +185,7 @@ echo $isAuthenticated;
                             </div>
                             <div class="min-w-0">
                                 <!-- Changed from "Annonce #{{ listing.id }}" to just listing.id -->
-                                <p class="font-semibold text-gray-900 truncate">{{ listing.id }}</p>
+                                <p class="font-semibold text-gray-900 truncate">Nouvelle annonce</p>
                                 <p class="text-sm text-gray-500">
                                     <i class="fas fa-star text-yellow-500 mr-1"></i>{{ listing.ratings }}
                                 </p>
@@ -212,7 +221,7 @@ echo $isAuthenticated;
                         </div>
 
                         <button @click="openContactModal(listing)" :class="listing.type === 'Offre' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'" class="w-full py-3 text-white rounded-lg font-semibold transition-colors">
-                            <i class="fas fa-comment mr-2"></i>Mettre en contact
+                            <i class="fas fa-comment mr-2"></i>{{ t.contact_button }}
                         </button>
                     </div>
                 </div>
@@ -220,10 +229,10 @@ echo $isAuthenticated;
 
             <div v-if="filteredListings.length === 0" class="text-center py-16">
                 <i class="fas fa-search text-6xl text-gray-300 mb-4"></i>
-                <h3 class="text-2xl font-bold text-gray-900 mb-2">Aucun résultat trouvé</h3>
-                <p class="text-gray-600 mb-6">Essayez de modifier vos filtres pour voir plus d'offres</p>
+                <h3 class="text-2xl font-bold text-gray-900 mb-2">{{ t.no_results }}</h3>
+                <p class="text-gray-600 mb-6">{{ t.reset_filters }}</p>
                 <button @click="resetFilters" class="px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                    <i class="fas fa-redo mr-2"></i>Réinitialiser les filtres
+                    <i class="fas fa-redo mr-2"></i>{{ t.reset_filters }}
                 </button>
             </div>
 
@@ -252,7 +261,7 @@ echo $isAuthenticated;
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 modal-content">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-gray-900">
-                    <i class="fas fa-handshake text-primary mr-2"></i>Mise en contact
+                    <i class="fas fa-handshake text-primary mr-2"></i>{{ t.contact_modal_title }}
                 </h3>
                 <button @click="closeContactModal" class="text-gray-400 hover:text-gray-600 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -282,18 +291,18 @@ echo $isAuthenticated;
             <form @submit.prevent="submitContactRequest" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-comment mr-1 text-primary"></i>Message
+                        <i class="fas fa-comment mr-1 text-primary"></i>{{ t.message_label }}
                     </label>
                     <textarea v-model="contactRequest.message" rows="4" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Votre message..."></textarea>
                 </div>
 
                 <button type="submit" :disabled="contactRequestSubmitting" class="w-full py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                     <i class="fas fa-paper-plane mr-2"></i>
-                    {{ contactRequestSubmitting ? 'Envoi en cours...' : 'Envoyer la demande' }}
+                    {{ contactRequestSubmitting ? t.sending : t.send_request }}
                 </button>
 
                 <div v-if="contactRequestSuccess" class="p-4 bg-green-100 text-green-700 rounded-lg text-sm">
-                    <i class="fas fa-check-circle mr-2"></i>Demande envoyée ! Nous vous mettrons en contact sous peu.
+                    <i class="fas fa-check-circle mr-2"></i>{{ t.success_message }}
                 </div>
             </form>
         </div>
@@ -364,6 +373,7 @@ echo $isAuthenticated;
         data() {
             return {
                 darkMode: false,
+                currentLang: 'fr',
                 mobileMenuOpen: false,
                 showContactModal: false,
                 selectedListing: null,
@@ -379,7 +389,7 @@ echo $isAuthenticated;
                     currency: '',
                     type: '',
                     maxAmount: null,
-                    deadline: 'all'
+                    delay: 'all'
                 },
                 currentPage: 1,
                 itemsPerPage: 9,
@@ -388,9 +398,66 @@ echo $isAuthenticated;
                 currencies: [],
                 listings: [],
                 isAuthenticated: !!window.isAuthenticated,
+                translations: {
+                    fr: {
+                        marketplace_title: 'Marketplace',
+                        marketplace_subtitle: 'Trouvez des offres et demandes de transfert près de chez vous',
+                        total_offers: 'Total Offres',
+                        total_requests: 'Total Demandes',
+                        active_countries: 'Pays actifs',
+                        active_cities: 'Villes actives',
+                        filters_title: 'Filtres',
+                        search_placeholder: 'Ville...',
+                        type_all: 'Tous',
+                        type_offers: 'Offres',
+                        type_requests: 'Demandes',
+                        currency_all: 'Toutes',
+                        max_amount: 'Montant max',
+                        country_all: 'Tous les pays',
+                        city_all: 'Toutes les villes',
+                        filter_delay: 'Filtrer par délai',
+                        no_results: 'Aucun résultat trouvé',
+                        reset_filters: 'Réinitialiser les filtres',
+                        contact_button: 'Mettre en contact',
+                        contact_modal_title: 'Mise en contact',
+                        message_label: 'Message',
+                        send_request: 'Envoyer la demande',
+                        sending: 'Envoi en cours...',
+                        success_message: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
+                    },
+                    en: {
+                        marketplace_title: 'Marketplace',
+                        marketplace_subtitle: 'Find transfer offers and requests near you',
+                        total_offers: 'Total Offers',
+                        total_requests: 'Total Requests',
+                        active_countries: 'Active Countries',
+                        active_cities: 'Active Cities',
+                        filters_title: 'Filters',
+                        search_placeholder: 'City...',
+                        type_all: 'All',
+                        type_offers: 'Offers',
+                        type_requests: 'Requests',
+                        currency_all: 'All',
+                        max_amount: 'Max amount',
+                        country_all: 'All countries',
+                        city_all: 'All cities',
+                        filter_delay: 'Filter by delay',
+                        no_results: 'No results found',
+                        reset_filters: 'Reset filters',
+                        contact_button: 'Contact',
+                        contact_modal_title: 'Contact',
+                        message_label: 'Message',
+                        send_request: 'Send request',
+                        sending: 'Sending...',
+                        success_message: 'Request sent! We will contact you soon.'
+                    }
+                }
             };
         },
         computed: {
+            t() {
+                return this.translations[this.currentLang];
+            },
             availableCities() {
                 return this.filters.country ? this.citiesByCountry[this.filters.country] || [] : [];
             },
@@ -424,8 +491,8 @@ echo $isAuthenticated;
                     filtered = filtered.filter(l => parseFloat(l.amount) <= this.filters.maxAmount);
                 }
 
-                if (this.filters.deadline !== 'all') {
-                    filtered = filtered.filter(l => l.deadline === this.filters.deadline);
+                if (this.filters.delay !== 'all') {
+                    filtered = filtered.filter(l => l.delay === this.filters.delay);
                 }
 
                 return filtered;
@@ -464,6 +531,10 @@ echo $isAuthenticated;
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+            const savedLang = localStorage.getItem('language');
+            if (savedLang) {
+                this.currentLang = savedLang;
+            }
             console.log('isAuthenticated (vue):', this.isAuthenticated);
 
             this.fetchListings();
@@ -483,10 +554,11 @@ echo $isAuthenticated;
                         const createdDate = new Date(listing.created_at);
                         const now = new Date();
                         const diffHours = Math.floor((now - createdDate) / (1000 * 60 * 60));
-
                         return {
                             ...listing,
-                            timeAgo: diffHours < 1 ? 'Il y a moins d\'1h' : `Il y a ${diffHours}h`
+                            timeAgo: diffHours < 1 ?
+                                "Il y a moins d'1h" : diffHours < 24 ?
+                                `Il y a ${diffHours}h` : `Il y a ${Math.floor(diffHours / 24)} jour${Math.floor(diffHours / 24) > 1 ? 's' : ''}`
                         };
                     });
 
@@ -522,6 +594,10 @@ echo $isAuthenticated;
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+            },
             toggleMobileMenu() {
                 this.mobileMenuOpen = !this.mobileMenuOpen;
             },
@@ -532,8 +608,8 @@ echo $isAuthenticated;
             applyFilters() {
                 this.currentPage = 1;
             },
-            toggleDeadlineFilter(deadline) {
-                this.filters.deadline = deadline;
+            toggledelayFilter(delay) {
+                this.filters.delay = delay;
                 this.applyFilters();
             },
             resetFilters() {
@@ -544,7 +620,7 @@ echo $isAuthenticated;
                     currency: '',
                     type: '',
                     maxAmount: null,
-                    deadline: 'all'
+                    delay: 'all'
                 };
                 this.applyFilters();
             },

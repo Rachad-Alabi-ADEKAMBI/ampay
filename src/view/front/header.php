@@ -18,6 +18,10 @@
             </div>
 
             <div class="flex items-center space-x-4">
+                <button @click="toggleLanguage" class="p-2 text-bold rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors "
+                    style='font-size: 1.6em; margin-top: -10px; margin-right: -20px;'>
+                    {{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}
+                </button>
                 <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="Toggle dark mode">
                     <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                 </button>

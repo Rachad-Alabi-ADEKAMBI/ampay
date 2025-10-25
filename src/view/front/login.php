@@ -3,9 +3,14 @@
 ob_start(); ?>
 
 <div id="app">
-    <!-- Added theme toggle button -->
-    <button @click="toggleDarkMode" class="theme-toggle" title="Changer de thème">
-        <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
+    <!-- Added language toggle button next to theme toggle -->
+    <button @click="toggleLang" class="lang-toggle" :title="currentLang === 'fr' ? 'Switch to English' : 'Passer au français'">
+        <span class="text-2xl">{{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}</span>
+    </button>
+
+    <!-- Made sun icon yellow with text-yellow-400 -->
+    <button @click="toggleDarkMode" class="theme-toggle" :title="t.changeTheme">
+        <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-900 dark:text-white'"></i>
     </button>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -18,11 +23,12 @@ ob_start(); ?>
                         </a>
                     </div>
                 </div>
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Connexion à AMPAY</h2>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                    Pas encore de compte?
-                    <a href="index.php?action=registerPage" class="font-medium text-primary hover:text-primary-dark">
-                        Inscrivez-vous
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t.title }}</h2>
+                <!-- Made signup link white in dark mode -->
+                <p class="mt-2 text-sm text-white-600 dark:text-gray-400">
+                    {{ t.noAccount }}
+                    <a href="index.php?action=registerPage" class="font-medium text-primary hover:text-primary-dark dark:text-white dark:hover:text-gray-200">
+                        {{ t.signUp }}
                     </a>
                 </p>
             </div>
@@ -30,15 +36,15 @@ ob_start(); ?>
             <form @submit.prevent="handleLogin" class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <div class="space-y-4">
                     <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                        <label for="email" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-envelope mr-1 text-gray-900 dark:text-white"></i>{{ t.email }}
                         </label>
-                        <input v-model="loginForm.email" id="email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="votre@email.com">
+                        <input v-model="loginForm.email" id="email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.emailPlaceholder">
                     </div>
 
                     <div>
-                        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            <i class="fas fa-lock mr-1 text-primary"></i>Mot de passe
+                        <label for="password" class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
+                            <i class="fas fa-lock mr-1 text-gray-900 dark:text-white"></i>{{ t.password }}
                         </label>
                         <div class="relative">
                             <input v-model="loginForm.password" :type="showPassword ? 'text' : 'password'" id="password" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="••••••••">
@@ -53,20 +59,20 @@ ob_start(); ?>
                     <div class="flex items-center">
                         <input v-model="loginForm.remember" id="remember" type="checkbox" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
                         <label for="remember" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                            Se souvenir de moi
+                            {{ t.rememberMe }}
                         </label>
                     </div>
 
                     <div class="text-sm">
                         <a href="index.php?action=resetPasswordPage" class="font-medium text-primary hover:text-primary-dark">
-                            Mot de passe oublié?
+                            {{ t.forgotPassword }}
                         </a>
                     </div>
                 </div>
 
                 <button type="submit" :disabled="loading" class="w-full px-4 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                     <i class="fas fa-sign-in-alt mr-2"></i>
-                    {{ loading ? 'Connexion...' : 'Se connecter' }}
+                    {{ loading ? t.loggingIn : t.login }}
                 </button>
 
                 <div v-if="error" class="p-4 bg-red-100 text-red-700 rounded-lg text-sm">
@@ -86,6 +92,7 @@ ob_start(); ?>
         data() {
             return {
                 darkMode: false,
+                currentLang: 'fr',
                 loginForm: {
                     email: '',
                     password: '',
@@ -93,8 +100,41 @@ ob_start(); ?>
                 },
                 showPassword: false,
                 loading: false,
-                error: ''
+                error: '',
+                translations: {
+                    fr: {
+                        changeTheme: 'Changer de thème',
+                        title: 'Connexion à AMPAY',
+                        noAccount: 'Pas encore de compte?',
+                        signUp: 'Inscrivez-vous',
+                        email: 'Email',
+                        emailPlaceholder: 'votre@email.com',
+                        password: 'Mot de passe',
+                        rememberMe: 'Se souvenir de moi',
+                        forgotPassword: 'Mot de passe oublié?',
+                        login: 'Se connecter',
+                        loggingIn: 'Connexion...'
+                    },
+                    en: {
+                        changeTheme: 'Change theme',
+                        title: 'Login to AMPAY',
+                        noAccount: 'No account yet?',
+                        signUp: 'Sign up',
+                        email: 'Email',
+                        emailPlaceholder: 'your@email.com',
+                        password: 'Password',
+                        rememberMe: 'Remember me',
+                        forgotPassword: 'Forgot password?',
+                        login: 'Login',
+                        loggingIn: 'Logging in...'
+                    }
+                }
             };
+        },
+        computed: {
+            t() {
+                return this.translations[this.currentLang];
+            }
         },
         mounted() {
             const savedDarkMode = localStorage.getItem('darkMode');
@@ -102,12 +142,22 @@ ob_start(); ?>
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
+            }
         },
         methods: {
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
+            },
+
+            toggleLang() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
             },
 
             async handleLogin() {
@@ -174,7 +224,34 @@ ob_start(); ?>
         background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
 
-    /* Added styles for theme toggle button */
+    /* Added lang-toggle button styles */
+    .lang-toggle {
+        position: fixed;
+        top: 1.5rem;
+        right: 5.5rem;
+        z-index: 50;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 9999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .lang-toggle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+
+    .dark-mode .lang-toggle {
+        background-color: var(--bg-dark-secondary);
+    }
+
     .theme-toggle {
         position: fixed;
         top: 1.5rem;
@@ -203,7 +280,6 @@ ob_start(); ?>
 
     .theme-toggle i {
         font-size: 1.25rem;
-        color: #10B981;
     }
 </style>
 
