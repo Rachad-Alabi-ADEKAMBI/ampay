@@ -91,3 +91,27 @@ Array
     [message] => eyt
     [listing_id] => 12
 )
+contactRequestUser() appelée
+Array
+(
+    [message] => ij
+    [listing_id] => 12
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => izi
+    [listing_id] => 15
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => paris
+    [listing_id] => 15
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => okkk
+    [listing_id] => 17
+)

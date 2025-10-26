@@ -46,16 +46,18 @@ function contactRequestUser()
         exit;
     }
 
-    $user_id = (int) $_SESSION['id'];
+    $sender_id = (int) $_SESSION['id'];
+    $receiver_id = 1; // ou récupère dynamiquement si nécessaire
 
     try {
         $stmt = $pdo->prepare("
-            INSERT INTO messages (created_at, listing_id, user_id, message, status)
-            VALUES (NOW(), :listing_id, :user_id, :message, 'Envoyé')
+            INSERT INTO messages (created_at, listing_id, sender_id, receiver_id, message, status)
+            VALUES (NOW(), :listing_id, :sender_id, :receiver_id, :message, 'Envoyé')
         ");
         $stmt->execute([
             ':listing_id' => $listing_id,
-            ':user_id' => $user_id,
+            ':sender_id' => $sender_id,
+            ':receiver_id' => $receiver_id,
             ':message' => $message
         ]);
 

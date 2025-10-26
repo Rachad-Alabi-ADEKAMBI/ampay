@@ -8,7 +8,7 @@ function fetchAllMessages()
     $stmt = $pdo->query("
         SELECT messages.*, users.*
         FROM messages
-        INNER JOIN users ON users.id = messages.user_id
+        INNER JOIN users ON users.id = messages.sender_id
         ORDER BY messages.id DESC
     ");
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);

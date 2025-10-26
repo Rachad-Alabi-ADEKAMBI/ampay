@@ -122,3 +122,61 @@ function updateListing()
         return ['success' => false, 'error' => 'Erreur base de données : ' . $e->getMessage()];
     }
 }
+
+function fetchCommentedTransactions()
+{
+    global $pdo;
+    $user_id = (int) $_SESSION['id'];
+
+    try {
+        // Récupère tous les messages envoyés par l'utilisateur avec les infos de listing
+        $sql = "
+            SELECT l.id AS listing_id, l.type, l.amount, l.currency, l.country, l.city, l.delay, l.status, l.created_at AS listing_created_at,
+                   m.id AS message_id, m.message, m.created_at AS message_created_at
+            FROM listings l
+            INNER JOIN messages m ON l.id = m.listing_id
+            WHERE m.sender_id = :sender_id
+            ORDER BY l.created_at DESC, m.created_at DESC
+        ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([':sender_id' => $user_id]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if (!$rows) {
+            echo json_encode(['success' => true, 'data' => [], 'message' => 'Aucun listing trouvé pour cet utilisateur.']);
+            exit;
+        }
+
+        // Regroupe les messages par listing
+        $listings = [];
+        foreach ($rows as $row) {
+            $id = $row['listing_id'];
+            if (!isset($listings[$id])) {
+                $listings[$id] = [
+                    'listing_id' => $row['listing_id'],
+                    'type' => $row['type'],
+                    'amount' => $row['amount'],
+                    'currency' => $row['currency'],
+                    'country' => $row['country'],
+                    'city' => $row['city'],
+                    'delay' => $row['delay'],
+                    'status' => $row['status'],
+                    'listing_created_at' => $row['listing_created_at'],
+                    'messages' => []
+                ];
+            }
+            $listings[$id]['messages'][] = [
+                'message_id' => $row['message_id'],
+                'message' => $row['message'],
+                'message_created_at' => $row['message_created_at']
+            ];
+        }
+
+        echo json_encode(['success' => true, 'data' => array_values($listings)]);
+        exit;
+    } catch (PDOException $e) {
+        echo json_encode(['success' => false, 'error' => 'Erreur base de données : ' . $e->getMessage()]);
+        exit;
+    }
+}

@@ -264,7 +264,7 @@ ob_start(); ?>
         createApp
     } = Vue;
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/index.php'
+        baseURL: 'index.php'
     });
 
     createApp({
@@ -277,7 +277,7 @@ ob_start(); ?>
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
-                user_referral_link: <?= json_encode($_SESSION['referral_link'] ?? ''); ?>,
+                user_referral_link: 'https://am-pay.xo.je?action=registerPage&ref=' + <?= json_encode($_SESSION['referral_link'] ?? '') ?>,
                 searchQuery: '',
                 statusFilter: 'all',
                 sortBy: 'date-desc',

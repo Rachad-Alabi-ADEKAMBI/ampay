@@ -4,14 +4,16 @@ ob_start(); ?>
 
 <div id="app">
     <!-- Added language toggle button next to theme toggle -->
-    <button @click="toggleLang" class="lang-toggle" :title="currentLang === 'fr' ? 'Switch to English' : 'Passer au français'">
-        <span class="text-2xl">{{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}</span>
-    </button>
+    <div class="" style="margin-top: 20px;">
+        <button @click="toggleLang" class="lang-toggle" :title="currentLang === 'fr' ? 'Switch to English' : 'Passer au français'">
+            <span class="text-2xl">{{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}</span>
+        </button>
 
-    <!-- Made sun icon yellow with text-yellow-400 -->
-    <button @click="toggleDarkMode" class="theme-toggle" :title="t.changeTheme">
-        <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-900 dark:text-white'"></i>
-    </button>
+        <!-- Made sun icon yellow with text-yellow-400 -->
+        <button @click="toggleDarkMode" class="theme-toggle" :title="t.changeTheme">
+            <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-900 dark:text-white'"></i>
+        </button>
+    </div>
 
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">

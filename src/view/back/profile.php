@@ -74,10 +74,6 @@ ob_start(); ?>
                                     <span class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ user.stats.transactions }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-600 dark:text-gray-400">Montant total</span>
-                                    <span class="text-xl font-bold text-primary">{{ formatCurrency(user.stats.totalAmount) }} EUR</span>
-                                </div>
-                                <div class="flex items-center justify-between">
                                     <span class="text-gray-600 dark:text-gray-400">Membre depuis</span>
                                     <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ user.memberSince }}</span>
                                 </div>
@@ -127,18 +123,14 @@ ob_start(); ?>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             <i class="fas fa-phone mr-1 text-primary"></i>Préfixe
                                         </label>
-                                        <select v-model="user.phone_prefix" :disabled="!editMode" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                            <option value="+33">+33 (France)</option>
-                                            <option value="+221">+221 (Sénégal)</option>
-                                            <option value="+225">+225 (Côte d'Ivoire)</option>
-                                            <option value="+234">+234 (Nigeria)</option>
-                                            <option value="+233">+233 (Ghana)</option>
-                                            <option value="+44">+44 (Royaume-Uni)</option>
-                                            <option value="+49">+49 (Allemagne)</option>
-                                            <option value="+229">+229 (Bénin)</option>
-                                            <option value="+228">+228 (Togo)</option>
-                                            <option value="+224">+224 (Guinée)</option>
+                                        <select v-model="user.phone_prefix" :disabled="!editMode"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
+               focus:ring-2 focus:ring-primary focus:border-transparent 
+               disabled:bg-gray-100 dark:disabled:bg-gray-700 
+               bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                            <option :value="user.phone_prefix">{{ user.phone_prefix }}</option>
                                         </select>
+
                                     </div>
                                     <div class="sm:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -153,17 +145,28 @@ ob_start(); ?>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             <i class="fas fa-flag mr-1 text-primary"></i>Pays
                                         </label>
-                                        <select v-model="user.country" :disabled="!editMode" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                            <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
+                                        <select v-model="user.country" :disabled="!editMode"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
+                       focus:ring-2 focus:ring-primary focus:border-transparent 
+                       disabled:bg-gray-100 dark:disabled:bg-gray-700 
+                       bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                            <option :value="user.country">{{ user.country }}</option>
                                         </select>
                                     </div>
+
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                             <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
                                         </label>
-                                        <input v-model="user.city" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                        <input v-model="user.city" :disabled="!editMode" type="text"
+                                            class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
+                      focus:ring-2 focus:ring-primary focus:border-transparent 
+                      disabled:bg-gray-100 dark:disabled:bg-gray-700 
+                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                     </div>
                                 </div>
+
+
 
                                 <div v-if="editMode" class="pt-4">
                                     <button type="submit" :disabled="submitting" class="w-full sm:w-auto px-8 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
@@ -338,7 +341,7 @@ ob_start(); ?>
         createApp
     } = Vue;
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/index.php'
+        baseURL: 'index.php'
     });
 
     createApp({
@@ -365,7 +368,7 @@ ob_start(); ?>
                     city: <?= json_encode($city); ?>,
                     account_verified: <?= json_encode($account_verified); ?>,
                     two_factor_enabled: false,
-                    memberSince: 'Janvier 2025',
+                    memberSince: '2025',
                     stats: {
                         transactions: 0,
                         totalAmount: 0

@@ -8,13 +8,11 @@
 ob_start(); ?>
 
 <div id="app">
-    <!-- <CHANGE> Overlay pour le sidebar en mobile, identique au dashboard -->
     <div v-if="sidebarOpen" @click="sidebarOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"></div>
 
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
         <?php include __DIR__ . '/../sidebar.php'; ?>
 
-        <!-- <CHANGE> Structure identique au dashboard avec md:ml-64 et flex-col -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                 <div class="px-4 sm:px-6 py-4">
@@ -43,9 +41,15 @@ ob_start(); ?>
                                 {{ capitalizeFirstLetter(user_first_name) }} {{ capitalizeAll(user_last_name) }}
                             </span>
                         </div>
-                        <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
-                            <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
-                        </button>
+                        <div class="flex gap-3">
+                            <button @click="toggleView" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                                <i :class="showCommentedView ? 'fas fa-list' : 'fas fa-comments'" class="mr-2"></i>
+                                {{ showCommentedView ? 'Mes Annonces' : 'Transactions Commentées' }}
+                            </button>
+                            <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                                <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -93,28 +97,25 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Filtres -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-
-                            <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les types</option>
-                                <option value="Offre">Offres</option>
-                                <option value="Demande">Demandes</option>
-                            </select>
-
-                            <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les statuts</option>
-                                <option value="Actif">Actif</option>
-                                <option value="Inactif">Inactif</option>
-                            </select>
+                    <div v-if="showCommentedView" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+                        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100">
+                                    <i class="fas fa-comments text-purple-600 mr-2"></i>Transactions commentées
+                                </h2>
+                                <span class="px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 rounded-full text-sm font-semibold">
+                                    {{ commentedTransactions.length }} transaction(s)
+                                </span>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- <CHANGE> Tableau au lieu de grille avec colonnes d'actions -->
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
-                        <div class="overflow-x-auto">
+                        <div v-if="commentedTransactions.length === 0" class="text-center py-16">
+                            <i class="fas fa-comment-slash text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction commentée</h3>
+                            <p class="text-gray-600 dark:text-gray-400">Vous n'avez envoyé de message sur aucune transaction pour le moment</p>
+                        </div>
+
+                        <div v-else class="overflow-x-auto">
                             <table class="w-full">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
@@ -128,79 +129,161 @@ ob_start(); ?>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <tr v-for="listing in paginatedListings" :key="listing.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                    <tr v-for="transaction in commentedTransactions" :key="transaction.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
-                                                <i :class="listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
-                                                {{ listing.type }}
+                                            <span :class="transaction.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                <i :class="transaction.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
+                                                {{ transaction.type }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</div>
+                                            <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(transaction.amount) }} {{ transaction.currency }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-900 dark:text-gray-100">
                                                 <i class="fas fa-map-marker-alt text-primary mr-1"></i>
-                                                {{ listing.city }}, {{ listing.country }}
+                                                {{ transaction.city }}, {{ transaction.country }}
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900 dark:text-gray-100">{{ listing.delay || 'N/A' }}</div>
+                                            <div class="text-sm text-gray-900 dark:text-gray-100">{{ transaction.delay || 'N/A' }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(transaction.listing_created_at) }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span :class="listing.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
-                                                {{ listing.status }}
+                                            <span :class="transaction.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                {{ transaction.status }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                            <div class="flex gap-2">
-                                                <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Voir">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button @click="editListing(listing)" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300" title="Modifier">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button @click="deleteListing(listing)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" title="Supprimer">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
+                                            <button @click="viewCommentedMessages(transaction)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300" title="Voir mes messages">
+                                                <i class="fas fa-comments"></i>
+                                                <span class="ml-1">({{ transaction.messages.length }})</span>
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-
-                        <!-- Message si aucune transaction -->
-                        <div v-if="filteredListings.length === 0" class="text-center py-16">
-                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction trouvée</h3>
-                            <p class="text-gray-600 dark:text-gray-400 mb-6">Créez votre première annonce pour commencer</p>
-                            <button @click="openCreateModal" class="px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                                <i class="fas fa-plus mr-2"></i>Créer une annonce
-                            </button>
-                        </div>
                     </div>
 
-                    <!-- Pagination -->
-                    <div v-if="totalPages > 1" class="flex justify-center mb-8">
-                        <nav class="inline-flex rounded-lg shadow-sm">
-                            <button @click="previousPage" :disabled="currentPage === 1"
-                                class="relative inline-flex items-center px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button v-for="page in visiblePages" :key="page" @click="goToPage(page)"
-                                :class="['relative inline-flex items-center px-4 py-2 border text-sm font-medium', 
-                                         currentPage === page ? 'z-10 primary-gradient border-primary text-white' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700']">
-                                {{ page }}
-                            </button>
-                            <button @click="nextPage" :disabled="currentPage === totalPages"
-                                class="relative inline-flex items-center px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </nav>
+                    <div v-if="!showCommentedView">
+                        <!-- Filtres -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                                <i class="fas fa-list mr-2"></i>Mes Annonces
+                            </h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+
+                                <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    <option value="">Tous les types</option>
+                                    <option value="Offre">Offres</option>
+                                    <option value="Demande">Demandes</option>
+                                </select>
+
+                                <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                                    <option value="">Tous les statuts</option>
+                                    <option value="Actif">Actif</option>
+                                    <option value="Inactif">Inactif</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Tableau -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montant</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Localisation</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Délai</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Statut</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                        <tr v-for="listing in paginatedListings" :key="listing.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                    <i :class="listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
+                                                    {{ listing.type }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900 dark:text-gray-100">
+                                                    <i class="fas fa-map-marker-alt text-primary mr-1"></i>
+                                                    {{ listing.city }}, {{ listing.country }}
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-900 dark:text-gray-100">{{ listing.delay || 'N/A' }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</div>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <span :class="listing.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
+                                                    {{ listing.status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <div class="flex gap-2">
+                                                    <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Voir">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button @click="viewAdminMessages(listing)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300" title="Messages admin">
+                                                        <i class="fas fa-comments"></i>
+                                                        <span v-if="getAdminMessageCount(listing.id) > 0" class="ml-1">({{ getAdminMessageCount(listing.id) }})</span>
+                                                    </button>
+                                                    <button @click="editListing(listing)" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300" title="Modifier">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button @click="deleteListing(listing)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" title="Supprimer">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div v-if="filteredListings.length === 0" class="text-center py-16">
+                                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction trouvée</h3>
+                                <p class="text-gray-600 dark:text-gray-400 mb-6">Créez votre première annonce pour commencer</p>
+                                <button @click="openCreateModal" class="px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                                    <i class="fas fa-plus mr-2"></i>Créer une annonce
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div v-if="totalPages > 1" class="flex justify-center mb-8">
+                            <nav class="inline-flex rounded-lg shadow-sm">
+                                <button @click="previousPage" :disabled="currentPage === 1"
+                                    class="relative inline-flex items-center px-4 py-2 rounded-l-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button v-for="page in visiblePages" :key="page" @click="goToPage(page)"
+                                    :class="['relative inline-flex items-center px-4 py-2 border text-sm font-medium', 
+                                             currentPage === page ? 'z-10 primary-gradient border-primary text-white' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700']">
+                                    {{ page }}
+                                </button>
+                                <button @click="nextPage" :disabled="currentPage === totalPages"
+                                    class="relative inline-flex items-center px-4 py-2 rounded-r-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </nav>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -320,10 +403,9 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- <CHANGE> Modal de détails professionnel avec cartes colorées et boutons d'action -->
+    <!-- Modal de détails -->
     <div v-if="showDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeDetailsModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <!-- En-tête avec gradient -->
             <div class="bg-gradient-to-r from-primary to-green-600 p-6 rounded-t-2xl">
                 <div class="flex justify-between items-center">
                     <div>
@@ -339,9 +421,7 @@ ob_start(); ?>
             </div>
 
             <div v-if="selectedListing" class="p-6 space-y-6">
-                <!-- Cartes d'informations -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Type -->
                     <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
@@ -354,7 +434,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Montant -->
                     <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-4 rounded-xl border border-green-200 dark:border-green-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
@@ -367,7 +446,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Localisation -->
                     <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
@@ -380,7 +458,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Délai -->
                     <div class="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-4 rounded-xl border border-orange-200 dark:border-orange-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center mr-3">
@@ -393,7 +470,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Date de création -->
                     <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 p-4 rounded-xl border border-indigo-200 dark:border-indigo-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3">
@@ -406,7 +482,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Statut -->
                     <div class="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 p-4 rounded-xl border border-teal-200 dark:border-teal-700">
                         <div class="flex items-center mb-2">
                             <div class="w-10 h-10 bg-teal-500 rounded-lg flex items-center justify-center mr-3">
@@ -420,7 +495,6 @@ ob_start(); ?>
                     </div>
                 </div>
 
-                <!-- <CHANGE> Boutons d'action dans le modal -->
                 <div class="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <button @click="editListing(selectedListing)" class="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
                         <i class="fas fa-edit mr-2"></i>Modifier
@@ -433,7 +507,7 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- <CHANGE> Modal de modification -->
+    <!-- Modal de modification -->
     <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50" @click.self="closeEditModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
@@ -528,6 +602,105 @@ ob_start(); ?>
             </form>
         </div>
     </div>
+
+    <!-- Modal pour voir les messages des transactions commentées -->
+    <div v-if="showCommentedMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeCommentedMessagesModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-8 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-comments text-purple-600 mr-2"></i>Mes messages - Annonce #{{ selectedCommentedTransaction?.listing_id }}
+                </h3>
+                <button @click="closeCommentedMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div v-if="selectedCommentedTransaction" class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span :class="selectedCommentedTransaction.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold mr-2">
+                            {{ selectedCommentedTransaction.type }}
+                        </span>
+                        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {{ formatCurrency(selectedCommentedTransaction.amount) }} {{ selectedCommentedTransaction.currency }}
+                        </span>
+                    </div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        {{ selectedCommentedTransaction.city }}, {{ selectedCommentedTransaction.country }}
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="selectedCommentedTransaction && selectedCommentedTransaction.messages.length === 0" class="text-center py-8">
+                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+                <p class="text-gray-600 dark:text-gray-400">Aucun message pour cette transaction</p>
+            </div>
+
+            <div v-else-if="selectedCommentedTransaction" class="space-y-4">
+                <div v-for="msg in selectedCommentedTransaction.messages" :key="msg.message_id" class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-700">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Vous</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(msg.message_created_at) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg">{{ msg.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour voir les messages de l'admin sur mes propres transactions -->
+    <div v-if="showAdminMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeAdminMessagesModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-8 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-envelope text-primary mr-2"></i>Messages Admin - Annonce #{{ selectedListingForMessages?.id }}
+                </h3>
+                <button @click="closeAdminMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <div v-if="loadingAdminMessages" class="text-center py-8">
+                <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+                <p class="text-gray-600 dark:text-gray-400">Chargement des messages...</p>
+            </div>
+
+            <div v-else-if="adminMessages.length === 0" class="text-center py-8">
+                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+                <p class="text-gray-600 dark:text-gray-400">L'admin n'a pas encore envoyé de message pour cette annonce</p>
+            </div>
+
+            <div v-else class="space-y-4">
+                <div v-for="msg in adminMessages" :key="msg.id" class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-user-shield text-white"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Admin</p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(msg.created_at) }}</p>
+                            </div>
+                        </div>
+                        <span v-if="msg.status" :class="msg.status === 'Envoyé' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'" class="px-2 py-1 rounded-full text-xs font-semibold">
+                            {{ msg.status }}
+                        </span>
+                    </div>
+                    <p class="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg">{{ msg.message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -536,7 +709,7 @@ ob_start(); ?>
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/index.php'
+        baseURL: 'index.php'
     });
 
     createApp({
@@ -544,6 +717,7 @@ ob_start(); ?>
             return {
                 darkMode: false,
                 sidebarOpen: false,
+                showCommentedView: false,
                 searchTerm: '',
                 filterType: '',
                 filterStatus: '',
@@ -552,10 +726,19 @@ ob_start(); ?>
                 showCreateModal: false,
                 showDetailsModal: false,
                 showEditModal: false,
+                showCommentedMessagesModal: false,
+                showAdminMessagesModal: false,
                 selectedListing: null,
+                selectedListingForMessages: null,
+                selectedCommentedTransaction: null,
                 editingListing: null,
                 submitting: false,
                 myListings: [],
+                commentedTransactions: [],
+                allMessages: [],
+                adminMessages: [],
+                loadingAdminMessages: false,
+                adminMessageCounts: {},
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
@@ -617,9 +800,14 @@ ob_start(); ?>
 
             if (this.userId) {
                 await this.fetchMyListings();
+                await this.fetchCommentedTransactions();
+                await this.fetchAllMessages();
             }
         },
         methods: {
+            toggleView() {
+                this.showCommentedView = !this.showCommentedView;
+            },
             async fetchMyListings() {
                 try {
                     const res = await fetch('index.php?action=myTransactionsList');
@@ -633,6 +821,68 @@ ob_start(); ?>
                     console.error("Erreur backend:", error);
                     this.myListings = [];
                 }
+            },
+            async fetchCommentedTransactions() {
+                try {
+                    const res = await fetch('index.php?action=commentedTransactions');
+                    const data = await res.json();
+                    if (data.success && Array.isArray(data.data)) {
+                        this.commentedTransactions = data.data;
+                    } else {
+                        this.commentedTransactions = [];
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des transactions commentées:", error);
+                    this.commentedTransactions = [];
+                }
+            },
+            async fetchAllMessages() {
+                try {
+                    const res = await fetch('http://127.0.0.1/ampay/index.php?action=allMessages');
+                    const data = await res.json();
+                    if (Array.isArray(data)) {
+                        this.allMessages = data;
+                        // Calculer le nombre de messages par listing
+                        this.adminMessageCounts = {};
+                        this.myListings.forEach(listing => {
+                            const count = this.allMessages.filter(msg => msg.listing_id === listing.id && msg.receiver_id === this.userId).length;
+                            this.adminMessageCounts[listing.id] = count;
+                        });
+                    } else {
+                        this.allMessages = [];
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des messages:", error);
+                    this.allMessages = [];
+                }
+            },
+            getAdminMessageCount(listingId) {
+                return this.adminMessageCounts[listingId] || 0;
+            },
+            viewCommentedMessages(transaction) {
+                this.selectedCommentedTransaction = transaction;
+                this.showCommentedMessagesModal = true;
+            },
+            closeCommentedMessagesModal() {
+                this.showCommentedMessagesModal = false;
+                this.selectedCommentedTransaction = null;
+            },
+            async viewAdminMessages(listing) {
+                this.selectedListingForMessages = listing;
+                this.showAdminMessagesModal = true;
+                this.loadingAdminMessages = true;
+
+                // Filtrer les messages par listing_id
+                this.adminMessages = this.allMessages.filter(msg =>
+                    msg.listing_id === listing.id && msg.receiver_id === this.userId
+                );
+
+                this.loadingAdminMessages = false;
+            },
+            closeAdminMessagesModal() {
+                this.showAdminMessagesModal = false;
+                this.selectedListingForMessages = null;
+                this.adminMessages = [];
             },
             capitalizeFirstLetter(word) {
                 if (!word) return '';
@@ -659,7 +909,9 @@ ob_start(); ?>
                 return new Date(dateString).toLocaleDateString('fr-FR', {
                     year: 'numeric',
                     month: 'long',
-                    day: 'numeric'
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
                 });
             },
             openCreateModal() {
@@ -679,7 +931,7 @@ ob_start(); ?>
             async submitListing() {
                 this.submitting = true;
                 try {
-                    const response = await api.post('?action=createTransaction', {
+                    const response = await axios.post('index.php?action=createTransaction', {
                         ...this.newListing,
                         user_id: this.userId
                     });
@@ -744,21 +996,6 @@ ob_start(); ?>
                 } catch (error) {
                     console.error('Erreur:', error);
                     alert('Erreur lors de la suppression.');
-                }
-            },
-            async toggleStatus(listing) {
-                const newStatus = listing.status === 'Actif' ? 'Inactif' : 'Actif';
-                try {
-                    await api.post('?action=updateListingStatus', {
-                        id: listing.id,
-                        status: newStatus
-                    });
-                    listing.status = newStatus;
-                    if (this.selectedListing && this.selectedListing.id === listing.id) {
-                        this.selectedListing.status = newStatus;
-                    }
-                } catch (error) {
-                    console.error('Erreur:', error);
                 }
             },
             previousPage() {
@@ -831,7 +1068,8 @@ ob_start(); ?>
     }
 
     .dark-mode input,
-    .dark-mode select {
+    .dark-mode select,
+    .dark-mode textarea {
         background-color: var(--bg-dark-secondary) !important;
         color: #F9FAFB !important;
     }
@@ -840,25 +1078,6 @@ ob_start(); ?>
         background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     }
 
-    @keyframes pulse {
-
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    /* <CHANGE> Sidebar responsive identique au dashboard */
     .sidebar {
         transition: transform 0.3s ease;
     }

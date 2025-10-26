@@ -12,7 +12,7 @@ echo $isAuthenticated;
     console.log("Auth depuis PHP:", window.isAuthenticated);
 </script>
 
-<div id="app">
+<div id="app" v-cloak>
 
     <?php include 'header.php'; ?>
 
@@ -274,7 +274,7 @@ echo $isAuthenticated;
                         <i class="fas fa-hashtag text-white"></i>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900">Annonce #{{ selectedListing.id }}</p>
+                        <p class="font-semibold text-gray-900">Nouvelle annonce</p>
                         <p class="text-sm text-gray-600">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
                     </div>
                 </div>
@@ -366,7 +366,7 @@ echo $isAuthenticated;
     } = Vue;
 
     const api = axios.create({
-        baseURL: 'http://127.0.0.1/ampay/api/index.php?action='
+        baseURL: 'index.php?'
     });
 
     createApp({
@@ -656,27 +656,38 @@ echo $isAuthenticated;
                 };
                 this.contactRequestSuccess = false;
             },
-            submitContactRequest() {
+            async submitContactRequest() {
                 if (!this.contactRequest.message.trim() || !this.selectedListing) return;
 
                 this.contactRequestSubmitting = true;
                 this.contactRequestSuccess = false;
 
-                api.post('index.php?action=contactRequest', {
-                        message: this.contactRequest.message,
-                        listing_id: this.selectedListing.id
-                    })
-                    .then(response => {
-                        this.contactRequestSuccess = true;
-                        this.contactRequest.message = ''; // clear message after success
-                    })
-                    .catch(error => {
-                        console.error('Erreur lors de l’envoi de la demande de contact :', error);
-                        alert('Une erreur est survenue. Veuillez réessayer.');
-                    })
-                    .finally(() => {
-                        this.contactRequestSubmitting = false;
-                    });
+
+
+                try {
+                    const response = await api.post(
+                        '', // URL relative
+                        {
+                            message: this.contactRequest.message,
+                            listing_id: this.selectedListing.listing_id
+                        }, {
+                            params: {
+                                action: 'contactRequest'
+                            },
+                            headers: {
+                                'Content-Type': 'application/json'
+                            } // important
+                        }
+                    );
+
+                    this.contactRequestSuccess = true;
+                    this.contactRequest.message = ''; // Réinitialise le message après succès
+                } catch (error) {
+                    console.error('Erreur lors de l’envoi de la demande de contact :', error);
+                    alert('Une erreur est survenue. Veuillez réessayer.');
+                } finally {
+                    this.contactRequestSubmitting = false;
+                }
             },
 
             previousPage() {
@@ -885,6 +896,12 @@ echo $isAuthenticated;
 
     .modal-content {
         animation: modalSlideIn 0.3s ease-out;
+    }
+</style>
+
+<style>
+    [v-cloak] {
+        display: none;
     }
 </style>
 

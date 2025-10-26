@@ -9,7 +9,7 @@ ob_start(); ?>
 <div class="app" id="app">
     <!-- Added theme and language toggle buttons -->
 
-   
+
 
     <?php include 'header.php'; ?>
 
@@ -54,25 +54,25 @@ ob_start(); ?>
 
                 <div class="hidden lg:flex justify-center slide-in-right">
                     <div class="relative float-animation">
-                        <img src="/placeholder.svg?height=600&width=300" alt="AMPAY App" class="mobile-mockup">
                         <div class="absolute -left-8 top-20 bg-white rounded-xl p-4 shadow-2xl" style="animation: float 3s ease-in-out infinite; animation-delay: 0.5s;">
                             <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-check text-green-600 text-xl"></i>
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-2xl" style="color: red;"></i>
                                 </div>
+
                                 <div>
-                                    <div class="text-sm text-gray-600">Transfert réussi</div>
+                                    <div class="text-sm text-gray-600">{{ t.transfer_success }}</div>
                                     <div class="text-lg font-bold text-gray-900">500 EUR</div>
                                 </div>
                             </div>
                         </div>
                         <div class="absolute -right-8 bottom-32 bg-white rounded-xl p-4 shadow-2xl" style="animation: float 3s ease-in-out infinite; animation-delay: 1s;">
                             <div class="flex items-center space-x-3">
-                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-bolt text-blue-600 text-xl"></i>
+                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-bolt text-blue-800 text-2xl"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-600">Instantané</div>
+                                    <div class="text-sm text-gray-600">{{ t.instant }}</div>
                                     <div class="text-lg font-bold text-gray-900">2 min</div>
                                 </div>
                             </div>
@@ -417,9 +417,11 @@ ob_start(); ?>
                 <div v-for="(faq, index) in faqs" :key="index" class="bg-gray-50 rounded-xl overflow-hidden hover-lift">
                     <button @click="toggleFaq(index)" class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-100 transition-colors">
                         <span class="text-lg font-semibold text-gray-900 pr-4">{{ faq.question }}</span>
-                        <i :class="faq.open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-primary text-xl flex-shrink-0"></i>
+                        <!-- Updated to use faqOpenStates array -->
+                        <i :class="faqOpenStates[index] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-primary text-xl flex-shrink-0"></i>
                     </button>
-                    <div v-if="faq.open" class="px-6 pb-5">
+                    <!-- Updated to use faqOpenStates array -->
+                    <div v-if="faqOpenStates[index]" class="px-6 pb-5">
                         <p class="text-gray-600 leading-relaxed">{{ faq.answer }}</p>
                     </div>
                 </div>
@@ -443,13 +445,13 @@ ob_start(); ?>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-user mr-1 text-primary"></i>{{ t.full_name }}
                             </label>
-                            <input v-model="contactForm.name" type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.full_name_placeholder">
+                            <input v-model="contactForm.name" type="text" required style="color: black;" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.full_name_placeholder">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-envelope mr-1 text-primary"></i>{{ t.email }}
                             </label>
-                            <input v-model="contactForm.email" type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.email_placeholder">
+                            <input v-model="contactForm.email" type="email" required style="color: black;" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.email_placeholder">
                         </div>
                     </div>
 
@@ -457,14 +459,14 @@ ob_start(); ?>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-phone mr-1 text-primary"></i>{{ t.phone }}
                         </label>
-                        <input v-model="contactForm.phone" type="tel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.phone_placeholder">
+                        <input v-model="contactForm.phone" type="tel" style="color: black;" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.phone_placeholder">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-tag mr-1 text-primary"></i>{{ t.subject }}
                         </label>
-                        <select v-model="contactForm.subject" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                        <select v-model="contactForm.subject" required style="color: black;" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
                             <option value="">{{ t.select_subject }}</option>
                             <option value="general">{{ t.subject_general }}</option>
                             <option value="support">{{ t.subject_support }}</option>
@@ -477,7 +479,7 @@ ob_start(); ?>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             <i class="fas fa-comment mr-1 text-primary"></i>{{ t.message }}
                         </label>
-                        <textarea v-model="contactForm.message" required rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.message_placeholder"></textarea>
+                        <textarea v-model="contactForm.message" required rows="5" style="color: black;" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" :placeholder="t.message_placeholder"></textarea>
                     </div>
 
                     <button type="submit" :disabled="contactFormSubmitting" class="w-full px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
@@ -597,79 +599,12 @@ ob_start(); ?>
                     subject: '',
                     message: ''
                 },
-                steps: [{
-                        icon: 'fas fa-user-plus',
-                        title: 'Inscription',
-                        description: 'Créez votre compte gratuitement en moins de 2 minutes'
-                    },
-                    {
-                        icon: 'fas fa-handshake',
-                        title: 'Connexion',
-                        description: 'Trouvez et échangez avec l\'autre partie en toute sécurité'
-                    },
-                    {
-                        icon: 'fas fa-check-double',
-                        title: 'Transaction',
-                        description: 'Finalisez le transfert et recevez votre argent instantanément'
-                    }
-                ],
                 recentOffers: [],
                 recentRequests: [],
-                features: [{
-                        icon: 'fas fa-shield-alt',
-                        title: 'Sécurité maximale',
-                        description: 'Vérification d\'identité, cryptage des données et protection contre la fraude'
-                    },
-                    {
-                        icon: 'fas fa-percentage',
-                        title: 'Frais transparents',
-                        description: 'Commissions réduites et affichées clairement avant chaque transaction'
-                    },
-                    {
-                        icon: 'fas fa-globe-africa',
-                        title: 'Multi-pays',
-                        description: 'Disponible dans 15+ pays en Afrique et en Europe'
-                    },
-                    {
-                        icon: 'fas fa-headset',
-                        title: 'Support 24/7',
-                        description: 'Équipe disponible à tout moment pour vous assister'
-                    }
-                ],
-                faqs: [{
-                        question: 'Comment fonctionne AMPAY ?',
-                        answer: 'AMPAY met en relation des personnes qui ont de l\'argent en espèces dans une ville avec celles qui en ont besoin. La plateforme facilite la mise en relation et prend une petite commission sur chaque transaction. C\'est simple, rapide et sécurisé.',
-                        open: false
-                    },
-                    {
-                        question: 'Quelles devises sont supportées ?',
-                        answer: 'Nous supportons les principales devises africaines (XOF, NGN, GHS, MAD, TND) et européennes (EUR, GBP, CHF). D\'autres devises seront ajoutées prochainement selon la demande.',
-                        open: false
-                    },
-                    {
-                        question: 'Comment sont calculées les commissions ?',
-                        answer: 'Les commissions varient entre 2% et 5% selon le montant et la devise. Elles sont toujours affichées clairement avant la transaction. Les parrainages offrent -10% sur la première opération.',
-                        open: false
-                    },
-                    {
-                        question: 'La plateforme est-elle sécurisée ?',
-                        answer: 'Oui, nous utilisons des protocoles de sécurité avancés (SSL, cryptage des données, authentification à deux facteurs). Tous les utilisateurs sont vérifiés avant de pouvoir effectuer des transactions.',
-                        open: false
-                    },
-                    {
-                        question: 'Combien de temps prend un transfert ?',
-                        answer: 'La plupart des transferts sont effectués en moins de 30 minutes. Le temps peut varier selon la disponibilité des offreurs dans votre zone et la rapidité de la mise en relation.',
-                        open: false
-                    },
-                    {
-                        question: 'Comment fonctionne le programme de parrainage ?',
-                        answer: 'Invitez un ami avec votre code de parrainage unique. Lorsqu\'il effectue sa première transaction, vous bénéficiez tous les deux d\'une réduction de 10% sur les commissions. Aucune limite de parrainages !',
-                        open: false
-                    }
-                ],
+                faqOpenStates: [false, false, false, false, false, false],
                 translations: {
                     fr: {
-                        hero_badge: 'Transferts d\'argent instantané',
+                        hero_badge: 'Transferts d\'argent international',
                         hero_title: 'Transfert d\'argent',
                         hero_title_highlight: 'sans intermédiaire',
                         hero_description: 'Connectez-vous directement avec des personnes qui ont des besoins complémentaires. Rapide, sécurisé et international.',
@@ -678,6 +613,8 @@ ob_start(); ?>
                         stats_users: 'Utilisateurs',
                         stats_countries: 'Pays',
                         stats_transferred: 'Transférés',
+                        instant: 'Instantané',
+                        transfer_success: 'Transfert réussi',
                         feature_secure: '100% Sécurisé',
                         feature_instant: 'Instantané',
                         feature_low_fees: 'Frais réduits',
@@ -713,14 +650,40 @@ ob_start(); ?>
                         view_all_offers: 'Voir toutes les offres',
                         how_it_works: 'Comment ça marche ?',
                         how_it_works_subtitle: 'Un processus simple en 3 étapes',
+                        step_1_title: 'Inscription',
+                        step_1_description: 'Créez votre compte gratuitement en moins de 2 minutes',
+                        step_2_title: 'Connexion',
+                        step_2_description: 'Trouvez et échangez avec l\'autre partie en toute sécurité',
+                        step_3_title: 'Transaction',
+                        step_3_description: 'Finalisez le transfert et recevez votre argent instantanément',
                         why_choose: 'Pourquoi choisir AMPAY ?',
                         why_choose_subtitle: 'Des fonctionnalités pensées pour votre sécurité et votre confort',
+                        feature_security_title: 'Sécurité maximale',
+                        feature_security_description: 'Vérification d\'identité, cryptage des données et protection contre la fraude',
+                        feature_fees_title: 'Frais transparents',
+                        feature_fees_description: 'Commissions réduites et affichées clairement avant chaque transaction',
+                        feature_countries_title: 'Multi-pays',
+                        feature_countries_description: 'Disponible dans 15+ pays en Afrique et en Europe',
+                        feature_support_title: 'Support 24/7',
+                        feature_support_description: 'Équipe disponible à tout moment pour vous assister',
                         referral_title: 'Programme de Parrainage',
                         referral_description: 'Invitez vos amis et bénéficiez de -10% de commission sur leur première opération !',
                         reduced_commission: 'Commission réduite',
                         unlimited_referrals: 'Parrainages illimités',
                         faq_title: 'Questions Fréquentes',
                         faq_subtitle: 'Tout ce que vous devez savoir sur AMPAY',
+                        faq_1_question: 'Comment fonctionne AMPAY ?',
+                        faq_1_answer: 'AMPAY met en relation des personnes qui ont de l\'argent en espèces dans une ville avec celles qui en ont besoin. La plateforme facilite la mise en relation et prend une petite commission sur chaque transaction. C\'est simple, rapide et sécurisé.',
+                        faq_2_question: 'Quelles devises sont supportées ?',
+                        faq_2_answer: 'Nous supportons les principales devises africaines (XOF, NGN, GHS, MAD, TND) et européennes (EUR, GBP, CHF). D\'autres devises seront ajoutées prochainement selon la demande.',
+                        faq_3_question: 'Comment sont calculées les commissions ?',
+                        faq_3_answer: 'Les commissions varient entre 2% et 5% selon le montant et la devise. Elles sont toujours affichées clairement avant la transaction. Les parrainages offrent -10% sur la première opération.',
+                        faq_4_question: 'La plateforme est-elle sécurisée ?',
+                        faq_4_answer: 'Oui, nous utilisons des protocoles de sécurité avancés (SSL, cryptage des données, authentification à deux facteurs). Tous les utilisateurs sont vérifiés avant de pouvoir effectuer des transactions.',
+                        faq_5_question: 'Combien de temps prend un transfert ?',
+                        faq_5_answer: 'La plupart des transferts sont effectués en moins de 30 minutes. Le temps peut varier selon la disponibilité des offreurs dans votre zone et la rapidité de la mise en relation.',
+                        faq_6_question: 'Comment fonctionne le programme de parrainage ?',
+                        faq_6_answer: 'Invitez un ami avec votre code de parrainage unique. Lorsqu\'il effectue sa première transaction, vous bénéficiez tous les deux d\'une réduction de 10% sur les commissions. Aucune limite de parrainages !',
                         contact_title: 'Contactez-nous',
                         contact_subtitle: 'Une question ? Notre équipe est là pour vous aider',
                         full_name: 'Nom complet',
@@ -749,7 +712,7 @@ ob_start(); ?>
                         request_sent_success: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
                     },
                     en: {
-                        hero_badge: 'Instant money transfers',
+                        hero_badge: 'Money transfers around the world',
                         hero_title: 'Money transfer',
                         hero_title_highlight: 'without intermediary',
                         hero_description: 'Connect directly with people who have complementary needs. Fast, secure and international.',
@@ -758,6 +721,8 @@ ob_start(); ?>
                         stats_users: 'Users',
                         stats_countries: 'Countries',
                         stats_transferred: 'Transferred',
+                        instant: 'Instant',
+                        transfer_success: 'Transfer successful',
                         feature_secure: '100% Secure',
                         feature_instant: 'Instant',
                         feature_low_fees: 'Low fees',
@@ -793,14 +758,40 @@ ob_start(); ?>
                         view_all_offers: 'View all offers',
                         how_it_works: 'How does it work?',
                         how_it_works_subtitle: 'A simple 3-step process',
+                        step_1_title: 'Sign up',
+                        step_1_description: 'Create your free account in less than 2 minutes',
+                        step_2_title: 'Connect',
+                        step_2_description: 'Find and exchange with the other party securely',
+                        step_3_title: 'Transaction',
+                        step_3_description: 'Complete the transfer and receive your money instantly',
                         why_choose: 'Why choose AMPAY?',
                         why_choose_subtitle: 'Features designed for your security and comfort',
+                        feature_security_title: 'Maximum security',
+                        feature_security_description: 'Identity verification, data encryption and fraud protection',
+                        feature_fees_title: 'Transparent fees',
+                        feature_fees_description: 'Reduced commissions clearly displayed before each transaction',
+                        feature_countries_title: 'Multi-country',
+                        feature_countries_description: 'Available in 15+ countries in Africa and Europe',
+                        feature_support_title: '24/7 Support',
+                        feature_support_description: 'Team available at any time to assist you',
                         referral_title: 'Referral Program',
                         referral_description: 'Invite your friends and get -10% commission on their first transaction!',
                         reduced_commission: 'Reduced commission',
                         unlimited_referrals: 'Unlimited referrals',
                         faq_title: 'Frequently Asked Questions',
                         faq_subtitle: 'Everything you need to know about AMPAY',
+                        faq_1_question: 'How does AMPAY work?',
+                        faq_1_answer: 'AMPAY connects people who have cash in a city with those who need it. The platform facilitates the connection and takes a small commission on each transaction. It\'s simple, fast and secure.',
+                        faq_2_question: 'What currencies are supported?',
+                        faq_2_answer: 'We support major African currencies (XOF, NGN, GHS, MAD, TND) and European currencies (EUR, GBP, CHF). Other currencies will be added soon based on demand.',
+                        faq_3_question: 'How are commissions calculated?',
+                        faq_3_answer: 'Commissions vary between 2% and 5% depending on the amount and currency. They are always clearly displayed before the transaction. Referrals offer -10% on the first transaction.',
+                        faq_4_question: 'Is the platform secure?',
+                        faq_4_answer: 'Yes, we use advanced security protocols (SSL, data encryption, two-factor authentication). All users are verified before they can make transactions.',
+                        faq_5_question: 'How long does a transfer take?',
+                        faq_5_answer: 'Most transfers are completed in less than 30 minutes. The time may vary depending on the availability of providers in your area and the speed of connection.',
+                        faq_6_question: 'How does the referral program work?',
+                        faq_6_answer: 'Invite a friend with your unique referral code. When they make their first transaction, you both benefit from a 10% reduction in commissions. No referral limit!',
                         contact_title: 'Contact us',
                         contact_subtitle: 'Have a question? Our team is here to help',
                         full_name: 'Full name',
@@ -834,6 +825,74 @@ ob_start(); ?>
         computed: {
             t() {
                 return this.translations[this.currentLang];
+            },
+            steps() {
+                return [{
+                        icon: 'fas fa-user-plus',
+                        title: this.t.step_1_title,
+                        description: this.t.step_1_description
+                    },
+                    {
+                        icon: 'fas fa-handshake',
+                        title: this.t.step_2_title,
+                        description: this.t.step_2_description
+                    },
+                    {
+                        icon: 'fas fa-check-double',
+                        title: this.t.step_3_title,
+                        description: this.t.step_3_description
+                    }
+                ];
+            },
+            features() {
+                return [{
+                        icon: 'fas fa-shield-alt',
+                        title: this.t.feature_security_title,
+                        description: this.t.feature_security_description
+                    },
+                    {
+                        icon: 'fas fa-percentage',
+                        title: this.t.feature_fees_title,
+                        description: this.t.feature_fees_description
+                    },
+                    {
+                        icon: 'fas fa-globe-africa',
+                        title: this.t.feature_countries_title,
+                        description: this.t.feature_countries_description
+                    },
+                    {
+                        icon: 'fas fa-headset',
+                        title: this.t.feature_support_title,
+                        description: this.t.feature_support_description
+                    }
+                ];
+            },
+            faqs() {
+                return [{
+                        question: this.t.faq_1_question,
+                        answer: this.t.faq_1_answer,
+                    },
+                    {
+                        question: this.t.faq_2_question,
+                        answer: this.t.faq_2_answer,
+                    },
+                    {
+                        question: this.t.faq_3_question,
+                        answer: this.t.faq_3_answer,
+                    },
+                    {
+                        question: this.t.faq_4_question,
+                        answer: this.t.faq_4_answer,
+                    },
+                    {
+                        question: this.t.faq_5_question,
+                        answer: this.t.faq_5_answer,
+                    },
+                    {
+                        question: this.t.faq_6_question,
+                        answer: this.t.faq_6_answer,
+                    }
+                ];
             }
         },
         mounted() {
@@ -938,7 +997,7 @@ ob_start(); ?>
                 this.mobileMenuOpen = !this.mobileMenuOpen;
             },
             toggleFaq(index) {
-                this.faqs[index].open = !this.faqs[index].open;
+                this.faqOpenStates[index] = !this.faqOpenStates[index];
             },
             formatCurrency(amount) {
                 return new Intl.NumberFormat('fr-FR', {

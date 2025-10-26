@@ -10,7 +10,7 @@ ob_start(); ?>
 
 <div id="app">
     <!-- Updated language toggle to show flag emojis and theme icon to yellow -->
-    <div class="fixed top-4 right-4 z-50 flex gap-2">
+    <div class="fixed top-4 right-10 z-50 flex gap-2">
         <button @click="toggleLanguage"
             class="w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center hover:scale-110 transition-transform text-2xl">
             {{ currentLang === 'fr' ? '🇺🇸' : '🇫🇷' }}
@@ -33,7 +33,7 @@ ob_start(); ?>
                 </div>
                 <!-- Using translations for title and subtitle -->
                 <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ t.title }}</h2>
-                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                <p class="mt-2 text-sm text-white-600 dark:text-gray-400">
                     {{ t.alreadyRegistered }}
                     <a href="index.php?action=loginPage" class="font-medium text-primary hover:text-primary-dark">
                         {{ t.login }}
@@ -284,7 +284,7 @@ ob_start(); ?>
                 countries: [],
                 cities: [],
                 searchTimeout: null,
-                is_sponsored: null,
+                is_sponsored: false,
                 referral_link: referralLinkFromPHP || '',
                 sponsor_first_name: '',
                 sponsor_last_name: '',
@@ -342,7 +342,8 @@ ob_start(); ?>
 
                     this.sponsor_first_name = data.sponsor_first_name;
                     this.sponsor_last_name = data.sponsor_last_name;
-                    this.sponsor_id_name = data.sponsor_id;
+                    this.sponsor_id = data.id;
+                    this.is_sponsored = true;
 
                     return {
                         id: data.id,
@@ -432,12 +433,15 @@ ob_start(); ?>
 
                 const payload = {
                     ...this.registerForm,
-                    referral_link: this.referral_link || '',
-                    sponsor_first_name: this.registerForm.sponsor_first_name || '',
-                    sponsor_last_name: this.registerForm.sponsor_last_name || '',
-                    sponsor_id: this.registerForm.sponsor_id || null,
-                    is_sponsored: this.registerForm.is_sponsored || false
+                    //   referral_link: this.referral_link || '',
+                    sponsor_first_name: this.sponsor_first_name,
+                    sponsor_last_name: this.sponsor_last_name,
+                    sponsor_id: this.sponsor_id,
+                    is_sponsored: this.is_sponsored
                 };
+
+                console.log('Payload envoyé au backend :', payload);
+
 
                 try {
                     const response = await axios.post(
@@ -474,6 +478,7 @@ ob_start(); ?>
                 } finally {
                     this.loading = false;
                 }
+
             }
         }
     }).mount('#app');

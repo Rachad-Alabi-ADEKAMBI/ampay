@@ -30,3 +30,8 @@ function updateTransaction()
 {
     updateListing();
 }
+
+function getCommentedTransactions()
+{
+    fetchCommentedTransactions();
+}

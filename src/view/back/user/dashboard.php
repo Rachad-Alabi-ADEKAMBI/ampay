@@ -52,7 +52,7 @@ ob_start(); ?>
                                 <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-hand-holding-usd text-xl"></i>
                                 </div>
-                                <span v-if="stats.myOffersChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myOffersChange }}%</span>
+                                <span v-if="stats.myOffersChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myOffers }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Mes Offres</div>
@@ -63,7 +63,7 @@ ob_start(); ?>
                                 <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-hand-holding-heart text-xl"></i>
                                 </div>
-                                <span v-if="stats.myRequestsChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myRequestsChange }}%</span>
+                                <span v-if="stats.myRequestsChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myRequests }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Mes Demandes</div>
@@ -74,7 +74,7 @@ ob_start(); ?>
                                 <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
                                     <i class="fas fa-exchange-alt text-xl"></i>
                                 </div>
-                                <span v-if="stats.myTransactionsChange > 0" class="text-xs text-green-600 font-semibold">+{{ stats.myTransactionsChange }}%</span>
+                                <span v-if="stats.myTransactionsChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myTransactions }}</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Mes Transactions</div>
@@ -186,12 +186,12 @@ ob_start(); ?>
             async fetchMyData() {
                 try {
                     // Transactions utilisateur directement depuis l’API
-                    const transactionsResponse = await api.get('http://127.0.0.1/ampay/index.php?action=myTransactionsList');
+                    const transactionsResponse = await api.get('index.php?action=myTransactionsList');
                     this.myListings = Array.isArray(transactionsResponse.data.data) ? transactionsResponse.data.data : [];
                     console.log('Transactions:', this.myListings);
 
                     // Parrainages utilisateur
-                    const sponsorshipsResponse = await api.get('http://127.0.0.1/ampay/index.php?action=mySponsorshipsList');
+                    const sponsorshipsResponse = await api.get('index.php?action=mySponsorshipsList');
                     this.mySponsorships = Array.isArray(sponsorshipsResponse.data.data) ? sponsorshipsResponse.data.data : [];
                     console.log('Sponsorships:', this.mySponsorships);
 

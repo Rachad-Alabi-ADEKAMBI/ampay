@@ -49,6 +49,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             getAllMessagesByListingId();
             break;
 
+        case 'commentedTransactions':
+            getCommentedTransactions();
+            break;
+
         case 'dashboard':
             dashboardPage();
             break;
