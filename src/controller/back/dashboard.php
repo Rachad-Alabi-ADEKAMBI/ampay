@@ -21,3 +21,13 @@ function getAllMessages()
 {
     fetchAllMessages();
 }
+
+function sendMessage()
+{
+    newMessage();
+}
+
+function getConversations()
+{
+    fetchConversations();
+}

@@ -41,8 +41,16 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             getAllMessages();
             break;
 
+        case 'getConversation':
+            getConversations();
+            break;
+
         case 'allListings':
             getAllListings();
+            break;
+
+        case 'sendMessage':
+            sendMessage();
             break;
 
         case 'allMessagesByListingId':

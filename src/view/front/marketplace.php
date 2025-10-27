@@ -3,13 +3,13 @@
 ob_start();
 
 $isAuthenticated = isset($_SESSION['id']); // true ou false
-echo $isAuthenticated;
+
 
 ?>
 <script>
     // Injecte une vraie valeur booléenne JS (pas une chaîne)
     window.isAuthenticated = <?php echo json_encode($isAuthenticated); ?>;
-    console.log("Auth depuis PHP:", window.isAuthenticated);
+    window.user_id = <?php echo $_SESSION['id'] ?? 'null'; ?>;
 </script>
 
 <div id="app" v-cloak>
@@ -220,7 +220,9 @@ echo $isAuthenticated;
                             <i class="fas fa-clock mr-1"></i>{{ listing.timeAgo }}
                         </div>
 
-                        <button @click="openContactModal(listing)" :class="listing.type === 'Offre' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'" class="w-full py-3 text-white rounded-lg font-semibold transition-colors">
+                        <button v-if="listing.user_id != user_id"
+                            @click="openContactModal(listing)" :class="listing.type === 'Offre' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'"
+                            class="w-full py-3 text-white rounded-lg font-semibold transition-colors">
                             <i class="fas fa-comment mr-2"></i>{{ t.contact_button }}
                         </button>
                     </div>
@@ -397,6 +399,7 @@ echo $isAuthenticated;
                 citiesByCountry: {},
                 currencies: [],
                 listings: [],
+                user_id: window.user_id,
                 isAuthenticated: !!window.isAuthenticated,
                 translations: {
                     fr: {

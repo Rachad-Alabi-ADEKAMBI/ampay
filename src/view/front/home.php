@@ -1,16 +1,21 @@
-<?php $title = "AmPay - Accueil"; ?>
+<?php $title = "AmPay - Accueil";
 
 
-<?php
-
-ob_start(); ?>
+ob_start();
 
 
-<div class="app" id="app">
+$isAuthenticated = isset($_SESSION['id']); // true ou false
+
+
+?>
+<script>
+    // Injecte une vraie valeur booléenne JS (pas une chaîne)
+    window.isAuthenticated = <?php echo json_encode($isAuthenticated); ?>;
+    window.user_id = <?php echo $_SESSION['id'] ?? 'null'; ?>;
+</script>
+
+<div id="app" v-cloak>
     <!-- Added theme and language toggle buttons -->
-
-
-
     <?php include 'header.php'; ?>
 
 
@@ -253,7 +258,8 @@ ob_start(); ?>
                                     <i class="fas fa-clock mr-1"></i>{{ offer.timeAgo }}
                                 </div>
 
-                                <button @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
+                                <button v-if="offer.user_id != user_id"
+                                    @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
@@ -316,7 +322,8 @@ ob_start(); ?>
                                     <i class="fas fa-clock mr-1"></i>{{ request.timeAgo }}
                                 </div>
 
-                                <button @click="openContactModal(request)" class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
+                                <button @click="openContactModal(request)" v-if="request.user_id != user_id"
+                                    class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
@@ -528,7 +535,7 @@ ob_start(); ?>
                         <i class="fas fa-hashtag text-white"></i>
                     </div>
                     <div>
-                        <p class="font-semibold text-gray-900">{{ t.listing_number }} #{{ selectedListing.id }}</p>
+                        <p class="font-semibold text-gray-900">Nouvelle annonce</p>
                         <p class="text-sm text-gray-600">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
                     </div>
                 </div>
@@ -588,6 +595,7 @@ ob_start(); ?>
                 selectedListing: null,
                 contactRequestSubmitting: false,
                 contactRequestSuccess: false,
+                user_id: window.user_id,
                 contactRequest: {
                     message: ''
                 },

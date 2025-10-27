@@ -41,12 +41,13 @@ ob_start(); ?>
                                 {{ capitalizeFirstLetter(user_first_name) }} {{ capitalizeAll(user_last_name) }}
                             </span>
                         </div>
-                        <div class="flex gap-3">
-                            <button @click="toggleView" class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                        <!-- Buttons stacked vertically on mobile -->
+                        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            <button @click="toggleView" class="w-full sm:w-auto px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all shadow-lg no-print">
                                 <i :class="showCommentedView ? 'fas fa-list' : 'fas fa-comments'" class="mr-2"></i>
                                 {{ showCommentedView ? 'Mes Annonces' : 'Transactions Commentées' }}
                             </button>
-                            <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
+                            <button @click="openCreateModal" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-medium transition-all shadow-lg no-print">
                                 <i class="fas fa-plus mr-2"></i>Nouvelle Annonce
                             </button>
                         </div>
@@ -115,9 +116,10 @@ ob_start(); ?>
                             <p class="text-gray-600 dark:text-gray-400">Vous n'avez envoyé de message sur aucune transaction pour le moment</p>
                         </div>
 
-                        <div v-else class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead class="bg-gray-50 dark:bg-gray-700">
+                        <!-- Responsive table with data-label attributes -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full responsive-table">
+                                <thead class="bg-gray-50 dark:bg-gray-700 hidden md:table-header-group">
                                     <tr>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montant</th>
@@ -129,34 +131,34 @@ ob_start(); ?>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <tr v-for="transaction in commentedTransactions" :key="transaction.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                    <tr v-for="transaction in commentedTransactions" :key="transaction.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors md:table-row flex flex-col md:flex-row mb-4 md:mb-0 border-b-4 md:border-b-0 border-gray-200 dark:border-gray-700">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Type">
                                             <span :class="transaction.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
                                                 <i :class="transaction.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
                                                 {{ transaction.type }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Montant">
                                             <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(transaction.amount) }} {{ transaction.currency }}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Localisation">
                                             <div class="text-sm text-gray-900 dark:text-gray-100">
                                                 <i class="fas fa-map-marker-alt text-primary mr-1"></i>
                                                 {{ transaction.city }}, {{ transaction.country }}
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Délai">
                                             <div class="text-sm text-gray-900 dark:text-gray-100">{{ transaction.delay || 'N/A' }}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Date">
                                             <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(transaction.listing_created_at) }}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-6 py-4 md:whitespace-nowrap" data-label="Statut">
                                             <span :class="transaction.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
                                                 {{ transaction.status }}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-6 py-4 md:whitespace-nowrap text-sm font-medium" data-label="Actions">
                                             <button @click="viewCommentedMessages(transaction)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300" title="Voir mes messages">
                                                 <i class="fas fa-comments"></i>
                                                 <span class="ml-1">({{ transaction.messages.length }})</span>
@@ -193,9 +195,10 @@ ob_start(); ?>
 
                         <!-- Tableau -->
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+                            <!-- Responsive table with data-label attributes -->
                             <div class="overflow-x-auto">
-                                <table class="w-full">
-                                    <thead class="bg-gray-50 dark:bg-gray-700">
+                                <table class="w-full responsive-table">
+                                    <thead class="bg-gray-50 dark:bg-gray-700 hidden md:table-header-group">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montant</th>
@@ -207,34 +210,34 @@ ob_start(); ?>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                        <tr v-for="listing in paginatedListings" :key="listing.id" class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                        <tr v-for="listing in paginatedListings" :key="listing.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors md:table-row flex flex-col md:flex-row mb-4 md:mb-0 border-b-4 md:border-b-0 border-gray-200 dark:border-gray-700">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Type">
                                                 <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
                                                     <i :class="listing.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
                                                     {{ listing.type }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Montant">
                                                 <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Localisation">
                                                 <div class="text-sm text-gray-900 dark:text-gray-100">
                                                     <i class="fas fa-map-marker-alt text-primary mr-1"></i>
                                                     {{ listing.city }}, {{ listing.country }}
                                                 </div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Délai">
                                                 <div class="text-sm text-gray-900 dark:text-gray-100">{{ listing.delay || 'N/A' }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Date">
                                                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</div>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
+                                            <td class="px-6 py-4 md:whitespace-nowrap" data-label="Statut">
                                                 <span :class="listing.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
                                                     {{ listing.status }}
                                                 </span>
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <td class="px-6 py-4 md:whitespace-nowrap text-sm font-medium" data-label="Actions">
                                                 <div class="flex gap-2">
                                                     <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Voir">
                                                         <i class="fas fa-eye"></i>
@@ -605,99 +608,172 @@ ob_start(); ?>
 
     <!-- Modal pour voir les messages des transactions commentées -->
     <div v-if="showCommentedMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeCommentedMessagesModal">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-8 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-comments text-purple-600 mr-2"></i>Mes messages - Annonce #{{ selectedCommentedTransaction?.listing_id }}
-                </h3>
-                <button @click="closeCommentedMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
+        <!-- Improved responsive modal with better mobile support -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col h-[90vh] md:max-h-[85vh]">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        <i class="fas fa-comments text-purple-600 mr-2"></i>
+                        <span class="hidden sm:inline">Mes messages - Annonce #{{ selectedCommentedTransaction?.listing_id }}</span>
+                        <span class="sm:hidden">Annonce #{{ selectedCommentedTransaction?.listing_id }}</span>
+                    </h3>
+                    <button @click="closeCommentedMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <i class="fas fa-times text-xl sm:text-2xl"></i>
+                    </button>
+                </div>
             </div>
 
-            <div v-if="selectedCommentedTransaction" class="mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                <div class="flex items-center justify-between">
+            <div v-if="selectedCommentedTransaction" class="px-4 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                         <span :class="selectedCommentedTransaction.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold mr-2">
                             {{ selectedCommentedTransaction.type }}
                         </span>
-                        <span class="text-lg font-bold text-gray-900 dark:text-gray-100">
+                        <span class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                             {{ formatCurrency(selectedCommentedTransaction.amount) }} {{ selectedCommentedTransaction.currency }}
                         </span>
                     </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                    <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
                         <i class="fas fa-map-marker-alt mr-1"></i>
                         {{ selectedCommentedTransaction.city }}, {{ selectedCommentedTransaction.country }}
                     </div>
                 </div>
             </div>
 
-            <div v-if="selectedCommentedTransaction && selectedCommentedTransaction.messages.length === 0" class="text-center py-8">
-                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
-                <p class="text-gray-600 dark:text-gray-400">Aucun message pour cette transaction</p>
-            </div>
+            <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3" ref="commentedChatContainer">
+                <div v-if="loadingCommentedMessages" class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-4xl text-purple-600 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400">Chargement des messages...</p>
+                </div>
 
-            <div v-else-if="selectedCommentedTransaction" class="space-y-4">
-                <div v-for="msg in selectedCommentedTransaction.messages" :key="msg.message_id" class="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-700">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-user text-white"></i>
+                <div v-else-if="commentedConversation.length === 0" class="text-center py-8">
+                    <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
+                    <h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Commencez la conversation en envoyant un message</p>
+                </div>
+
+                <!-- Improved message colors for better readability -->
+                <div v-else v-for="msg in commentedConversation" :key="msg.message_id" :class="['flex', msg.sender_id === userId ? 'justify-end' : 'justify-start']">
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                        <div class="flex items-center mb-2">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
+                                <i :class="msg.sender_id === userId ? 'fas fa-user' : 'fas fa-user-shield'" class="text-white text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Vous</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(msg.message_created_at) }}</p>
+                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
+                                    {{ msg.sender_id === userId ? 'Vous' : 'Admin' }}
+                                </p>
+                                <p :class="['text-xs', msg.sender_id === userId ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
+                                    {{ formatDate(msg.message_created_at) }}
+                                </p>
                             </div>
                         </div>
+                        <p class="text-sm break-words">{{ msg.message }}</p>
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg">{{ msg.message }}</p>
                 </div>
+            </div>
+
+            <!-- Improved form with better mobile button visibility -->
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
+                <form @submit.prevent="sendCommentedMessage" class="flex gap-2">
+                    <textarea
+                        v-model="newCommentedMessage"
+                        rows="2"
+                        placeholder="Écrivez votre message..."
+                        class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
+                    <button
+                        type="submit"
+                        :disabled="!newCommentedMessage.trim() || sendingCommentedMessage"
+                        class="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
+                        <i class="fas fa-paper-plane text-base sm:text-lg"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
     <!-- Modal pour voir les messages de l'admin sur mes propres transactions -->
     <div v-if="showAdminMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeAdminMessagesModal">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-8 max-h-[80vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-envelope text-primary mr-2"></i>Messages Admin - Annonce #{{ selectedListingForMessages?.id }}
-                </h3>
-                <button @click="closeAdminMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-                    <i class="fas fa-times text-2xl"></i>
-                </button>
+        <!-- Improved responsive modal with better mobile support -->
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col h-[90vh] md:max-h-[85vh]">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        <i class="fas fa-envelope text-primary mr-2"></i>
+                        <span class="hidden sm:inline">Messages Admin - Annonce #{{ selectedListingForMessages?.id }}</span>
+                        <span class="sm:hidden">Annonce #{{ selectedListingForMessages?.id }}</span>
+                    </h3>
+                    <button @click="closeAdminMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <i class="fas fa-times text-xl sm:text-2xl"></i>
+                    </button>
+                </div>
             </div>
 
-            <div v-if="loadingAdminMessages" class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
-                <p class="text-gray-600 dark:text-gray-400">Chargement des messages...</p>
-            </div>
-
-            <div v-else-if="adminMessages.length === 0" class="text-center py-8">
-                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
-                <p class="text-gray-600 dark:text-gray-400">L'admin n'a pas encore envoyé de message pour cette annonce</p>
-            </div>
-
-            <div v-else class="space-y-4">
-                <div v-for="msg in adminMessages" :key="msg.id" class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-user-shield text-white"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Admin</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(msg.created_at) }}</p>
-                            </div>
-                        </div>
-                        <span v-if="msg.status" :class="msg.status === 'Envoyé' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'" class="px-2 py-1 rounded-full text-xs font-semibold">
-                            {{ msg.status }}
+            <div v-if="selectedListingForMessages" class="px-4 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                        <span :class="selectedListingForMessages.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold mr-2">
+                            {{ selectedListingForMessages.type }}
+                        </span>
+                        <span class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {{ formatCurrency(selectedListingForMessages.amount) }} {{ selectedListingForMessages.currency }}
                         </span>
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg">{{ msg.message }}</p>
+                    <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        {{ selectedListingForMessages.city }}, {{ selectedListingForMessages.country }}
+                    </div>
                 </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3" ref="adminChatContainer">
+                <div v-if="loadingAdminMessages" class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400">Chargement des messages...</p>
+                </div>
+
+                <div v-else-if="adminConversation.length === 0" class="text-center py-8">
+                    <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
+                    <h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Aucune conversation pour le moment</p>
+                </div>
+
+                <!-- Improved message colors for better readability -->
+                <div v-else v-for="msg in adminConversation" :key="msg.id" :class="['flex', msg.sender_id === userId ? 'justify-end' : 'justify-start']">
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                        <div class="flex items-center mb-2">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-green-600' : 'bg-gray-400 dark:bg-gray-600']">
+                                <i :class="msg.sender_id === userId ? 'fas fa-user' : 'fas fa-user-shield'" class="text-white text-xs sm:text-sm"></i>
+                            </div>
+                            <div>
+                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-green-100' : 'text-gray-700 dark:text-gray-300']">
+                                    {{ msg.sender_id === userId ? 'Vous' : 'Admin' }}
+                                </p>
+                                <p :class="['text-xs', msg.sender_id === userId ? 'text-green-200' : 'text-gray-500 dark:text-gray-400']">
+                                    {{ formatDate(msg.created_at) }}
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-sm break-words">{{ msg.message }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Improved form with better mobile button visibility -->
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
+                <form @submit.prevent="sendAdminMessage" class="flex gap-2">
+                    <textarea
+                        v-model="newAdminMessage"
+                        rows="2"
+                        placeholder="Écrivez votre message..."
+                        class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
+                    <button
+                        type="submit"
+                        :disabled="!newAdminMessage.trim() || sendingAdminMessage"
+                        class="px-4 sm:px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
+                        <i class="fas fa-paper-plane text-base sm:text-lg"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -736,8 +812,14 @@ ob_start(); ?>
                 myListings: [],
                 commentedTransactions: [],
                 allMessages: [],
-                adminMessages: [],
+                commentedConversation: [],
+                adminConversation: [],
+                loadingCommentedMessages: false,
                 loadingAdminMessages: false,
+                newCommentedMessage: '',
+                newAdminMessage: '',
+                sendingCommentedMessage: false,
+                sendingAdminMessage: false,
                 adminMessageCounts: {},
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
@@ -859,30 +941,141 @@ ob_start(); ?>
             getAdminMessageCount(listingId) {
                 return this.adminMessageCounts[listingId] || 0;
             },
-            viewCommentedMessages(transaction) {
+            async viewCommentedMessages(transaction) {
                 this.selectedCommentedTransaction = transaction;
                 this.showCommentedMessagesModal = true;
+                this.loadingCommentedMessages = true;
+                this.commentedConversation = [];
+
+                try {
+                    // Fetch all messages for this listing_id where user is sender or receiver
+                    const res = await fetch(`index.php?action=getConversation&listing_id=${transaction.listing_id}`);
+                    const data = await res.json();
+
+                    if (data.success && Array.isArray(data.messages)) {
+                        this.commentedConversation = data.messages.sort((a, b) =>
+                            new Date(a.message_created_at) - new Date(b.message_created_at)
+                        );
+                    }
+                } catch (error) {
+                    console.error("Erreur lors du chargement de la conversation:", error);
+                } finally {
+                    this.loadingCommentedMessages = false;
+                    this.$nextTick(() => {
+                        this.scrollToBottom('commentedChatContainer');
+                    });
+                }
             },
             closeCommentedMessagesModal() {
                 this.showCommentedMessagesModal = false;
                 this.selectedCommentedTransaction = null;
+                this.commentedConversation = [];
+                this.newCommentedMessage = '';
+            },
+            async sendCommentedMessage() {
+                if (!this.newCommentedMessage.trim() || this.sendingCommentedMessage) return;
+
+                this.sendingCommentedMessage = true;
+                try {
+                    const response = await axios.post('index.php?action=sendMessage', {
+                        listing_id: this.selectedCommentedTransaction.listing_id,
+                        message: this.newCommentedMessage.trim(),
+                        sender_id: this.userId,
+                        receiver_id: 1
+                    });
+
+                    if (response.data?.success) {
+                        // Add message to conversation immediately
+                        this.commentedConversation.push({
+                            message_id: Date.now(),
+                            listing_id: this.selectedCommentedTransaction.listing_id,
+                            sender_id: this.userId,
+                            message: this.newCommentedMessage.trim(),
+                            message_created_at: new Date().toISOString()
+                        });
+
+                        this.newCommentedMessage = '';
+                        this.$nextTick(() => {
+                            this.scrollToBottom('commentedChatContainer');
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'envoi du message:', error);
+                    alert('Erreur lors de l\'envoi du message.');
+                } finally {
+                    this.sendingCommentedMessage = false;
+                }
             },
             async viewAdminMessages(listing) {
                 this.selectedListingForMessages = listing;
                 this.showAdminMessagesModal = true;
                 this.loadingAdminMessages = true;
+                this.adminConversation = [];
 
-                // Filtrer les messages par listing_id
-                this.adminMessages = this.allMessages.filter(msg =>
-                    msg.listing_id === listing.id && msg.receiver_id === this.userId
-                );
+                try {
+                    // Fetch all messages for this listing_id where user is sender or receiver
+                    const res = await fetch(`index.php?action=getConversation&listing_id=${listing.id}`);
+                    const data = await res.json();
 
-                this.loadingAdminMessages = false;
+                    if (data.success && Array.isArray(data.messages)) {
+                        this.adminConversation = data.messages.sort((a, b) =>
+                            new Date(a.created_at || a.message_created_at) - new Date(b.created_at || b.message_created_at)
+                        );
+                    }
+                } catch (error) {
+                    console.error("Erreur lors du chargement de la conversation:", error);
+                } finally {
+                    this.loadingAdminMessages = false;
+                    this.$nextTick(() => {
+                        this.scrollToBottom('adminChatContainer');
+                    });
+                }
             },
             closeAdminMessagesModal() {
                 this.showAdminMessagesModal = false;
                 this.selectedListingForMessages = null;
-                this.adminMessages = [];
+                this.adminConversation = [];
+                this.newAdminMessage = '';
+            },
+            async sendAdminMessage() {
+                if (!this.newAdminMessage.trim() || this.sendingAdminMessage) return;
+
+                this.sendingAdminMessage = true;
+                try {
+                    const response = await axios.post('index.php?action=sendMessage', {
+                        listing_id: this.selectedListingForMessages.id,
+                        message: this.newAdminMessage.trim(),
+                        sender_id: this.userId,
+                        receiver_id: 1
+                    });
+
+                    if (response.data?.success) {
+                        // Add message to conversation immediately
+                        this.adminConversation.push({
+                            id: Date.now(),
+                            listing_id: this.selectedListingForMessages.id,
+                            sender_id: this.userId,
+                            message: this.newAdminMessage.trim(),
+                            created_at: new Date().toISOString()
+                        });
+
+                        this.newAdminMessage = '';
+                        this.$nextTick(() => {
+                            this.scrollToBottom('adminChatContainer');
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'envoi du message:', error);
+                    alert('Erreur lors de l\'envoi du message.');
+                } finally {
+                    this.sendingAdminMessage = false;
+                }
+            },
+            scrollToBottom(refName) {
+                const container = this.$refs[refName];
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
             },
             capitalizeFirstLetter(word) {
                 if (!word) return '';
@@ -1016,6 +1209,8 @@ ob_start(); ?>
         --primary: #10B981;
         --bg-dark: #0F172A;
         --bg-dark-secondary: #1E293B;
+        /* Added custom gray-750 color for better dark mode hover */
+        --bg-gray-750: #1a2332;
     }
 
     body.dark-mode {
@@ -1082,6 +1277,7 @@ ob_start(); ?>
         transition: transform 0.3s ease;
     }
 
+    /* Added responsive table styles */
     @media (max-width: 768px) {
         .sidebar {
             transform: translateX(-100%);
@@ -1095,6 +1291,50 @@ ob_start(); ?>
         .sidebar.open {
             transform: translateX(0);
         }
+
+        .responsive-table tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .dark-mode .responsive-table tbody tr {
+            border-color: #374151;
+        }
+
+        .responsive-table tbody td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .dark-mode .responsive-table tbody td {
+            border-bottom-color: #1f2937;
+        }
+
+        .responsive-table tbody td:last-child {
+            border-bottom: none;
+        }
+
+        .responsive-table tbody td::before {
+            content: attr(data-label);
+            font-weight: 600;
+            color: #6b7280;
+            margin-right: 1rem;
+        }
+
+        .dark-mode .responsive-table tbody td::before {
+            color: #9ca3af;
+        }
+    }
+
+    /* Added custom dark mode hover color for better visual feedback */
+    .dark-mode tr:hover {
+        background-color: var(--bg-gray-750) !important;
     }
 
     @media print {

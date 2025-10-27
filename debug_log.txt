@@ -115,3 +115,21 @@ Array
     [message] => okkk
     [listing_id] => 17
 )
+contactRequestUser() appelée
+Array
+(
+    [message] => svp
+    [listing_id] => 17
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => je m'appelle Rachad, je veux bien lui fournir cela
+    [listing_id] => 20
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => je peux aider
+    [listing_id] => 19
+)

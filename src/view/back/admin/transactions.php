@@ -348,10 +348,10 @@ ob_start(); ?>
 
     <!-- Modal de gestion des messages -->
     <div v-if="showMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeMessagesModal">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-8 max-h-[80vh] overflow-y-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-comments text-primary mr-2"></i>Messages - Annonce #{{ selectedListing?.listing_id }}
+                <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <i class="fas fa-comments text-primary mr-2"></i>Conversations - Annonce #{{ selectedListing?.listing_id }}
                 </h3>
                 <button @click="closeMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -360,44 +360,124 @@ ob_start(); ?>
 
             <div v-if="loadingMessages" class="text-center py-8">
                 <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
-                <p class="text-gray-600 dark:text-gray-400">Chargement des messages...</p>
+                <p class="text-gray-600 dark:text-gray-400">Chargement des conversations...</p>
             </div>
 
-            <div v-else-if="transactionMessages.length === 0" class="text-center py-8">
-                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+            <div v-else-if="conversationsList.length === 0" class="text-center py-8">
+                <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucune conversation</h4>
                 <p class="text-gray-600 dark:text-gray-400">Aucun message pour cette annonce</p>
             </div>
 
+            <!-- Show list of conversations instead of all messages -->
             <div v-else class="space-y-4">
-                <div v-for="msg in transactionMessages" :key="msg.id" class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
+                <div v-for="conversation in conversationsList" :key="conversation.user_id" class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-colors">
                     <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center">
-                            <div class="w-10 h-10 primary-gradient rounded-full flex items-center justify-center mr-3">
-                                <i class="fas fa-user text-white"></i>
+                        <div class="flex items-center flex-1">
+                            <div class="w-12 h-12 primary-gradient rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-user text-white text-lg"></i>
                             </div>
-                            <div>
-                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ msg.first_name }} {{ msg.last_name }}</p>
-                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ msg.email }}</p>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ conversation.first_name }} {{ conversation.last_name }}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ conversation.email }}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate">{{ conversation.last_message }}</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span v-if="msg.status" :class="msg.status === 'Envoyé' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'" class="px-2 py-1 rounded-full text-xs font-semibold">
-                                {{ msg.status }}
+                        <div class="flex flex-col items-end gap-2 ml-4">
+                            <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold whitespace-nowrap">
+                                {{ conversation.message_count }} message(s)
                             </span>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ formatDate(msg.created_at) }}</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ formatDate(conversation.last_message_date) }}</span>
                         </div>
                     </div>
-                    <p class="text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-lg mb-3">{{ msg.message }}</p>
-                    <div class="flex justify-end gap-2">
-                        <button v-if="msg.status === 'Envoyé'" @click="markAsRead(msg)" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
-                            <i class="fas fa-check mr-2"></i>Marquer comme lu
-                        </button>
-                        <button @click="openReplyModal(msg)" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium">
-                            <i class="fas fa-reply mr-2"></i>Répondre
-                        </button>
+                    <!-- Add button to access full conversation -->
+                    <button @click="openChatModal(conversation)" class="w-full px-4 py-2 bg-primary hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                        <i class="fas fa-comments mr-2"></i>Accéder aux messages
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New modal for full chat conversation -->
+    <div v-if="showChatModal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4" @click.self="closeChatModal">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col h-[90vh] md:max-h-[85vh]">
+            <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
+                        <i class="fas fa-comments text-primary mr-2"></i>
+                        <span class="hidden sm:inline">Conversation avec {{ selectedConversation?.first_name }} {{ selectedConversation?.last_name }}</span>
+                        <span class="sm:hidden">{{ selectedConversation?.first_name }} {{ selectedConversation?.last_name }}</span>
+                    </h3>
+                    <button @click="closeChatModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                        <i class="fas fa-times text-xl sm:text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div v-if="selectedListing" class="px-4 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">Annonce #{{ selectedListing.listing_id }} - </span>
+                        <span class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
+                            {{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}
+                        </span>
+                    </div>
+                    <div class="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-map-marker-alt mr-1"></i>
+                        {{ selectedListing.city }}, {{ selectedListing.country }}
                     </div>
                 </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3" ref="chatContainer">
+                <div v-if="loadingChat" class="text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400">Chargement de la conversation...</p>
+                </div>
+
+                <div v-else-if="chatMessages.length === 0" class="text-center py-8">
+                    <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
+                    <h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Commencez la conversation</p>
+                </div>
+
+                <!-- Chat interface similar to myTransactions.php -->
+                <div v-else v-for="msg in chatMessages" :key="msg.id" :class="['flex', msg.sender_id === 1 ? 'justify-end' : 'justify-start']">
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                        <div class="flex items-center mb-2">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === 1 ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
+                                <i :class="msg.sender_id === 1 ? 'fas fa-user-shield' : 'fas fa-user'" class="text-white text-xs sm:text-sm"></i>
+                            </div>
+                            <div>
+                                <p :class="['text-xs font-semibold', msg.sender_id === 1 ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
+                                    {{ msg.sender_id === 1 ? 'Vous (Admin)' : msg.first_name + ' ' + msg.last_name }}
+                                </p>
+                                <p :class="['text-xs', msg.sender_id === 1 ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
+                                    {{ formatDate(msg.created_at) }}
+                                </p>
+                            </div>
+                        </div>
+                        <p class="text-sm break-words">{{ msg.message }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form to send messages -->
+            <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
+                <form @submit.prevent="sendChatMessage" class="flex gap-2">
+                    <textarea
+                        v-model="newChatMessage"
+                        rows="2"
+                        placeholder="Écrivez votre message..."
+                        class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
+                    <button
+                        type="submit"
+                        :disabled="!newChatMessage.trim() || sendingChatMessage"
+                        class="px-4 sm:px-6 py-2 bg-primary hover:bg-green-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
+                        <i class="fas fa-paper-plane text-base sm:text-lg"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -468,8 +548,15 @@ ob_start(); ?>
                 showMessageModal: false,
                 showMessagesModal: false,
                 showReplyModal: false,
+                showChatModal: false,
                 selectedListing: null,
                 selectedMessage: null,
+                selectedConversation: null,
+                conversationsList: [],
+                chatMessages: [],
+                loadingChat: false,
+                newChatMessage: '',
+                sendingChatMessage: false,
                 messageContent: '',
                 replyContent: '',
                 allListings: [],
@@ -659,19 +746,30 @@ ob_start(); ?>
                 this.messageContent = '';
             },
             async sendMessage() {
-                if (!this.messageContent.trim()) return;
+                const content = this.messageContent.trim();
+                if (!content) return;
+
                 try {
-                    await api.post('?action=sendMessage', {
+                    const {
+                        data
+                    } = await api.post('?action=sendMessage', {
                         transaction_id: this.selectedListing.listing_id,
-                        message: this.messageContent
+                        message: content,
+                        receiver_id: this.selectedListing.user_id
                     });
-                    alert('Message envoyé avec succès!');
-                    this.closeMessageModal();
+
+                    if (data.success) {
+                        alert(data.message || 'Message envoyé avec succès !');
+                        this.closeMessageModal();
+                    } else {
+                        alert(data.error || 'Une erreur est survenue.');
+                    }
                 } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de l\'envoi du message');
+                    console.error('Erreur réseau :', error);
+                    alert('Erreur de communication avec le serveur.');
                 }
             },
+
             async toggleStatus(listing) {
                 const newStatus = listing.status === 'Actif' ? 'Inactif' : 'Actif';
                 try {
@@ -696,15 +794,126 @@ ob_start(); ?>
                 this.loadingMessages = true;
 
                 const messages = await this.fetchAllMessagesByListingId(listingId);
-                this.transactionMessages = messages;
+
+                // Group messages by user (sender)
+                const conversationsMap = new Map();
+                messages.forEach(msg => {
+                    const userId = msg.sender_id === 1 ? msg.receiver_id : msg.sender_id;
+
+                    if (!conversationsMap.has(userId)) {
+                        conversationsMap.set(userId, {
+                            user_id: userId,
+                            first_name: msg.first_name,
+                            last_name: msg.last_name,
+                            email: msg.email,
+                            messages: [],
+                            last_message: '',
+                            last_message_date: '',
+                            message_count: 0
+                        });
+                    }
+
+                    const conversation = conversationsMap.get(userId);
+                    conversation.messages.push(msg);
+                    conversation.message_count++;
+
+                    // Update last message info
+                    if (!conversation.last_message_date || new Date(msg.created_at) > new Date(conversation.last_message_date)) {
+                        conversation.last_message = msg.message;
+                        conversation.last_message_date = msg.created_at;
+                    }
+                });
+
+                this.conversationsList = Array.from(conversationsMap.values()).sort((a, b) =>
+                    new Date(b.last_message_date) - new Date(a.last_message_date)
+                );
 
                 this.loadingMessages = false;
             },
             closeMessagesModal() {
                 this.showMessagesModal = false;
                 this.selectedListing = null;
-                this.transactionMessages = [];
+                this.conversationsList = [];
             },
+
+            async openChatModal(conversation) {
+                this.selectedConversation = conversation;
+                this.showChatModal = true;
+                this.loadingChat = true;
+                this.chatMessages = [];
+
+                try {
+                    // Fetch all messages between admin (ID=1) and this user for this listing
+                    const res = await api.get(`?action=getConversation&listing_id=${this.selectedListing.listing_id}&user_id=${conversation.user_id}`);
+
+                    if (res.data && res.data.success && Array.isArray(res.data.messages)) {
+                        this.chatMessages = res.data.messages.sort((a, b) =>
+                            new Date(a.created_at) - new Date(b.created_at)
+                        );
+                    }
+                } catch (error) {
+                    console.error("Erreur lors du chargement de la conversation:", error);
+                } finally {
+                    this.loadingChat = false;
+                    this.$nextTick(() => {
+                        this.scrollToBottom();
+                    });
+                }
+            },
+
+            closeChatModal() {
+                this.showChatModal = false;
+                this.selectedConversation = null;
+                this.chatMessages = [];
+                this.newChatMessage = '';
+            },
+
+            async sendChatMessage() {
+                if (!this.newChatMessage.trim() || this.sendingChatMessage) return;
+
+                this.sendingChatMessage = true;
+                try {
+                    const response = await api.post('?action=sendMessage', {
+                        transaction_id: this.selectedListing.listing_id,
+                        message: this.newChatMessage.trim(),
+                        receiver_id: this.selectedConversation.user_id
+                    });
+
+                    if (response.data && response.data.success) {
+                        // Add message to chat immediately
+                        this.chatMessages.push({
+                            id: Date.now(),
+                            listing_id: this.selectedListing.listing_id,
+                            sender_id: 1,
+                            receiver_id: this.selectedConversation.user_id,
+                            message: this.newChatMessage.trim(),
+                            created_at: new Date().toISOString(),
+                            first_name: 'Admin',
+                            last_name: ''
+                        });
+
+                        this.newChatMessage = '';
+                        this.$nextTick(() => {
+                            this.scrollToBottom();
+                        });
+                    } else {
+                        alert(response.data?.error || 'Erreur lors de l\'envoi du message.');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'envoi du message :', error);
+                    alert('Erreur de communication avec le serveur.');
+                } finally {
+                    this.sendingChatMessage = false;
+                }
+            },
+
+            scrollToBottom() {
+                const container = this.$refs.chatContainer;
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                }
+            },
+
             openReplyModal(message) {
                 this.selectedMessage = message;
                 this.replyContent = '';
@@ -716,22 +925,34 @@ ob_start(); ?>
                 this.replyContent = '';
             },
             async sendReply() {
-                if (!this.replyContent.trim()) return;
+                if (!this.replyContent.trim()) {
+                    alert("Le message ne peut pas être vide.");
+                    return;
+                }
+
                 try {
-                    await api.post('?action=sendMessage', {
+                    const response = await api.post('?action=sendMessage', {
                         transaction_id: this.selectedListing.listing_id,
                         message: this.replyContent,
-                        recipient_email: this.selectedMessage.email
+                        receiver_id: this.selectedMessage.sender_id // ← ICI tu envoies le bon destinataire
                     });
-                    alert('Réponse envoyée avec succès!');
-                    this.closeReplyModal();
-                    const messages = await this.fetchAllMessagesByListingId(this.selectedListing.listing_id);
-                    this.transactionMessages = messages;
+
+                    if (response.data && response.data.success) {
+                        alert(response.data.message || 'Réponse envoyée avec succès !');
+                        this.closeReplyModal();
+                        const messages = await this.fetchAllMessagesByListingId(this.selectedListing.listing_id);
+                        this.transactionMessages = messages;
+                    } else {
+                        const errorMessage = response.data?.error || 'Erreur inconnue lors de l’envoi du message.';
+                        alert('Échec : ' + errorMessage);
+                    }
                 } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de l\'envoi de la réponse');
+                    console.error('Erreur lors de l’envoi de la réponse :', error);
+                    alert('Une erreur est survenue. Vérifie ta connexion ou réessaie plus tard.');
                 }
             },
+
+
             capitalizeFirstLetter(word) {
                 if (!word) return '';
                 return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
