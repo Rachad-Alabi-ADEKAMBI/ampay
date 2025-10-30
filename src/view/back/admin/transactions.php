@@ -102,7 +102,6 @@ ob_start(); ?>
                                 <option value="Inactif">Inactif</option>
                             </select>
 
-                            <!-- Changed from sort to filter with proper delay options -->
                             <select v-model="filterDelay" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 <option value="">Tous les délais</option>
                                 <option value="Urgent">Urgent</option>
@@ -132,7 +131,6 @@ ob_start(); ?>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <!-- Removed white hover in dark mode, changed to darker gray -->
                                     <tr v-for="listing in paginatedListings" :key="listing.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
                                         <td data-label="Annonceur" class="px-6 py-4 whitespace-nowrap">
                                             <div>
@@ -179,10 +177,10 @@ ob_start(); ?>
                                                 <button @click="toggleStatus(listing)" :class="listing.status === 'Actif' ? 'text-red-600 hover:text-red-900 dark:text-red-400' : 'text-green-600 hover:text-green-900 dark:text-green-400'" :title="listing.status === 'Actif' ? 'Désactiver' : 'Activer'">
                                                     <i :class="listing.status === 'Actif' ? 'fas fa-pause' : 'fas fa-play'"></i>
                                                 </button>
-                                                <!-- Added unread message count badge next to messages icon -->
+                                                <!-- Added conversation count in parentheses next to messages icon -->
                                                 <button @click="openMessagesModal(listing.listing_id)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 relative" title="Messages">
                                                     <i class="fas fa-comments"></i>
-                                                    <span v-if="getUnreadCount(listing.listing_id) > 0" class="ml-1 text-xs font-semibold">({{ getUnreadCount(listing.listing_id) }})</span>
+                                                    <span v-if="getConversationCount(listing.listing_id) > 0" class="ml-1 text-xs font-semibold">({{ getConversationCount(listing.listing_id) }})</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -247,7 +245,9 @@ ob_start(); ?>
                             </div>
                             <div>
                                 <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Annonceur</p>
-                                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ selectedListing.first_name }} {{ selectedListing.last_name }}</p>
+                                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ capitalizeFirstLetter(selectedListing.first_name) }}
+                                    {{ capitalizeFirstLetter(selectedListing.last_name) }}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -288,7 +288,6 @@ ob_start(); ?>
                         </div>
                     </div>
 
-                    <!-- Added delay display in details modal -->
                     <div :class="getDelayCardColor(selectedListing.delay)" class="p-4 rounded-xl border">
                         <div class="flex items-center mb-2">
                             <div :class="getDelayIconBgColor(selectedListing.delay)" class="w-10 h-10 rounded-lg flex items-center justify-center mr-3">
@@ -369,16 +368,19 @@ ob_start(); ?>
                 <p class="text-gray-600 dark:text-gray-400">Aucun message pour cette annonce</p>
             </div>
 
-            <!-- Show list of conversations instead of all messages -->
             <div v-else class="space-y-4">
-                <div v-for="conversation in conversationsList" :key="conversation.user_id" class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-colors">
+                <div v-for="conversation in conversationsList" :key="conversation.user_id" v-if="1>0"
+                    class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 
+                dark:border-gray-700 hover:border-primary dark:hover:border-primary transition-colors">
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center flex-1">
                             <div class="w-12 h-12 primary-gradient rounded-full flex items-center justify-center mr-3 flex-shrink-0">
                                 <i class="fas fa-user text-white text-lg"></i>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ conversation.first_name }} {{ conversation.last_name }}</p>
+                                <p class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(conversation.first_name) }}
+                                    {{ capitalizeAll(conversation.last_name) }}
+                                </p>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{{ conversation.email }}</p>
                                 <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 truncate">{{ conversation.last_message }}</p>
                             </div>
@@ -390,8 +392,8 @@ ob_start(); ?>
                             <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ formatDate(conversation.last_message_date) }}</span>
                         </div>
                     </div>
-                    <!-- Add button to access full conversation -->
-                    <button @click="openChatModal(conversation)" class="w-full px-4 py-2 bg-primary hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
+                    <!-- Made button always green (bg-green-600) and visible in both light and dark modes -->
+                    <button @click="openChatModal(conversation)" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
                         <i class="fas fa-comments mr-2"></i>Accéder aux messages
                     </button>
                 </div>
@@ -406,8 +408,12 @@ ob_start(); ?>
                 <div class="flex justify-between items-center">
                     <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         <i class="fas fa-comments text-primary mr-2"></i>
-                        <span class="hidden sm:inline">Conversation avec {{ selectedConversation?.first_name }} {{ selectedConversation?.last_name }}</span>
-                        <span class="sm:hidden">{{ selectedConversation?.first_name }} {{ selectedConversation?.last_name }}</span>
+                        <span class="hidden sm:inline">Conversation avec {{ capitalizeFirstLetter(selectedConversation?.sender_first_name) ||
+                            capitalizeFirstLetter( selectedConversation?.first_name) }} {{ capitalizeAll(selectedConversation?.sender_last_name) ||
+                                 capitalizeAll(selectedConversation?.last_name) }}</span>
+                        <span class="sm:hidden">{{ capitalizeFirstLetter(selectedConversation?.sender_first_name) || 
+                            capitalizeFirstLetter(selectedConversation?.first_name) }} {{ capitalizeAll(selectedConversation?.sender_last_name) ||
+                                capitalizeAll(selectedConversation?.last_name) }}</span>
                     </h3>
                     <button @click="closeChatModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                         <i class="fas fa-times text-xl sm:text-2xl"></i>
@@ -442,18 +448,19 @@ ob_start(); ?>
                     <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Commencez la conversation</p>
                 </div>
 
-                <!-- Chat interface similar to myTransactions.php -->
+                <!-- Swapped colors: green for sent messages (admin), blue for received messages -->
                 <div v-else v-for="msg in chatMessages" :key="msg.id" :class="['flex', msg.sender_id === 1 ? 'justify-end' : 'justify-start']">
-                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === 1 ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === 1 ? 'bg-green-600 text-white' : 'bg-blue-500 text-white']">
                         <div class="flex items-center mb-2">
-                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === 1 ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === 1 ? 'bg-green-700' : 'bg-blue-600']">
                                 <i :class="msg.sender_id === 1 ? 'fas fa-user-shield' : 'fas fa-user'" class="text-white text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p :class="['text-xs font-semibold', msg.sender_id === 1 ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
-                                    {{ msg.sender_id === 1 ? 'Vous (Admin)' : msg.first_name + ' ' + msg.last_name }}
+                                <p :class="['text-xs font-semibold', msg.sender_id === 1 ? 'text-green-100' : 'text-blue-100']">
+                                    {{ msg.sender_id === 1 ? 'Vous (Admin)' : (capitalizeFirstLetter(msg.sender_first_name) || capitalizeFirstLetter(msg.first_name)) + ' ' + 
+                                        (capitalizeAll(msg.sender_last_name) || capitalizeAll(msg.last_name)) }}
                                 </p>
-                                <p :class="['text-xs', msg.sender_id === 1 ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
+                                <p :class="['text-xs', msg.sender_id === 1 ? 'text-green-200' : 'text-blue-200']">
                                     {{ formatDate(msg.created_at) }}
                                 </p>
                             </div>
@@ -463,7 +470,7 @@ ob_start(); ?>
                 </div>
             </div>
 
-            <!-- Form to send messages -->
+            <!-- Made send button always green (bg-green-600) and visible in both light and dark modes -->
             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
                 <form @submit.prevent="sendChatMessage" class="flex gap-2">
                     <textarea
@@ -474,7 +481,7 @@ ob_start(); ?>
                     <button
                         type="submit"
                         :disabled="!newChatMessage.trim() || sendingChatMessage"
-                        class="px-4 sm:px-6 py-2 bg-primary hover:bg-green-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
+                        class="px-4 sm:px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
                         <i class="fas fa-paper-plane text-base sm:text-lg"></i>
                     </button>
                 </form>
@@ -495,7 +502,6 @@ ob_start(); ?>
             </div>
 
             <div v-if="selectedMessage" class="space-y-4">
-                <!-- Original message display -->
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border-l-4 border-primary">
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Message original de:</p>
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ selectedMessage.first_name }} {{ selectedMessage.last_name }}</p>
@@ -503,7 +509,6 @@ ob_start(); ?>
                     <p class="text-sm text-gray-700 dark:text-gray-300 italic mt-2">"{{ selectedMessage.message }}"</p>
                 </div>
 
-                <!-- Reply form -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Votre réponse</label>
                     <textarea v-model="replyContent" rows="6" placeholder="Écrivez votre réponse ici..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></textarea>
@@ -564,6 +569,7 @@ ob_start(); ?>
                 loadingMessages: false,
                 countries: [],
                 messageCounts: {},
+                conversationCounts: {},
             };
         },
         computed: {
@@ -641,11 +647,25 @@ ob_start(); ?>
                     const messages = await this.fetchAllMessagesByListingId(listing.listing_id);
                     const unreadCount = messages.filter(m => m.status === 'Envoyé').length;
                     this.messageCounts[listing.listing_id] = unreadCount;
+
+                    // Calculate conversation count (unique users excluding admin-to-admin)
+                    const uniqueUsers = new Set();
+                    messages.forEach(msg => {
+                        const userId = msg.sender_id === 1 ? msg.receiver_id : msg.sender_id;
+                        // Only count if it's not admin talking to admin
+                        if (userId !== 1) {
+                            uniqueUsers.add(userId);
+                        }
+                    });
+                    this.conversationCounts[listing.listing_id] = uniqueUsers.size;
                 });
                 await Promise.all(promises);
             },
             getUnreadCount(listingId) {
                 return this.messageCounts[listingId] || 0;
+            },
+            getConversationCount(listingId) {
+                return this.conversationCounts[listingId] || 0;
             },
             async fetchAllMessagesByListingId(listingId) {
                 try {
@@ -746,17 +766,23 @@ ob_start(); ?>
                 this.messageContent = '';
             },
             async sendMessage() {
+                console.log('sendMessage appelée');
                 const content = this.messageContent.trim();
                 if (!content) return;
+
+                const payload = {
+                    listing_id: this.selectedListing.listing_id,
+                    message: content,
+                    receiver_id: this.selectedListing.user_id,
+                };
+                console.log('Requête envoyée à sendMessage:', payload);
 
                 try {
                     const {
                         data
-                    } = await api.post('?action=sendMessage', {
-                        transaction_id: this.selectedListing.listing_id,
-                        message: content,
-                        receiver_id: this.selectedListing.user_id
-                    });
+                    } = await api.post('?action=sendMessage', payload);
+
+                    console.log('Réponse du serveur:', data);
 
                     if (data.success) {
                         alert(data.message || 'Message envoyé avec succès !');
@@ -795,16 +821,23 @@ ob_start(); ?>
 
                 const messages = await this.fetchAllMessagesByListingId(listingId);
 
-                // Group messages by user (sender)
+                // Group messages by user (sender), excluding admin-to-admin conversations
                 const conversationsMap = new Map();
                 messages.forEach(msg => {
                     const userId = msg.sender_id === 1 ? msg.receiver_id : msg.sender_id;
 
+                    // Skip if this is admin talking to admin
+                    if (userId === 1) {
+                        return;
+                    }
+
                     if (!conversationsMap.has(userId)) {
                         conversationsMap.set(userId, {
                             user_id: userId,
-                            first_name: msg.first_name,
-                            last_name: msg.last_name,
+                            first_name: msg.sender_id === 1 ? (msg.receiver_first_name || msg.first_name) : (msg.sender_first_name || msg.first_name),
+                            last_name: msg.sender_id === 1 ? (msg.receiver_last_name || msg.last_name) : (msg.sender_last_name || msg.last_name),
+                            sender_first_name: msg.sender_id === 1 ? (msg.receiver_first_name || msg.first_name) : (msg.sender_first_name || msg.first_name),
+                            sender_last_name: msg.sender_id === 1 ? (msg.receiver_last_name || msg.last_name) : (msg.sender_last_name || msg.last_name),
                             email: msg.email,
                             messages: [],
                             last_message: '',
@@ -817,7 +850,6 @@ ob_start(); ?>
                     conversation.messages.push(msg);
                     conversation.message_count++;
 
-                    // Update last message info
                     if (!conversation.last_message_date || new Date(msg.created_at) > new Date(conversation.last_message_date)) {
                         conversation.last_message = msg.message;
                         conversation.last_message_date = msg.created_at;
@@ -843,7 +875,6 @@ ob_start(); ?>
                 this.chatMessages = [];
 
                 try {
-                    // Fetch all messages between admin (ID=1) and this user for this listing
                     const res = await api.get(`?action=getConversation&listing_id=${this.selectedListing.listing_id}&user_id=${conversation.user_id}`);
 
                     if (res.data && res.data.success && Array.isArray(res.data.messages)) {
@@ -856,7 +887,9 @@ ob_start(); ?>
                 } finally {
                     this.loadingChat = false;
                     this.$nextTick(() => {
-                        this.scrollToBottom();
+                        setTimeout(() => {
+                            this.scrollToBottom();
+                        }, 100);
                     });
                 }
             },
@@ -869,18 +902,18 @@ ob_start(); ?>
             },
 
             async sendChatMessage() {
+                console.log('nouveau chat !!')
                 if (!this.newChatMessage.trim() || this.sendingChatMessage) return;
 
                 this.sendingChatMessage = true;
                 try {
                     const response = await api.post('?action=sendMessage', {
-                        transaction_id: this.selectedListing.listing_id,
+                        listing_id: this.selectedListing.listing_id,
                         message: this.newChatMessage.trim(),
                         receiver_id: this.selectedConversation.user_id
                     });
 
                     if (response.data && response.data.success) {
-                        // Add message to chat immediately
                         this.chatMessages.push({
                             id: Date.now(),
                             listing_id: this.selectedListing.listing_id,
@@ -894,7 +927,9 @@ ob_start(); ?>
 
                         this.newChatMessage = '';
                         this.$nextTick(() => {
-                            this.scrollToBottom();
+                            setTimeout(() => {
+                                this.scrollToBottom();
+                            }, 50);
                         });
                     } else {
                         alert(response.data?.error || 'Erreur lors de l\'envoi du message.');
@@ -910,7 +945,10 @@ ob_start(); ?>
             scrollToBottom() {
                 const container = this.$refs.chatContainer;
                 if (container) {
-                    container.scrollTop = container.scrollHeight;
+                    container.scrollTo({
+                        top: container.scrollHeight,
+                        behavior: 'smooth'
+                    });
                 }
             },
 
@@ -934,7 +972,7 @@ ob_start(); ?>
                     const response = await api.post('?action=sendMessage', {
                         transaction_id: this.selectedListing.listing_id,
                         message: this.replyContent,
-                        receiver_id: this.selectedMessage.sender_id // ← ICI tu envoies le bon destinataire
+                        receiver_id: this.selectedMessage.sender_id
                     });
 
                     if (response.data && response.data.success) {
@@ -943,12 +981,12 @@ ob_start(); ?>
                         const messages = await this.fetchAllMessagesByListingId(this.selectedListing.listing_id);
                         this.transactionMessages = messages;
                     } else {
-                        const errorMessage = response.data?.error || 'Erreur inconnue lors de l’envoi du message.';
+                        const errorMessage = response.data?.error || "Erreur inconnue lors de l'envoi du message. |";
                         alert('Échec : ' + errorMessage);
                     }
                 } catch (error) {
-                    console.error('Erreur lors de l’envoi de la réponse :', error);
-                    alert('Une erreur est survenue. Vérifie ta connexion ou réessaie plus tard.');
+                    console.error("Erreur lors de l' envoi de la réponse: ," + error);
+                    alert("Une erreur est survenue. Vérifie ta connexion ou réessaie plus tard.");
                 }
             },
 
@@ -979,7 +1017,6 @@ ob_start(); ?>
         --primary: #10B981;
         --bg-dark: #0F172A;
         --bg-dark-secondary: #1E293B;
-        /* Added custom gray-750 color for better dark mode hover */
         --bg-gray-750: #1a2332;
     }
 
@@ -1115,7 +1152,6 @@ ob_start(); ?>
         }
     }
 
-    /* Added custom dark mode hover color */
     .dark-mode tr:hover {
         background-color: var(--bg-gray-750) !important;
     }

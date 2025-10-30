@@ -5,17 +5,34 @@
 function fetchAllMessages()
 {
     global $pdo;
+
     $stmt = $pdo->query("
-        SELECT messages.*, users.*
+        SELECT 
+            messages.id AS message_id,
+            messages.created_at AS message_date,
+            messages.listing_id,
+            messages.message,
+            messages.sender_id,
+            messages.receiver_id,
+            messages.status AS message_status,       -- ✅ status du message
+            users.first_name,
+            users.last_name,
+            users.email,
+            users.phone,
+            users.username,
+            users.country,
+            users.city
         FROM messages
         INNER JOIN users ON users.id = messages.sender_id
         ORDER BY messages.id DESC
     ");
+
     $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    header('Content-Type: application/json');
-    echo json_encode($messages);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($messages, JSON_UNESCAPED_UNICODE);
 }
+
 
 
 function newMessage()
@@ -23,7 +40,7 @@ function newMessage()
     global $pdo;
     session_start();
     header('Content-Type: application/json; charset=utf-8');
-    ob_clean(); // ← vide tout tampon de sortie
+    ob_clean(); // Vide tout tampon de sortie
 
     if (!isset($_SESSION['id'])) {
         echo json_encode(['success' => false, 'error' => 'Utilisateur non authentifié.']);
@@ -38,8 +55,17 @@ function newMessage()
         exit;
     }
 
-    if (empty($input['listing_id']) || empty(trim($input['message'])) || empty($input['receiver_id'])) {
-        echo json_encode(['success' => false, 'error' => 'Champs manquants.']);
+    $missing = [];
+
+    if (empty($input['listing_id'])) $missing[] = 'listing_id';
+    if (empty($input['message']) || !trim($input['message'])) $missing[] = 'message';
+    if (empty($input['receiver_id'])) $missing[] = 'receiver_id';
+
+    if (!empty($missing)) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Champs manquants : ' . implode(', ', $missing)
+        ]);
         exit;
     }
 
@@ -68,6 +94,7 @@ function newMessage()
 }
 
 
+
 function fetchConversations()
 {
     global $pdo;
@@ -76,7 +103,7 @@ function fetchConversations()
     ob_clean();
 
     if (!isset($_SESSION['id'])) {
-        echo json_encode(['success' => false, 'error' => 'Utilisateur non authentifié.']);
+        echo json_encode(['success' => false, 'error' => 'Utilisateur non authentifié.'], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -84,7 +111,7 @@ function fetchConversations()
     $listing_id = isset($_GET['listing_id']) ? (int) $_GET['listing_id'] : 0;
 
     if ($listing_id <= 0) {
-        echo json_encode(['success' => false, 'error' => 'ID de transaction invalide.']);
+        echo json_encode(['success' => false, 'error' => 'ID de transaction invalide.'], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -98,7 +125,11 @@ function fetchConversations()
                 m.status,
                 m.created_at,
                 s.username AS sender_name,
-                r.username AS receiver_name
+                s.first_name AS sender_first_name,
+                s.last_name AS sender_last_name,
+                r.username AS receiver_name,
+                r.first_name AS receiver_first_name,
+                r.last_name AS receiver_last_name
             FROM messages m
             LEFT JOIN users s ON s.id = m.sender_id
             LEFT JOIN users r ON r.id = m.receiver_id
@@ -116,13 +147,13 @@ function fetchConversations()
         echo json_encode([
             'success' => true,
             'messages' => $messages
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     } catch (PDOException $e) {
         echo json_encode([
             'success' => false,
             'error' => 'Erreur base de données : ' . $e->getMessage()
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
         exit;
     }
 }
