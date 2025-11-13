@@ -18,25 +18,31 @@ ob_start(); ?>
                             <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
+                            <!-- Added translation for dashboard title -->
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Tableau de bord
+                                {{ t.dashboard_title }}
                             </h1>
                         </div>
 
-                        <div class="flex items-center space-x-4">
+                        <!-- Added language switcher button next to theme toggle -->
+                        <div class="flex items-center space-x-2">
+                            <button @click="toggleLanguage" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">{{ currentLang === 'fr' ? 'EN' : 'FR' }}</span>
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
                         </div>
                     </div>
-
+                </div>
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
 
                 <div class="px-4 sm:px-6 pb-2 pt-4">
+                    <!-- Added translation for welcome message -->
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
-                        Bonjour
+                        {{ t.welcome }}
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">
                             {{ capitalizeFirstLetter(user_first_name) }} {{ capitalizeAll(user_last_name) }}
                         </span>
@@ -45,7 +51,7 @@ ob_start(); ?>
 
 
                 <div class="px-4 sm:px-6 pt-2">
-
+                    <!-- Added translations for all stats cards -->
                     <div class=" grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
@@ -55,7 +61,7 @@ ob_start(); ?>
                                 <span v-if="stats.myOffersChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Offres</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.my_offers }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -66,7 +72,7 @@ ob_start(); ?>
                                 <span v-if="stats.myRequestsChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Demandes</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.my_requests }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -77,7 +83,7 @@ ob_start(); ?>
                                 <span v-if="stats.myTransactionsChange > 0" class="text-xs text-green-600 font-semibold"></span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.myTransactions }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Transactions</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.my_transactions }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -87,7 +93,7 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.mySponsorships }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Mes Parrainages</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.my_sponsorships }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -97,19 +103,20 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ formatCurrency(stats.totalVolume) }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Volume Total</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.total_volume }}</div>
                         </div>
                     </div>
 
+                    <!-- Added translations for chart titles -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Mon activité mensuelle</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.monthly_activity }}</h3>
                             <div class="w-full max-w-full">
                                 <canvas id="activityChart"></canvas>
                             </div>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition Offres/Demandes</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.offers_requests_distribution }}</h3>
                             <div class="w-full max-w-full">
                                 <canvas id="distributionChart"></canvas>
                             </div>
@@ -143,7 +150,60 @@ ob_start(); ?>
                 recentActivities: [],
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
-                user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>
+                user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
+                currentLang: 'fr',
+                translations: {
+                    fr: {
+                        dashboard_title: 'Tableau de bord',
+                        welcome: 'Bonjour',
+                        my_offers: 'Mes Offres',
+                        my_requests: 'Mes Demandes',
+                        my_transactions: 'Mes Transactions',
+                        my_sponsorships: 'Mes Parrainages',
+                        total_volume: 'Volume Total',
+                        monthly_activity: 'Mon activité mensuelle',
+                        offers_requests_distribution: 'Répartition Offres/Demandes',
+                        offers: 'Mes Offres',
+                        requests: 'Mes Demandes',
+                        months: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                        // Sidebar translations
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes transactions',
+                        nav_my_sponsorships: 'Mes parrainages',
+                        nav_logout: 'Déconnexion'
+                    },
+                    en: {
+                        dashboard_title: 'Dashboard',
+                        welcome: 'Hello',
+                        my_offers: 'My Offers',
+                        my_requests: 'My Requests',
+                        my_transactions: 'My Transactions',
+                        my_sponsorships: 'My Sponsorships',
+                        total_volume: 'Total Volume',
+                        monthly_activity: 'My Monthly Activity',
+                        offers_requests_distribution: 'Offers/Requests Distribution',
+                        offers: 'My Offers',
+                        requests: 'My Requests',
+                        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        // Sidebar translations
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout'
+                    }
+                }
             };
         },
         computed: {
@@ -167,6 +227,9 @@ ob_start(); ?>
                     myRequestsChange: 8,
                     myTransactionsChange: 15
                 };
+            },
+            t() {
+                return this.translations[this.currentLang];
             }
         },
         mounted() {
@@ -174,6 +237,11 @@ ob_start(); ?>
             if (savedDarkMode === 'true') {
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
+            }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
             }
 
             this.userId = <?= isset($_SESSION['id']) ? $_SESSION['id'] : 'null'; ?>;
@@ -185,7 +253,7 @@ ob_start(); ?>
         methods: {
             async fetchMyData() {
                 try {
-                    // Transactions utilisateur directement depuis l’API
+                    // Transactions utilisateur directement depuis l'API
                     const transactionsResponse = await api.get('index.php?action=myTransactionsList');
                     this.myListings = Array.isArray(transactionsResponse.data.data) ? transactionsResponse.data.data : [];
                     console.log('Transactions:', this.myListings);
@@ -242,23 +310,41 @@ ob_start(); ?>
                 localStorage.setItem('darkMode', this.darkMode);
             },
 
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+                // Dispatch event to notify sidebar
+                window.dispatchEvent(new CustomEvent('languageChanged', {
+                    detail: this.currentLang
+                }));
+                // Re-initialize charts with new language
+                this.$nextTick(() => this.initCharts());
+            },
+
             initCharts() {
+                if (window.activityChartInstance) {
+                    window.activityChartInstance.destroy();
+                }
+                if (window.distributionChartInstance) {
+                    window.distributionChartInstance.destroy();
+                }
+
                 const activityCtx = document.getElementById('activityChart');
                 if (activityCtx) {
                     const monthlyData = this.getMonthlyData();
-                    new Chart(activityCtx, {
+                    window.activityChartInstance = new Chart(activityCtx, {
                         type: 'line',
                         data: {
-                            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                            labels: this.t.months,
                             datasets: [{
-                                    label: 'Mes Offres',
+                                    label: this.t.offers,
                                     data: monthlyData.offers,
                                     borderColor: '#10B981',
                                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                                     tension: 0.4
                                 },
                                 {
-                                    label: 'Mes Demandes',
+                                    label: this.t.requests,
                                     data: monthlyData.requests,
                                     borderColor: '#F59E0B',
                                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -280,10 +366,10 @@ ob_start(); ?>
 
                 const distributionCtx = document.getElementById('distributionChart');
                 if (distributionCtx) {
-                    new Chart(distributionCtx, {
+                    window.distributionChartInstance = new Chart(distributionCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Mes Offres', 'Mes Demandes'],
+                            labels: [this.t.offers, this.t.requests],
                             datasets: [{
                                 data: [this.stats.myOffers, this.stats.myRequests],
                                 backgroundColor: ['#10B981', '#F59E0B']
@@ -332,121 +418,6 @@ ob_start(); ?>
 
 
 <style>
-    :root {
-        --primary: #10B981;
-        --bg-dark: #0F172A;
-        --bg-dark-secondary: #1E293B;
-    }
-
-    body.dark-mode {
-        background-color: var(--bg-dark);
-        color: #F9FAFB;
-    }
-
-    .dark-mode .bg-white {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .bg-gray-50 {
-        background-color: var(--bg-dark) !important;
-    }
-
-    .dark-mode .bg-gray-100 {
-        background-color: var(--bg-dark-secondary) !important;
-    }
-
-    .dark-mode .text-gray-900 {
-        color: #F9FAFB !important;
-    }
-
-    .dark-mode .text-gray-700 {
-        color: #94A3B8 !important;
-    }
-
-    .dark-mode .text-gray-600 {
-        color: #94A3B8 !important;
-    }
-
-    .dark-mode .text-gray-500 {
-        color: #64748B !important;
-    }
-
-    .dark-mode .border-gray-200 {
-        border-color: #334155 !important;
-    }
-
-    .dark-mode .border-gray-300 {
-        border-color: #475569 !important;
-    }
-
-    .dark-mode .shadow-sm {
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .dark-mode .shadow-md {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .primary-gradient {
-        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    }
-
-    @keyframes pulse {
-
-        0%,
-        100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.5;
-        }
-    }
-
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
-    }
-
-    .sidebar {
-        transition: transform 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-        .sidebar {
-            transform: translateX(-100%);
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 40;
-        }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-    }
-
-    @media print {
-        .no-print {
-            display: none !important;
-        }
-
-        body {
-            background: white !important;
-            color: black !important;
-        }
-
-        .bg-white {
-            background: white !important;
-        }
-
-        .shadow-sm,
-        .shadow-md {
-            box-shadow: none !important;
-        }
-    }
 </style>
 
 <?php $content = ob_get_clean(); ?>

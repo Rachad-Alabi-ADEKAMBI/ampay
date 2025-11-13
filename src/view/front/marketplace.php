@@ -320,25 +320,29 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         </div>
                         <span class="text-2xl font-bold">AMPAY</span>
                     </div>
-                    <p class="text-gray-400 leading-relaxed">Transferts d'argent sans intermédiaire entre l'Afrique et l'Europe.</p>
+                    <p class="text-gray-400 leading-relaxed">{{ t.footer_description }}</p>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Liens rapides</h4>
+                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_quick_links }}</h4>
                     <ul class="space-y-2">
-                        <li><a href="index.php" class="text-gray-400 hover:text-primary transition-colors">Accueil</a></li>
-                        <li><a href="marketplace.php" class="text-gray-400 hover:text-primary transition-colors">Marketplace</a></li>
+                        <li><a href="index.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_home }}</a></li>
+                        <li><a href="marketplace.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_marketplace }}</a></li>
+                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_dashboard }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Support</h4>
+                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_support }}</h4>
                     <ul class="space-y-2">
-                        <li><a href="#faq" class="text-gray-400 hover:text-primary transition-colors">FAQ</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">Contact</a></li>
-                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">tableau de bord</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_faq }}</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_contact }}</a></li>
+                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_dashboard }}</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_about }}</a></li>
+                        <li><a href="#terms" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_terms }}</a></li>
+                        <li><a href="#privacy" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_privacy }}</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-lg font-semibold mb-4">Suivez-nous</h4>
+                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_follow_us }}</h4>
                     <div class="flex space-x-4">
                         <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
                             <i class="fab fa-facebook"></i>
@@ -356,7 +360,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                 </div>
             </div>
             <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
-                <p>&copy; 2025 AMPAY. Tous droits réservés.</p>
+                <p>{{ t.footer_copyright }}</p>
             </div>
         </div>
     </footer>
@@ -403,6 +407,21 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                 isAuthenticated: !!window.isAuthenticated,
                 translations: {
                     fr: {
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_dashboard: 'Tableau de bord',
+                        nav_logout: 'Déconnexion',
+                        nav_login: 'Connexion',
+                        footer_description: 'Transferts d\'argent sans intermédiaire entre l\'Afrique et l\'Europe.',
+                        footer_quick_links: 'Liens rapides',
+                        footer_terms: 'Conditions générales d\'utilisation',
+                        footer_privacy: 'Politique de confidentialité',
+                        footer_support: 'Support',
+                        footer_faq: 'FAQ',
+                        footer_about: 'À propos',
+                        footer_contact: 'Contact',
+                        footer_follow_us: 'Suivez-nous',
+                        footer_copyright: '© 2025 AMPAY. Tous droits réservés.',
                         marketplace_title: 'Marketplace',
                         marketplace_subtitle: 'Trouvez des offres et demandes de transfert près de chez vous',
                         total_offers: 'Total Offres',
@@ -426,9 +445,27 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         message_label: 'Message',
                         send_request: 'Envoyer la demande',
                         sending: 'Envoi en cours...',
-                        success_message: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
+                        success_message: 'Demande envoyée ! Nous vous mettrons en contact sous peu.',
+                        footer_home: 'Accueil',
+                        footer_marketplace: 'Marketplace',
+                        footer_dashboard: 'Tableau de bord'
                     },
                     en: {
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_dashboard: 'Dashboard',
+                        nav_logout: 'Logout',
+                        nav_login: 'Login',
+                        footer_description: 'Money transfers without intermediaries between Africa and Europe.',
+                        footer_quick_links: 'Quick Links',
+                        footer_terms: 'Terms of Service',
+                        footer_privacy: 'Privacy Policy',
+                        footer_support: 'Support',
+                        footer_faq: 'FAQ',
+                        footer_about: 'About',
+                        footer_contact: 'Contact',
+                        footer_follow_us: 'Follow Us',
+                        footer_copyright: '© 2025 AMPAY. All rights reserved.',
                         marketplace_title: 'Marketplace',
                         marketplace_subtitle: 'Find transfer offers and requests near you',
                         total_offers: 'Total Offers',
@@ -452,7 +489,10 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         message_label: 'Message',
                         send_request: 'Send request',
                         sending: 'Sending...',
-                        success_message: 'Request sent! We will contact you soon.'
+                        success_message: 'Request sent! We will contact you soon.',
+                        footer_home: 'Home',
+                        footer_marketplace: 'Marketplace',
+                        footer_dashboard: 'Dashboard'
                     }
                 }
             };

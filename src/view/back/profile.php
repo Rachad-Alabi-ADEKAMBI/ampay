@@ -21,7 +21,7 @@ ob_start(); ?>
     <div class="flex h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden overflow-x-hidden">
         <?php include 'sidebar.php'; ?>
 
-        <!-- <CHANGE> Structure identique au dashboard avec md:ml-64 et flex-col -->
+        <!-- Structure identique au dashboard avec md:ml-64 et flex-col -->
         <div class="flex-1 flex flex-col h-screen overflow-hidden md:ml-64">
             <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-20 no-print flex-shrink-0">
                 <div class="px-4 sm:px-6 py-4">
@@ -30,11 +30,16 @@ ob_start(); ?>
                             <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
+                            <!-- Added translation for page title -->
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Profil
+                                {{ t.profile }}
                             </h1>
                         </div>
-                        <div class="flex items-center space-x-4">
+                        <!-- Added language switcher button next to theme toggle -->
+                        <div class="flex items-center space-x-2">
+                            <button @click="toggleLanguage" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">{{ currentLang === 'fr' ? 'EN' : 'FR' }}</span>
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
@@ -44,8 +49,9 @@ ob_start(); ?>
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+                <!-- Added translation for description -->
                 <div class="mb-8">
-                    <p class="text-lg text-gray-600 dark:text-gray-400">Gérez vos informations personnelles et vos préférences</p>
+                    <p class="text-lg text-gray-600 dark:text-gray-400">{{ t.profile_description }}</p>
                 </div>
 
                 <div class="grid lg:grid-cols-3 gap-6">
@@ -58,23 +64,27 @@ ob_start(); ?>
                             <p class="text-gray-600 dark:text-gray-400 mb-4">{{ user.email }}</p>
                             <div class="flex items-center justify-center space-x-2 mb-4">
                                 <i :class="user.account_verified ? 'fas fa-check-circle text-green-500' : 'fas fa-times-circle text-red-500'"></i>
+                                <!-- Added translation for account status -->
                                 <span class="text-sm font-semibold" :class="user.account_verified ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'">
-                                    {{ user.account_verified ? 'Compte vérifié' : 'Compte non vérifié' }}
+                                    {{ user.account_verified ? t.account_verified : t.account_not_verified }}
                                 </span>
                             </div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mt-6 card-hover">
+                            <!-- Added translation for statistics title -->
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                                <i class="fas fa-chart-line text-primary mr-2"></i>Statistiques
+                                <i class="fas fa-chart-line text-primary mr-2"></i>{{ t.statistics }}
                             </h3>
                             <div class="space-y-4">
+                                <!-- Added translation for transactions -->
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-600 dark:text-gray-400">Transactions</span>
+                                    <span class="text-gray-600 dark:text-gray-400">{{ t.transactions }}</span>
                                     <span class="text-xl font-bold text-gray-900 dark:text-gray-100">{{ user.stats.transactions }}</span>
                                 </div>
+                                <!-- Added translation for member since -->
                                 <div class="flex items-center justify-between">
-                                    <span class="text-gray-600 dark:text-gray-400">Membre depuis</span>
+                                    <span class="text-gray-600 dark:text-gray-400">{{ t.member_since }}</span>
                                     <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ user.memberSince }}</span>
                                 </div>
                             </div>
@@ -84,44 +94,50 @@ ob_start(); ?>
                     <div class="lg:col-span-2 space-y-6">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
                             <div class="flex items-center justify-between mb-6">
+                                <!-- Added translation for personal info title -->
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                    <i class="fas fa-user-edit text-primary mr-2"></i>Informations personnelles
+                                    <i class="fas fa-user-edit text-primary mr-2"></i>{{ t.personal_info }}
                                 </h3>
+                                <!-- Added translation for edit/cancel buttons -->
                                 <button @click="editMode = !editMode" class="px-4 py-2 text-primary hover:bg-primary hover:text-white border border-primary rounded-lg transition-colors">
                                     <i :class="editMode ? 'fas fa-times' : 'fas fa-edit'" class="mr-2"></i>
-                                    {{ editMode ? 'Annuler' : 'Modifier' }}
+                                    {{ editMode ? t.cancel : t.edit }}
                                 </button>
                             </div>
 
                             <form @submit.prevent="saveProfile" class="space-y-4">
-                                <!-- <CHANGE> Champs séparés pour prénom et nom -->
+                                <!-- Champs séparés pour prénom et nom -->
                                 <div class="grid sm:grid-cols-2 gap-4">
+                                    <!-- Added translation for first name label -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-user mr-1 text-primary"></i>Prénom
+                                            <i class="fas fa-user mr-1 text-primary"></i>{{ t.first_name }}
                                         </label>
                                         <input v-model="user.first_name" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                     </div>
+                                    <!-- Added translation for last name label -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-user mr-1 text-primary"></i>Nom
+                                            <i class="fas fa-user mr-1 text-primary"></i>{{ t.last_name }}
                                         </label>
                                         <input v-model="user.last_name" :disabled="!editMode" type="text" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                     </div>
                                 </div>
 
+                                <!-- Added translation for email label -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        <i class="fas fa-envelope mr-1 text-primary"></i>Email
+                                        <i class="fas fa-envelope mr-1 text-primary"></i>{{ t.email }}
                                     </label>
                                     <input v-model="user.email" :disabled="!editMode" type="email" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                                 </div>
 
-                                <!-- <CHANGE> Champs séparés pour préfixe et numéro de téléphone -->
+                                <!-- Champs séparés pour préfixe et numéro de téléphone -->
                                 <div class="grid sm:grid-cols-3 gap-4">
+                                    <!-- Added translation for phone prefix label -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-phone mr-1 text-primary"></i>Préfixe
+                                            <i class="fas fa-phone mr-1 text-primary"></i>{{ t.phone_prefix }}
                                         </label>
                                         <select v-model="user.phone_prefix" :disabled="!editMode"
                                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
@@ -132,18 +148,20 @@ ob_start(); ?>
                                         </select>
 
                                     </div>
+                                    <!-- Added translation for phone number label -->
                                     <div class="sm:col-span-2">
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-phone mr-1 text-primary"></i>Numéro de téléphone
+                                            <i class="fas fa-phone mr-1 text-primary"></i>{{ t.phone_number }}
                                         </label>
                                         <input v-model="user.phone" :disabled="!editMode" type="tel" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent disabled:bg-gray-100 dark:disabled:bg-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="612345678">
                                     </div>
                                 </div>
 
                                 <div class="grid sm:grid-cols-2 gap-4">
+                                    <!-- Added translation for country label -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-flag mr-1 text-primary"></i>Pays
+                                            <i class="fas fa-flag mr-1 text-primary"></i>{{ t.country }}
                                         </label>
                                         <select v-model="user.country" :disabled="!editMode"
                                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
@@ -154,9 +172,10 @@ ob_start(); ?>
                                         </select>
                                     </div>
 
+                                    <!-- Added translation for city label -->
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                            <i class="fas fa-map-marker-alt mr-1 text-primary"></i>Ville
+                                            <i class="fas fa-map-marker-alt mr-1 text-primary"></i>{{ t.city }}
                                         </label>
                                         <input v-model="user.city" :disabled="!editMode" type="text"
                                             class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg 
@@ -168,34 +187,38 @@ ob_start(); ?>
 
 
 
+                                <!-- Added translation for save button -->
                                 <div v-if="editMode" class="pt-4">
                                     <button type="submit" :disabled="submitting" class="w-full sm:w-auto px-8 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
-                                        <i class="fas fa-save mr-2"></i>{{ submitting ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+                                        <i class="fas fa-save mr-2"></i>{{ submitting ? t.saving : t.save_changes }}
                                     </button>
                                 </div>
                             </form>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
+                            <!-- Added translation for security title -->
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-                                <i class="fas fa-shield-alt text-primary mr-2"></i>Sécurité
+                                <i class="fas fa-shield-alt text-primary mr-2"></i>{{ t.security }}
                             </h3>
                             <div class="space-y-4">
+                                <!-- Added translation for change password button -->
                                 <button @click="showPasswordModal = true" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <span class="flex items-center">
                                         <i class="fas fa-key text-primary mr-3"></i>
-                                        <span class="font-medium text-gray-900 dark:text-gray-100">Changer le mot de passe</span>
+                                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ t.change_password }}</span>
                                     </span>
                                     <i class="fas fa-chevron-right text-gray-400"></i>
                                 </button>
+                                <!-- Added translation for 2FA button and status -->
                                 <button @click="show2FAModal = true" class="w-full flex items-center justify-between px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     <span class="flex items-center">
                                         <i class="fas fa-mobile-alt text-primary mr-3"></i>
-                                        <span class="font-medium text-gray-900 dark:text-gray-100">Authentification à deux facteurs</span>
+                                        <span class="font-medium text-gray-900 dark:text-gray-100">{{ t.two_factor_auth }}</span>
                                     </span>
                                     <div class="flex items-center gap-2">
                                         <span :class="user.two_factor_enabled ? 'text-green-600 dark:text-green-400' : 'text-gray-400'" class="text-sm font-semibold">
-                                            {{ user.two_factor_enabled ? 'Activée' : 'Désactivée' }}
+                                            {{ user.two_factor_enabled ? t.enabled : t.disabled }}
                                         </span>
                                         <i class="fas fa-chevron-right text-gray-400"></i>
                                     </div>
@@ -204,24 +227,27 @@ ob_start(); ?>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 card-hover">
+                            <!-- Added translation for notifications title -->
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-                                <i class="fas fa-bell text-primary mr-2"></i>Notifications
+                                <i class="fas fa-bell text-primary mr-2"></i>{{ t.notifications }}
                             </h3>
                             <div class="space-y-4">
+                                <!-- Added translation for email notifications -->
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Notifications par email</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">Recevez des mises à jour par email</p>
+                                        <p class="font-medium text-gray-900 dark:text-gray-100">{{ t.email_notifications }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ t.email_notifications_desc }}</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input v-model="notifications.email" type="checkbox" class="sr-only peer">
                                         <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                                     </label>
                                 </div>
+                                <!-- Added translation for push notifications -->
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <p class="font-medium text-gray-900 dark:text-gray-100">Notifications push</p>
-                                        <p class="text-sm text-gray-600 dark:text-gray-400">Recevez des notifications sur votre appareil</p>
+                                        <p class="font-medium text-gray-900 dark:text-gray-100">{{ t.push_notifications }}</p>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">{{ t.push_notifications_desc }}</p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer">
                                         <input v-model="notifications.push" type="checkbox" class="sr-only peer">
@@ -236,12 +262,13 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- <CHANGE> Modal pour changer le mot de passe -->
+    <!-- Modal pour changer le mot de passe -->
     <div v-if="showPasswordModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closePasswordModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
+                <!-- Added translation for modal title -->
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-key text-primary mr-2"></i>Changer le mot de passe
+                    <i class="fas fa-key text-primary mr-2"></i>{{ t.change_password }}
                 </h3>
                 <button @click="closePasswordModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -249,24 +276,28 @@ ob_start(); ?>
             </div>
 
             <form @submit.prevent="changePassword" class="space-y-4">
+                <!-- Added translation for current password -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-lock mr-1 text-primary"></i>Mot de passe actuel
+                        <i class="fas fa-lock mr-1 text-primary"></i>{{ t.current_password }}
                     </label>
                     <input v-model="passwordForm.current" type="password" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                 </div>
 
+                <!-- Added translation for new password -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-lock mr-1 text-primary"></i>Nouveau mot de passe
+                        <i class="fas fa-lock mr-1 text-primary"></i>{{ t.new_password }}
                     </label>
                     <input v-model="passwordForm.new" type="password" required minlength="8" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Minimum 8 caractères</p>
+                    <!-- Added translation for password hint -->
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">{{ t.password_hint }}</p>
                 </div>
 
+                <!-- Added translation for confirm password -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <i class="fas fa-lock mr-1 text-primary"></i>Confirmer le nouveau mot de passe
+                        <i class="fas fa-lock mr-1 text-primary"></i>{{ t.confirm_password }}
                     </label>
                     <input v-model="passwordForm.confirm" type="password" required minlength="8" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                 </div>
@@ -275,24 +306,26 @@ ob_start(); ?>
                     <p class="text-sm text-red-600 dark:text-red-400">{{ passwordError }}</p>
                 </div>
 
+                <!-- Added translation for modal buttons -->
                 <div class="flex gap-4 pt-4">
                     <button type="button" @click="closePasswordModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        Annuler
+                        {{ t.cancel }}
                     </button>
                     <button type="submit" :disabled="submitting" class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
-                        <i class="fas fa-check mr-2"></i>{{ submitting ? 'Modification...' : 'Modifier' }}
+                        <i class="fas fa-check mr-2"></i>{{ submitting ? t.modifying : t.modify }}
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- <CHANGE> Modal pour la double authentification -->
+    <!-- Modal pour la double authentification -->
     <div v-if="show2FAModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="close2FAModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8">
             <div class="flex justify-between items-center mb-6">
+                <!-- Added translation for 2FA modal title -->
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-mobile-alt text-primary mr-2"></i>Authentification 2FA
+                    <i class="fas fa-mobile-alt text-primary mr-2"></i>{{ t.two_factor_auth }}
                 </h3>
                 <button @click="close2FAModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -301,21 +334,21 @@ ob_start(); ?>
 
             <div class="mb-6">
                 <div class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <!-- Added translation for current status -->
                     <div>
-                        <p class="font-semibold text-gray-900 dark:text-gray-100">Statut actuel</p>
+                        <p class="font-semibold text-gray-900 dark:text-gray-100">{{ t.current_status }}</p>
                         <p :class="user.two_factor_enabled ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'" class="text-sm">
-                            {{ user.two_factor_enabled ? 'Activée' : 'Désactivée' }}
+                            {{ user.two_factor_enabled ? t.enabled : t.disabled }}
                         </p>
                     </div>
                     <i :class="user.two_factor_enabled ? 'fas fa-check-circle text-green-500' : 'fas fa-times-circle text-gray-400'" class="text-3xl"></i>
                 </div>
             </div>
 
+            <!-- Added translation for 2FA description -->
             <div class="mb-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    {{ user.two_factor_enabled 
-                        ? 'La double authentification est actuellement activée. Vous pouvez la désactiver ci-dessous.' 
-                        : 'Activez la double authentification pour renforcer la sécurité de votre compte.' }}
+                    {{ user.two_factor_enabled ? t.twofa_enabled_desc : t.twofa_disabled_desc }}
                 </p>
             </div>
 
@@ -323,13 +356,14 @@ ob_start(); ?>
                 <p class="text-sm text-red-600 dark:text-red-400">{{ twoFactorError }}</p>
             </div>
 
+            <!-- Added translation for 2FA modal buttons -->
             <div class="flex gap-4">
                 <button @click="close2FAModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    Annuler
+                    {{ t.cancel }}
                 </button>
                 <button @click="toggle2FA" :disabled="submitting" :class="user.two_factor_enabled ? 'bg-red-500 hover:bg-red-600' : 'primary-gradient'" class="flex-1 px-6 py-3 text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
                     <i :class="user.two_factor_enabled ? 'fas fa-times' : 'fas fa-check'" class="mr-2"></i>
-                    {{ submitting ? 'Traitement...' : (user.two_factor_enabled ? 'Désactiver' : 'Activer') }}
+                    {{ submitting ? t.processing : (user.two_factor_enabled ? t.disable : t.enable) }}
                 </button>
             </div>
         </div>
@@ -356,7 +390,117 @@ ob_start(); ?>
                 passwordError: '',
                 twoFactorError: '',
                 countries: ['France', 'Sénégal', 'Côte d\'Ivoire', 'Nigeria', 'Ghana', 'Royaume-Uni', 'Allemagne', 'Bénin', 'Togo', 'Guinée'],
-                // <CHANGE> Données initialisées depuis la session PHP
+                currentLang: 'fr',
+                translations: {
+                    fr: {
+                        profile: 'Profil',
+                        profile_description: 'Gérez vos informations personnelles et vos préférences',
+                        account_verified: 'Compte vérifié',
+                        account_not_verified: 'Compte non vérifié',
+                        statistics: 'Statistiques',
+                        transactions: 'Transactions',
+                        member_since: 'Membre depuis',
+                        personal_info: 'Informations personnelles',
+                        edit: 'Modifier',
+                        cancel: 'Annuler',
+                        first_name: 'Prénom',
+                        last_name: 'Nom',
+                        email: 'Email',
+                        phone_prefix: 'Préfixe',
+                        phone_number: 'Numéro de téléphone',
+                        country: 'Pays',
+                        city: 'Ville',
+                        save_changes: 'Enregistrer les modifications',
+                        saving: 'Enregistrement...',
+                        security: 'Sécurité',
+                        change_password: 'Changer le mot de passe',
+                        two_factor_auth: 'Authentification à deux facteurs',
+                        enabled: 'Activée',
+                        disabled: 'Désactivée',
+                        notifications: 'Notifications',
+                        email_notifications: 'Notifications par email',
+                        email_notifications_desc: 'Recevez des mises à jour par email',
+                        push_notifications: 'Notifications push',
+                        push_notifications_desc: 'Recevez des notifications sur votre appareil',
+                        current_password: 'Mot de passe actuel',
+                        new_password: 'Nouveau mot de passe',
+                        confirm_password: 'Confirmer le nouveau mot de passe',
+                        password_hint: 'Minimum 8 caractères',
+                        modify: 'Modifier',
+                        modifying: 'Modification...',
+                        current_status: 'Statut actuel',
+                        twofa_enabled_desc: 'La double authentification est actuellement activée. Vous pouvez la désactiver ci-dessous.',
+                        twofa_disabled_desc: 'Activez la double authentification pour renforcer la sécurité de votre compte.',
+                        processing: 'Traitement...',
+                        enable: 'Activer',
+                        disable: 'Désactiver',
+                        // Sidebar translations
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes transactions',
+                        nav_my_sponsorships: 'Mes parrainages',
+                        nav_logout: 'Déconnexion'
+                    },
+                    en: {
+                        profile: 'Profile',
+                        profile_description: 'Manage your personal information and preferences',
+                        account_verified: 'Account verified',
+                        account_not_verified: 'Account not verified',
+                        statistics: 'Statistics',
+                        transactions: 'Transactions',
+                        member_since: 'Member since',
+                        personal_info: 'Personal Information',
+                        edit: 'Edit',
+                        cancel: 'Cancel',
+                        first_name: 'First Name',
+                        last_name: 'Last Name',
+                        email: 'Email',
+                        phone_prefix: 'Prefix',
+                        phone_number: 'Phone Number',
+                        country: 'Country',
+                        city: 'City',
+                        save_changes: 'Save changes',
+                        saving: 'Saving...',
+                        security: 'Security',
+                        change_password: 'Change password',
+                        two_factor_auth: 'Two-factor authentication',
+                        enabled: 'Enabled',
+                        disabled: 'Disabled',
+                        notifications: 'Notifications',
+                        email_notifications: 'Email notifications',
+                        email_notifications_desc: 'Receive updates by email',
+                        push_notifications: 'Push notifications',
+                        push_notifications_desc: 'Receive notifications on your device',
+                        current_password: 'Current password',
+                        new_password: 'New password',
+                        confirm_password: 'Confirm new password',
+                        password_hint: 'Minimum 8 characters',
+                        modify: 'Modify',
+                        modifying: 'Modifying...',
+                        current_status: 'Current status',
+                        twofa_enabled_desc: 'Two-factor authentication is currently enabled. You can disable it below.',
+                        twofa_disabled_desc: 'Enable two-factor authentication to strengthen your account security.',
+                        processing: 'Processing...',
+                        enable: 'Enable',
+                        disable: 'Disable',
+                        // Sidebar translations
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout'
+                    }
+                },
                 user: {
                     id: <?= json_encode($user_id); ?>,
                     first_name: <?= json_encode($first_name); ?>,
@@ -385,12 +529,23 @@ ob_start(); ?>
                 }
             };
         },
+        computed: {
+            t() {
+                return this.translations[this.currentLang];
+            }
+        },
         mounted() {
             const savedDarkMode = localStorage.getItem('darkMode');
             if (savedDarkMode === 'true') {
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
+            }
+
             this.fetch2FAStatus();
         },
         methods: {
@@ -399,7 +554,15 @@ ob_start(); ?>
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
-            // <CHANGE> Fonction pour sauvegarder le profil avec appel API
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+                // Dispatch event to notify sidebar
+                window.dispatchEvent(new CustomEvent('languageChanged', {
+                    detail: this.currentLang
+                }));
+            },
+            // Fonction pour sauvegarder le profil avec appel API
             async saveProfile() {
                 this.submitting = true;
                 try {
@@ -435,7 +598,7 @@ ob_start(); ?>
                 if (!word) return '';
                 return word.toString().toUpperCase();
             },
-            // <CHANGE> Fonction pour changer le mot de passe avec validation
+            // Fonction pour changer le mot de passe avec validation
             async changePassword() {
                 this.passwordError = '';
 
@@ -479,7 +642,7 @@ ob_start(); ?>
                 };
                 this.passwordError = '';
             },
-            // <CHANGE> Fonction pour récupérer le statut 2FA
+            // Fonction pour récupérer le statut 2FA
             async fetch2FAStatus() {
                 try {
                     const response = await api.get(`?action=get2FAStatus&user_id=${this.user.id}`);
@@ -490,7 +653,7 @@ ob_start(); ?>
                     console.error('Erreur lors de la récupération du statut 2FA:', error);
                 }
             },
-            // <CHANGE> Fonction pour activer/désactiver la 2FA
+            // Fonction pour activer/désactiver la 2FA
             async toggle2FA() {
                 this.twoFactorError = '';
                 this.submitting = true;

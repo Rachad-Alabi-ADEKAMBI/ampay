@@ -17,9 +17,14 @@ ob_start(); ?>
                             <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
-                            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">Transactions</h1>
+                            <!-- Added translation for title -->
+                            <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">{{ t.page_title }}</h1>
                         </div>
                         <div class="flex items-center space-x-4">
+                            <!-- Added language toggle button showing opposite language -->
+                            <button @click="toggleLanguage" class="px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors font-semibold text-gray-600 dark:text-gray-300">
+                                {{ currentLang === 'fr' ? 'EN' : 'FR' }}
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
@@ -30,14 +35,15 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
                 <div class="px-4 sm:px-6 pb-2 pt-4">
+                    <!-- Added translation for greeting -->
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center mb-6">
-                        Bonjour
+                        {{ t.greeting }}
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">Admin</span>
                     </div>
                 </div>
 
                 <div class="px-4 sm:px-6 pt-2">
-                    <!-- Statistiques -->
+                    <!-- Added translations for statistics cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
                             <div class="flex items-center justify-between mb-4">
@@ -46,7 +52,7 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ allListings.length }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Annonces</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.stat_total_listings }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -56,7 +62,7 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ offerCount }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offres</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.stat_offers }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -66,7 +72,7 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ requestCount }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandes</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.stat_requests }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -76,63 +82,63 @@ ob_start(); ?>
                                 </div>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ activeCount }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Actives</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.stat_active }}</div>
                         </div>
                     </div>
 
-                    <!-- Filtres -->
+                    <!-- Added translations for filters -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
                         <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                            <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                            <input v-model="searchTerm" @input="applyFilters" type="text" :placeholder="t.filter_search" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
 
                             <select v-model="filterType" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les types</option>
-                                <option value="Offre">Offres</option>
-                                <option value="Demande">Demandes</option>
+                                <option value="">{{ t.filter_all_types }}</option>
+                                <option value="Offre">{{ t.filter_offers }}</option>
+                                <option value="Demande">{{ t.filter_requests }}</option>
                             </select>
 
                             <select v-model="filterCountry" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les pays</option>
+                                <option value="">{{ t.filter_all_countries }}</option>
                                 <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
                             </select>
 
                             <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les statuts</option>
-                                <option value="Actif">Actif</option>
-                                <option value="Inactif">Inactif</option>
+                                <option value="">{{ t.filter_all_status }}</option>
+                                <option value="Actif">{{ t.status_active }}</option>
+                                <option value="Inactif">{{ t.status_inactive }}</option>
                             </select>
 
                             <select v-model="filterDelay" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                                <option value="">Tous les délais</option>
-                                <option value="Urgent">Urgent</option>
-                                <option value="Deux semaines">Deux semaines</option>
-                                <option value="Nulle">Nulle</option>
+                                <option value="">{{ t.filter_all_delays }}</option>
+                                <option value="Urgent">{{ t.delay_urgent }}</option>
+                                <option value="Deux semaines">{{ t.delay_two_weeks }}</option>
+                                <option value="Nulle">{{ t.delay_none }}</option>
                             </select>
 
-                            <input v-model.number="filterMinAmount" @input="applyFilters" type="number" placeholder="Montant min" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                            <input v-model.number="filterMinAmount" @input="applyFilters" type="number" :placeholder="t.filter_min_amount" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
 
-                            <input v-model.number="filterMaxAmount" @input="applyFilters" type="number" placeholder="Montant max" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                            <input v-model.number="filterMaxAmount" @input="applyFilters" type="number" :placeholder="t.filter_max_amount" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                         </div>
                     </div>
 
-                    <!-- Tableau -->
+                    <!-- Added translations for table headers -->
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
                         <div class="overflow-x-auto">
                             <table class="w-full responsive-table">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Annonceur</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Montant</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Localisation</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Statut</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Actions</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_advertiser }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_type }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_amount }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_location }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_date }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_status }}</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{{ t.table_actions }}</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     <tr v-for="listing in paginatedListings" :key="listing.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                                        <td data-label="Annonceur" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_advertiser" class="px-6 py-4 whitespace-nowrap">
                                             <div>
                                                 <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(listing.first_name) }}
                                                     {{ capitalizeAll(listing.last_name) }}
@@ -140,7 +146,7 @@ ob_start(); ?>
                                                 <div class="text-sm text-gray-500 dark:text-gray-400">{{ listing.email }}</div>
                                             </div>
                                         </td>
-                                        <td data-label="Type" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_type" class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-2">
                                                 <span :class="getDelayDotColor(listing.delay)" class="w-3 h-3 rounded-full flex-shrink-0"></span>
                                                 <span :class="listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
@@ -149,36 +155,36 @@ ob_start(); ?>
                                                 </span>
                                             </div>
                                         </td>
-                                        <td data-label="Montant" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_amount" class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</div>
                                         </td>
-                                        <td data-label="Localisation" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_location" class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-900 dark:text-gray-100">
                                                 <i class="fas fa-map-marker-alt text-primary mr-1"></i>
                                                 {{ listing.city }}, {{ listing.country }}
                                             </div>
                                         </td>
-                                        <td data-label="Date" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_date" class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</div>
                                         </td>
-                                        <td data-label="Statut" class="px-6 py-4 whitespace-nowrap">
+                                        <td :data-label="t.table_status" class="px-6 py-4 whitespace-nowrap">
                                             <span :class="listing.status === 'Actif' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'" class="px-3 py-1 rounded-full text-xs font-semibold">
-                                                {{ listing.status }}
+                                                {{ listing.status === 'Actif' ? t.status_active : t.status_inactive }}
                                             </span>
                                         </td>
-                                        <td data-label="Actions" class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td :data-label="t.table_actions" class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex gap-2">
-                                                <button @click="viewListingDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" title="Voir">
+                                                <button @click="viewListingDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" :title="t.action_view">
                                                     <i class="fas fa-eye"></i>
                                                 </button>
-                                                <button @click="openMessageModal(listing)" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300" title="Message">
+                                                <button @click="openMessageModal(listing)" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300" :title="t.action_message">
                                                     <i class="fas fa-envelope"></i>
                                                 </button>
-                                                <button @click="toggleStatus(listing)" :class="listing.status === 'Actif' ? 'text-red-600 hover:text-red-900 dark:text-red-400' : 'text-green-600 hover:text-green-900 dark:text-green-400'" :title="listing.status === 'Actif' ? 'Désactiver' : 'Activer'">
+                                                <button @click="toggleStatus(listing)" :class="listing.status === 'Actif' ? 'text-red-600 hover:text-red-900 dark:text-red-400' : 'text-green-600 hover:text-green-900 dark:text-green-400'" :title="listing.status === 'Actif' ? t.action_deactivate : t.action_activate">
                                                     <i :class="listing.status === 'Actif' ? 'fas fa-pause' : 'fas fa-play'"></i>
                                                 </button>
                                                 <!-- Added conversation count in parentheses next to messages icon -->
-                                                <button @click="openMessagesModal(listing.listing_id)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 relative" title="Messages">
+                                                <button @click="openMessagesModal(listing.listing_id)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 relative" :title="t.action_messages">
                                                     <i class="fas fa-comments"></i>
                                                     <span v-if="getConversationCount(listing.listing_id) > 0" class="ml-1 text-xs font-semibold">({{ getConversationCount(listing.listing_id) }})</span>
                                                 </button>
@@ -191,8 +197,9 @@ ob_start(); ?>
 
                         <div v-if="filteredListings.length === 0" class="text-center py-16">
                             <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
-                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Aucune transaction trouvée</h3>
-                            <p class="text-gray-600 dark:text-gray-400">Essayez de modifier vos filtres</p>
+                            <!-- Added translation for empty state -->
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t.empty_title }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400">{{ t.empty_message }}</p>
                         </div>
                     </div>
 
@@ -219,16 +226,16 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- Modal de détails -->
+    <!-- Added translations for details modal -->
     <div v-if="showDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeDetailsModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div class="bg-gradient-to-r from-primary to-green-600 p-6 rounded-t-2xl">
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-2xl font-bold text-white mb-1">
-                            <i class="fas fa-file-invoice-dollar mr-2"></i>Détails de l'annonce
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>{{ t.modal_details_title }}
                         </h3>
-                        <p class="text-green-100 text-sm">Annonce #{{ selectedListing?.listing_id }}</p>
+                        <p class="text-green-100 text-sm">{{ t.modal_listing }} #{{ selectedListing?.listing_id }}</p>
                     </div>
                     <button @click="closeDetailsModal" class="text-white hover:text-gray-200 transition-colors">
                         <i class="fas fa-times text-2xl"></i>
@@ -244,7 +251,7 @@ ob_start(); ?>
                                 <i class="fas fa-user text-white"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Annonceur</p>
+                                <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">{{ t.modal_advertiser }}</p>
                                 <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ capitalizeFirstLetter(selectedListing.first_name) }}
                                     {{ capitalizeFirstLetter(selectedListing.last_name) }}
                                 </p>
@@ -258,7 +265,7 @@ ob_start(); ?>
                                 <i class="fas fa-money-bill-wave text-white"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-green-600 dark:text-green-400 font-medium">Montant</p>
+                                <p class="text-xs text-green-600 dark:text-green-400 font-medium">{{ t.modal_amount }}</p>
                                 <p class="text-lg font-bold text-green-900 dark:text-green-100">{{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}</p>
                             </div>
                         </div>
@@ -270,7 +277,7 @@ ob_start(); ?>
                                 <i class="fas fa-map-marker-alt text-white"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">Localisation</p>
+                                <p class="text-xs text-purple-600 dark:text-purple-400 font-medium">{{ t.modal_location }}</p>
                                 <p class="text-lg font-bold text-purple-900 dark:text-purple-100">{{ selectedListing.city }}, {{ selectedListing.country }}</p>
                             </div>
                         </div>
@@ -282,7 +289,7 @@ ob_start(); ?>
                                 <i class="fas fa-phone text-white"></i>
                             </div>
                             <div>
-                                <p class="text-xs text-orange-600 dark:text-orange-400 font-medium">Téléphone</p>
+                                <p class="text-xs text-orange-600 dark:text-orange-400 font-medium">{{ t.modal_phone }}</p>
                                 <p class="text-lg font-bold text-orange-900 dark:text-orange-100">{{ selectedListing.phone || 'N/A' }}</p>
                             </div>
                         </div>
@@ -294,10 +301,10 @@ ob_start(); ?>
                                 <i class="fas fa-clock text-white"></i>
                             </div>
                             <div>
-                                <p class="text-xs font-medium" :class="getDelayTextColor(selectedListing.delay)">Délai</p>
+                                <p class="text-xs font-medium" :class="getDelayTextColor(selectedListing.delay)">{{ t.modal_delay }}</p>
                                 <div class="flex items-center">
                                     <span :class="getDelayDotColor(selectedListing.delay)" class="w-3 h-3 rounded-full mr-2"></span>
-                                    <p class="text-lg font-bold" :class="getDelayTextDarkColor(selectedListing.delay)">{{ selectedListing.delay }}</p>
+                                    <p class="text-lg font-bold" :class="getDelayTextDarkColor(selectedListing.delay)">{{ getTranslatedDelay(selectedListing.delay) }}</p>
                                 </div>
                             </div>
                         </div>
@@ -307,12 +314,12 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- Modal d'envoi de message -->
+    <!-- Added translations for message modal -->
     <div v-if="showMessageModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeMessageModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-envelope text-primary mr-2"></i>Envoyer un message
+                    <i class="fas fa-envelope text-primary mr-2"></i>{{ t.modal_send_message }}
                 </h3>
                 <button @click="closeMessageModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -321,7 +328,7 @@ ob_start(); ?>
 
             <div v-if="selectedListing" class="space-y-4">
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Destinataire</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">{{ t.modal_recipient }}</p>
                     <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(selectedListing.first_name) }}
                         {{ capitalizeAll(selectedListing.last_name) }}
                     </p>
@@ -329,28 +336,28 @@ ob_start(); ?>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Votre message</label>
-                    <textarea v-model="messageContent" rows="6" placeholder="Écrivez votre message ici..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.modal_your_message }}</label>
+                    <textarea v-model="messageContent" rows="6" :placeholder="t.modal_message_placeholder" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></textarea>
                 </div>
 
                 <div class="flex gap-3">
                     <button @click="closeMessageModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        Annuler
+                        {{ t.button_cancel }}
                     </button>
                     <button @click="sendMessage" :disabled="!messageContent.trim()" class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
-                        <i class="fas fa-paper-plane mr-2"></i>Envoyer
+                        <i class="fas fa-paper-plane mr-2"></i>{{ t.button_send }}
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de gestion des messages -->
+    <!-- Added translations for conversations modal -->
     <div v-if="showMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeMessagesModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full p-6 sm:p-8 max-h-[80vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-comments text-primary mr-2"></i>Conversations - Annonce #{{ selectedListing?.listing_id }}
+                    <i class="fas fa-comments text-primary mr-2"></i>{{ t.modal_conversations }} - {{ t.modal_listing }} #{{ selectedListing?.listing_id }}
                 </h3>
                 <button @click="closeMessagesModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -359,13 +366,13 @@ ob_start(); ?>
 
             <div v-if="loadingMessages" class="text-center py-8">
                 <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
-                <p class="text-gray-600 dark:text-gray-400">Chargement des conversations...</p>
+                <p class="text-gray-600 dark:text-gray-400">{{ t.loading_conversations }}</p>
             </div>
 
             <div v-else-if="conversationsList.length === 0" class="text-center py-8">
                 <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
-                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucune conversation</h4>
-                <p class="text-gray-600 dark:text-gray-400">Aucun message pour cette annonce</p>
+                <h4 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ t.no_conversation }}</h4>
+                <p class="text-gray-600 dark:text-gray-400">{{ t.no_conversation_message }}</p>
             </div>
 
             <div v-else class="space-y-4">
@@ -387,28 +394,27 @@ ob_start(); ?>
                         </div>
                         <div class="flex flex-col items-end gap-2 ml-4">
                             <span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-semibold whitespace-nowrap">
-                                {{ conversation.message_count }} message(s)
+                                {{ conversation.message_count }} {{ t.message_count }}
                             </span>
                             <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">{{ formatDate(conversation.last_message_date) }}</span>
                         </div>
                     </div>
-                    <!-- Made button always green (bg-green-600) and visible in both light and dark modes -->
                     <button @click="openChatModal(conversation)" class="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm font-medium">
-                        <i class="fas fa-comments mr-2"></i>Accéder aux messages
+                        <i class="fas fa-comments mr-2"></i>{{ t.button_access_messages }}
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- New modal for full chat conversation -->
+    <!-- Added translations for chat modal -->
     <div v-if="showChatModal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4" @click.self="closeChatModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col h-[90vh] md:max-h-[85vh]">
             <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <div class="flex justify-between items-center">
                     <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
                         <i class="fas fa-comments text-primary mr-2"></i>
-                        <span class="hidden sm:inline">Conversation avec {{ capitalizeFirstLetter(selectedConversation?.sender_first_name) ||
+                        <span class="hidden sm:inline">{{ t.modal_conversation_with }} {{ capitalizeFirstLetter(selectedConversation?.sender_first_name) ||
                             capitalizeFirstLetter( selectedConversation?.first_name) }} {{ capitalizeAll(selectedConversation?.sender_last_name) ||
                                  capitalizeAll(selectedConversation?.last_name) }}</span>
                         <span class="sm:hidden">{{ capitalizeFirstLetter(selectedConversation?.sender_first_name) || 
@@ -424,7 +430,7 @@ ob_start(); ?>
             <div v-if="selectedListing" class="px-4 sm:px-6 py-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
-                        <span class="text-sm text-gray-600 dark:text-gray-400">Annonce #{{ selectedListing.listing_id }} - </span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ t.modal_listing }} #{{ selectedListing.listing_id }} - </span>
                         <span class="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">
                             {{ formatCurrency(selectedListing.amount) }} {{ selectedListing.currency }}
                         </span>
@@ -439,16 +445,15 @@ ob_start(); ?>
             <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3" ref="chatContainer">
                 <div v-if="loadingChat" class="text-center py-8">
                     <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
-                    <p class="text-gray-600 dark:text-gray-400">Chargement de la conversation...</p>
+                    <p class="text-gray-600 dark:text-gray-400">{{ t.loading_conversation }}</p>
                 </div>
 
                 <div v-else-if="chatMessages.length === 0" class="text-center py-8">
                     <i class="fas fa-inbox text-4xl sm:text-6xl text-gray-300 mb-4"></i>
-                    <h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Aucun message</h4>
-                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">Commencez la conversation</p>
+                    <h4 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ t.no_messages }}</h4>
+                    <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">{{ t.start_conversation }}</p>
                 </div>
 
-                <!-- Swapped colors: green for sent messages (admin), blue for received messages -->
                 <div v-else v-for="msg in chatMessages" :key="msg.id" :class="['flex', msg.sender_id === 1 ? 'justify-end' : 'justify-start']">
                     <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === 1 ? 'bg-green-600 text-white' : 'bg-blue-500 text-white']">
                         <div class="flex items-center mb-2">
@@ -457,7 +462,7 @@ ob_start(); ?>
                             </div>
                             <div>
                                 <p :class="['text-xs font-semibold', msg.sender_id === 1 ? 'text-green-100' : 'text-blue-100']">
-                                    {{ msg.sender_id === 1 ? 'Vous (Admin)' : (capitalizeFirstLetter(msg.sender_first_name) || capitalizeFirstLetter(msg.first_name)) + ' ' + 
+                                    {{ msg.sender_id === 1 ? t.you_admin : (capitalizeFirstLetter(msg.sender_first_name) || capitalizeFirstLetter(msg.first_name)) + ' ' + 
                                         (capitalizeAll(msg.sender_last_name) || capitalizeAll(msg.last_name)) }}
                                 </p>
                                 <p :class="['text-xs', msg.sender_id === 1 ? 'text-green-200' : 'text-blue-200']">
@@ -470,13 +475,12 @@ ob_start(); ?>
                 </div>
             </div>
 
-            <!-- Made send button always green (bg-green-600) and visible in both light and dark modes -->
             <div class="px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
                 <form @submit.prevent="sendChatMessage" class="flex gap-2">
                     <textarea
                         v-model="newChatMessage"
                         rows="2"
-                        placeholder="Écrivez votre message..."
+                        :placeholder="t.modal_type_message"
                         class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
                     <button
                         type="submit"
@@ -489,12 +493,12 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- New reply modal for individual message responses -->
+    <!-- Added translations for reply modal -->
     <div v-if="showReplyModal" class="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4" @click.self="closeReplyModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-reply text-primary mr-2"></i>Répondre au message
+                    <i class="fas fa-reply text-primary mr-2"></i>{{ t.modal_reply_message }}
                 </h3>
                 <button @click="closeReplyModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
                     <i class="fas fa-times text-2xl"></i>
@@ -503,23 +507,23 @@ ob_start(); ?>
 
             <div v-if="selectedMessage" class="space-y-4">
                 <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border-l-4 border-primary">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Message original de:</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">{{ t.modal_original_message }}</p>
                     <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ selectedMessage.first_name }} {{ selectedMessage.last_name }}</p>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">{{ selectedMessage.email }}</p>
                     <p class="text-sm text-gray-700 dark:text-gray-300 italic mt-2">"{{ selectedMessage.message }}"</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Votre réponse</label>
-                    <textarea v-model="replyContent" rows="6" placeholder="Écrivez votre réponse ici..." class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{ t.modal_your_reply }}</label>
+                    <textarea v-model="replyContent" rows="6" :placeholder="t.modal_reply_placeholder" class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"></textarea>
                 </div>
 
                 <div class="flex gap-3">
                     <button @click="closeReplyModal" class="flex-1 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        Annuler
+                        {{ t.button_cancel }}
                     </button>
                     <button @click="sendReply" :disabled="!replyContent.trim()" class="flex-1 px-6 py-3 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50">
-                        <i class="fas fa-paper-plane mr-2"></i>Envoyer
+                        <i class="fas fa-paper-plane mr-2"></i>{{ t.button_send }}
                     </button>
                 </div>
             </div>
@@ -538,6 +542,161 @@ ob_start(); ?>
     createApp({
         data() {
             return {
+                currentLang: localStorage.getItem('language') || 'fr',
+                translations: {
+                    fr: {
+                        page_title: 'Transactions',
+                        greeting: 'Bonjour',
+                        stat_total_listings: 'Total Annonces',
+                        stat_offers: 'Offres',
+                        stat_requests: 'Demandes',
+                        stat_active: 'Actives',
+                        filter_search: 'Rechercher...',
+                        filter_all_types: 'Tous les types',
+                        filter_offers: 'Offres',
+                        filter_requests: 'Demandes',
+                        filter_all_countries: 'Tous les pays',
+                        filter_all_status: 'Tous les statuts',
+                        filter_all_delays: 'Tous les délais',
+                        filter_min_amount: 'Montant min',
+                        filter_max_amount: 'Montant max',
+                        status_active: 'Actif',
+                        status_inactive: 'Inactif',
+                        delay_urgent: 'Urgent',
+                        delay_two_weeks: 'Deux semaines',
+                        delay_none: 'Nulle',
+                        table_advertiser: 'Annonceur',
+                        table_type: 'Type',
+                        table_amount: 'Montant',
+                        table_location: 'Localisation',
+                        table_date: 'Date',
+                        table_status: 'Statut',
+                        table_actions: 'Actions',
+                        action_view: 'Voir',
+                        action_message: 'Message',
+                        action_deactivate: 'Désactiver',
+                        action_activate: 'Activer',
+                        action_messages: 'Messages',
+                        empty_title: 'Aucune transaction trouvée',
+                        empty_message: 'Essayez de modifier vos filtres',
+                        modal_details_title: 'Détails de l\'annonce',
+                        modal_listing: 'Annonce',
+                        modal_advertiser: 'Annonceur',
+                        modal_amount: 'Montant',
+                        modal_location: 'Localisation',
+                        modal_phone: 'Téléphone',
+                        modal_delay: 'Délai',
+                        modal_send_message: 'Envoyer un message',
+                        modal_recipient: 'Destinataire',
+                        modal_your_message: 'Votre message',
+                        modal_message_placeholder: 'Écrivez votre message ici...',
+                        modal_conversations: 'Conversations',
+                        modal_conversation_with: 'Conversation avec',
+                        modal_reply_message: 'Répondre au message',
+                        modal_original_message: 'Message original de:',
+                        modal_your_reply: 'Votre réponse',
+                        modal_reply_placeholder: 'Écrivez votre réponse ici...',
+                        modal_type_message: 'Écrivez votre message...',
+                        loading_conversations: 'Chargement des conversations...',
+                        loading_conversation: 'Chargement de la conversation...',
+                        no_conversation: 'Aucune conversation',
+                        no_conversation_message: 'Aucun message pour cette annonce',
+                        no_messages: 'Aucun message',
+                        start_conversation: 'Commencez la conversation',
+                        message_count: 'message(s)',
+                        button_access_messages: 'Accéder aux messages',
+                        button_cancel: 'Annuler',
+                        button_send: 'Envoyer',
+                        you_admin: 'Vous (Admin)',
+                        // Navigation translations
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes Transactions',
+                        nav_my_sponsorships: 'Mes Parrainages',
+                        nav_logout: 'Déconnexion'
+                    },
+                    en: {
+                        page_title: 'Transactions',
+                        greeting: 'Hello',
+                        stat_total_listings: 'Total Listings',
+                        stat_offers: 'Offers',
+                        stat_requests: 'Requests',
+                        stat_active: 'Active',
+                        filter_search: 'Search...',
+                        filter_all_types: 'All types',
+                        filter_offers: 'Offers',
+                        filter_requests: 'Requests',
+                        filter_all_countries: 'All countries',
+                        filter_all_status: 'All statuses',
+                        filter_all_delays: 'All delays',
+                        filter_min_amount: 'Min amount',
+                        filter_max_amount: 'Max amount',
+                        status_active: 'Active',
+                        status_inactive: 'Inactive',
+                        delay_urgent: 'Urgent',
+                        delay_two_weeks: 'Two weeks',
+                        delay_none: 'None',
+                        table_advertiser: 'Advertiser',
+                        table_type: 'Type',
+                        table_amount: 'Amount',
+                        table_location: 'Location',
+                        table_date: 'Date',
+                        table_status: 'Status',
+                        table_actions: 'Actions',
+                        action_view: 'View',
+                        action_message: 'Message',
+                        action_deactivate: 'Deactivate',
+                        action_activate: 'Activate',
+                        action_messages: 'Messages',
+                        empty_title: 'No transaction found',
+                        empty_message: 'Try modifying your filters',
+                        modal_details_title: 'Listing Details',
+                        modal_listing: 'Listing',
+                        modal_advertiser: 'Advertiser',
+                        modal_amount: 'Amount',
+                        modal_location: 'Location',
+                        modal_phone: 'Phone',
+                        modal_delay: 'Delay',
+                        modal_send_message: 'Send a message',
+                        modal_recipient: 'Recipient',
+                        modal_your_message: 'Your message',
+                        modal_message_placeholder: 'Write your message here...',
+                        modal_conversations: 'Conversations',
+                        modal_conversation_with: 'Conversation with',
+                        modal_reply_message: 'Reply to message',
+                        modal_original_message: 'Original message from:',
+                        modal_your_reply: 'Your reply',
+                        modal_reply_placeholder: 'Write your reply here...',
+                        modal_type_message: 'Write your message...',
+                        loading_conversations: 'Loading conversations...',
+                        loading_conversation: 'Loading conversation...',
+                        no_conversation: 'No conversation',
+                        no_conversation_message: 'No messages for this listing',
+                        no_messages: 'No messages',
+                        start_conversation: 'Start the conversation',
+                        message_count: 'message(s)',
+                        button_access_messages: 'Access messages',
+                        button_cancel: 'Cancel',
+                        button_send: 'Send',
+                        you_admin: 'You (Admin)',
+                        // Navigation translations
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout'
+                    }
+                },
                 darkMode: false,
                 sidebarOpen: false,
                 searchTerm: '',
@@ -573,6 +732,9 @@ ob_start(); ?>
             };
         },
         computed: {
+            t() {
+                return this.translations[this.currentLang];
+            },
             offerCount() {
                 return this.allListings.filter(l => l.type === 'Offre').length;
             },
@@ -632,6 +794,16 @@ ob_start(); ?>
             await this.fetchAllMessageCounts();
         },
         methods: {
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+            },
+            getTranslatedDelay(delay) {
+                if (delay === 'Urgent') return this.t.delay_urgent;
+                if (delay === 'Deux semaines') return this.t.delay_two_weeks;
+                if (delay === 'Nulle') return this.t.delay_none;
+                return delay;
+            },
             async fetchListings() {
                 try {
                     const response = await api.get('?action=allListings');

@@ -18,6 +18,9 @@ require_once 'src/controller/front/home.php';
 require_once 'src/controller/front/marketplace.php';
 require_once 'src/controller/front/login.php';
 require_once 'src/controller/front/register.php';
+require_once 'src/controller/front/terms.php';
+require_once 'src/controller/front/policy.php';
+
 
 require_once 'src/controller/back/dashboard.php';
 require_once 'src/controller/back/admin/transactions.php';
@@ -125,6 +128,14 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
 
         case 'loginPage':
             loginPage();
+            break;
+
+        case 'termsPage':
+            termsPage();
+            break;
+
+        case 'policyPage':
+            policyPage();
             break;
 
         case 'login':

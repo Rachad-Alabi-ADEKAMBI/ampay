@@ -8,12 +8,13 @@
                 <span class="ml-2 text-2xl font-bold text-gray-900">AMPAY</span>
             </a>
 
+            <!-- Using translation variables for navigation links -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="index.php" class="text-gray-700 hover:text-primary transition-colors font-medium">
-                    <i class="fas fa-home mr-1"></i> Accueil
+                    <i class="fas fa-home mr-1"></i> {{ t.nav_home }}
                 </a>
                 <a href="index.php?action=marketplace" class="text-gray-700 hover:text-primary transition-colors font-medium">
-                    <i class="fas fa-store mr-1"></i> Marketplace
+                    <i class="fas fa-store mr-1"></i> {{ t.nav_marketplace }}
                 </a>
             </div>
 
@@ -26,18 +27,19 @@
                     <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                 </button>
 
+                <!-- Using translation variables for user menu links -->
                 <div class="hidden sm:flex items-center space-x-3">
                     <?php if (isset($_SESSION['id'])): ?>
                         <a href="index.php?action=dashboard" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
-                            <i class="fas fa-user-shield mr-1"></i> Tableau de bord
+                            <i class="fas fa-user-shield mr-1"></i> {{ t.nav_dashboard }}
                         </a>
 
                         <a href="index.php?action=logout" class="px-4 py-2 text-gray-700 hover:text-primary transition-colors font-medium">
-                            <i class="fas fa-user-logout mr-1"></i> Déconnexion
+                            <i class="fas fa-user-logout mr-1"></i> {{ t.nav_logout }}
                         </a>
                     <?php else: ?>
                         <a href="index.php?action=loginPage" class="px-6 py-2 primary-gradient text-white rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            <i class="fas fa-sign-in-alt mr-1"></i> Connexion
+                            <i class="fas fa-sign-in-alt mr-1"></i> {{ t.nav_login }}
                         </a>
                     <?php endif; ?>
                 </div>
@@ -48,25 +50,26 @@
             </div>
         </div>
 
+        <!-- Using translation variables for mobile menu -->
         <div v-if="mobileMenuOpen" class="md:hidden mt-4 pb-4 space-y-3 mobile-menu-enter">
             <a href="index.php" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <i class="fas fa-home mr-2"></i> Accueil
+                <i class="fas fa-home mr-2"></i> {{ t.nav_home }}
             </a>
             <a href="index.php?action=marketplace" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                <i class="fas fa-store mr-2"></i> Marketplace
+                <i class="fas fa-store mr-2"></i> {{ t.nav_marketplace }}
             </a>
 
             <?php if (isset($_SESSION['id'])): ?>
                 <a href="index.php?action=dashboard" @click="mobileMenuOpen = false" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <i class="fas fa-user-shield mr-2"></i> Tableau de bord
+                    <i class="fas fa-user-shield mr-2"></i> {{ t.nav_dashboard }}
                 </a>
                 <a href="index.php?action=logout" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                    <i class="fas fa-user-logout mr-1"></i> Déconnexion
+                    <i class="fas fa-user-logout mr-1"></i> {{ t.nav_logout }}
                 </a>
 
             <?php else: ?>
                 <a href="index.php?action=loginPage" @click="mobileMenuOpen = false" class="block px-4 py-2 primary-gradient text-white rounded-lg font-semibold text-center hover:opacity-90 transition-opacity">
-                    <i class="fas fa-sign-in-alt mr-2"></i> Connexion
+                    <i class="fas fa-sign-in-alt mr-2"></i> {{ t.nav_login }}
                 </a>
             <?php endif; ?>
         </div>

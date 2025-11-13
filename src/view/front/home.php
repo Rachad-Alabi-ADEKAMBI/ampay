@@ -18,7 +18,6 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
     <!-- Added theme and language toggle buttons -->
     <?php include 'header.php'; ?>
 
-
     <section class="parallax hero-gradient pt-32 pb-20 min-h-screen flex items-center" style="background-image: url('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1920&h=1080&fit=crop');">
         <div class="parallax-content container mx-auto px-4 sm:px-6">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
@@ -612,6 +611,21 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                 faqOpenStates: [false, false, false, false, false, false],
                 translations: {
                     fr: {
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_dashboard: 'Tableau de bord',
+                        nav_logout: 'Déconnexion',
+                        nav_login: 'Connexion',
+                        footer_description: 'Transferts d\'argent sans intermédiaire entre l\'Afrique et l\'Europe.',
+                        footer_quick_links: 'Liens rapides',
+                        footer_terms: 'Conditions générales d\'utilisation',
+                        footer_privacy: 'Politique de confidentialité',
+                        footer_support: 'Support',
+                        footer_faq: 'FAQ',
+                        footer_about: 'À propos',
+                        footer_contact: 'Contact',
+                        footer_follow_us: 'Suivez-nous',
+                        footer_copyright: '© 2025 AMPAY. Tous droits réservés.',
                         hero_badge: 'Transferts d\'argent international',
                         hero_title: 'Transfert d\'argent',
                         hero_title_highlight: 'sans intermédiaire',
@@ -720,6 +734,21 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         request_sent_success: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
                     },
                     en: {
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_dashboard: 'Dashboard',
+                        nav_logout: 'Logout',
+                        nav_login: 'Login',
+                        footer_description: 'Money transfers without intermediary between Africa and Europe.',
+                        footer_quick_links: 'Quick Links',
+                        footer_terms: 'Terms of Service',
+                        footer_privacy: 'Privacy Policy',
+                        footer_support: 'Support',
+                        footer_faq: 'FAQ',
+                        footer_about: 'About',
+                        footer_contact: 'Contact',
+                        footer_follow_us: 'Follow us',
+                        footer_copyright: '© 2025 AMPAY. All rights reserved.',
                         hero_badge: 'Money transfers around the world',
                         hero_title: 'Money transfer',
                         hero_title_highlight: 'without intermediary',

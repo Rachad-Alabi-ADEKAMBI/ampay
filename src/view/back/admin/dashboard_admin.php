@@ -22,10 +22,14 @@ ob_start(); ?>
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Tableau de bord
+                                {{ t.dashboard_title }}
                             </h1>
                         </div>
-                        <div class="flex items-center space-x-4">
+                        <!-- Added language switcher button next to theme toggle -->
+                        <div class="flex items-center space-x-2">
+                            <button @click="toggleLanguage" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">{{ currentLang === 'fr' ? 'EN' : 'FR' }}</span>
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
@@ -38,7 +42,7 @@ ob_start(); ?>
             <div class="flex-1 overflow-y-auto overflow-x-hidden">
                 <div class="px-4 sm:px-6 pb-2 pt-4">
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
-                        Bonjour
+                        {{ t.welcome }}
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">
                             Admin
                         </span>
@@ -55,7 +59,7 @@ ob_start(); ?>
                                 <span class="text-xs text-green-600 font-semibold">+12%</span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalUsers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Total Utilisateurs</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.total_users }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -66,7 +70,7 @@ ob_start(); ?>
                                 <span class="text-xs text-green-600 font-semibold">+8%</span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeOffers }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Offres Actives</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.active_offers }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -77,7 +81,7 @@ ob_start(); ?>
                                 <span class="text-xs text-green-600 font-semibold">+15%</span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.activeRequests }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Demandes Actives</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.active_requests }}</div>
                         </div>
 
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
@@ -88,20 +92,20 @@ ob_start(); ?>
                                 <span class="text-xs text-green-600 font-semibold">+23%</span>
                             </div>
                             <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ stats.totalTransactions }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.transactions }}</div>
                         </div>
                     </div>
 
                     <!-- Added max-w-full and overflow-hidden to chart containers -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Offres et Demandes par mois</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.offers_requests_per_month }}</h3>
                             <div class="w-full max-w-full">
                                 <canvas id="transactionsChart"></canvas>
                             </div>
                         </div>
                         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-6 max-w-full overflow-hidden">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Répartition par type</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{{ t.distribution_by_type }}</h3>
                             <div class="w-full max-w-full">
                                 <canvas id="typeChart"></canvas>
                             </div>
@@ -133,6 +137,57 @@ ob_start(); ?>
                 listings: [],
                 users: [],
                 recentActivities: [],
+                currentLang: 'fr',
+                translations: {
+                    fr: {
+                        dashboard_title: 'Tableau de bord',
+                        welcome: 'Bonjour',
+                        total_users: 'Total Utilisateurs',
+                        active_offers: 'Offres Actives',
+                        active_requests: 'Demandes Actives',
+                        transactions: 'Transactions',
+                        offers_requests_per_month: 'Offres et Demandes par mois',
+                        distribution_by_type: 'Répartition par type',
+                        offers: 'Offres',
+                        requests: 'Demandes',
+                        // Sidebar translations
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes transactions',
+                        nav_my_sponsorships: 'Mes parrainages',
+                        nav_logout: 'Déconnexion',
+                        months: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin']
+                    },
+                    en: {
+                        dashboard_title: 'Dashboard',
+                        welcome: 'Hello',
+                        total_users: 'Total Users',
+                        active_offers: 'Active Offers',
+                        active_requests: 'Active Requests',
+                        transactions: 'Transactions',
+                        offers_requests_per_month: 'Offers and Requests per Month',
+                        distribution_by_type: 'Distribution by Type',
+                        offers: 'Offers',
+                        requests: 'Requests',
+                        // Sidebar translations
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout',
+                        months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+                    }
+                }
             };
         },
         computed: {
@@ -143,6 +198,9 @@ ob_start(); ?>
                     activeRequests: this.listings.filter(l => l.type === 'Demande').length,
                     totalTransactions: this.listings.length
                 };
+            },
+            t() {
+                return this.translations[this.currentLang];
             }
         },
         mounted() {
@@ -150,6 +208,11 @@ ob_start(); ?>
             if (savedDarkMode === 'true') {
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
+            }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
             }
 
             this.fetchUsers();
@@ -201,23 +264,40 @@ ob_start(); ?>
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+                // Dispatch event to notify sidebar
+                window.dispatchEvent(new CustomEvent('languageChanged', {
+                    detail: this.currentLang
+                }));
+                // Re-initialize charts with new language
+                this.$nextTick(() => this.initCharts());
+            },
             initCharts() {
+                if (window.transactionsChartInstance) {
+                    window.transactionsChartInstance.destroy();
+                }
+                if (window.typeChartInstance) {
+                    window.typeChartInstance.destroy();
+                }
+
                 const transactionsCtx = document.getElementById('transactionsChart');
                 if (transactionsCtx) {
                     const monthlyData = this.getMonthlyData();
-                    new Chart(transactionsCtx, {
+                    window.transactionsChartInstance = new Chart(transactionsCtx, {
                         type: 'line',
                         data: {
-                            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                            labels: this.t.months,
                             datasets: [{
-                                    label: 'Offres',
+                                    label: this.t.offers,
                                     data: monthlyData.offers,
                                     borderColor: '#10B981',
                                     backgroundColor: 'rgba(16, 185, 129, 0.1)',
                                     tension: 0.4
                                 },
                                 {
-                                    label: 'Demandes',
+                                    label: this.t.requests,
                                     data: monthlyData.requests,
                                     borderColor: '#F59E0B',
                                     backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -239,10 +319,10 @@ ob_start(); ?>
 
                 const typeCtx = document.getElementById('typeChart');
                 if (typeCtx) {
-                    new Chart(typeCtx, {
+                    window.typeChartInstance = new Chart(typeCtx, {
                         type: 'doughnut',
                         data: {
-                            labels: ['Offres', 'Demandes'],
+                            labels: [this.t.offers, this.t.requests],
                             datasets: [{
                                 data: [this.stats.activeOffers, this.stats.activeRequests],
                                 backgroundColor: ['#10B981', '#F59E0B']

@@ -25,11 +25,16 @@ ob_start(); ?>
                             <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
+                            <!-- Added translation for page title -->
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Liste des utilisateurs
+                                {{ t.pageTitle }}
                             </h1>
                         </div>
+                        <!-- Added language toggle button -->
                         <div class="flex items-center space-x-4">
+                            <button @click="toggleLanguage" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">{{ currentLanguage.toUpperCase() }}</span>
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
@@ -39,20 +44,22 @@ ob_start(); ?>
             </header>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+                <!-- Added translation for greeting -->
                 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
-                        Bonjour
+                        {{ t.greeting }}
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">
                             Admin
                         </span>
                     </div>
                 </div>
                 <!-- Stats -->
+                <!-- Added translation for stats labels -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Utilisateurs</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ t.stats.totalUsers }}</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ allUsers.length }}</p>
                             </div>
                             <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
@@ -63,7 +70,7 @@ ob_start(); ?>
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Total Annonces</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ t.stats.totalListings }}</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ totalListings }}</p>
                             </div>
                             <div class="w-12 h-12 bg-green-100 text-green-600 rounded-lg flex items-center justify-center">
@@ -74,7 +81,7 @@ ob_start(); ?>
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">Utilisateurs Bannis</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">{{ t.stats.bannedUsers }}</p>
                                 <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{ bannedUsers }}</p>
                             </div>
                             <div class="w-12 h-12 bg-red-100 text-red-600 rounded-lg flex items-center justify-center">
@@ -85,62 +92,64 @@ ob_start(); ?>
                 </div>
 
                 <!-- Filters -->
+                <!-- Added translation for filters -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher par nom, email..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <input v-model="searchTerm" @input="applyFilters" type="text" :placeholder="t.filters.searchPlaceholder" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                         <select v-model="filterCountry" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <option value="">Tous les pays</option>
+                            <option value="">{{ t.filters.allCountries }}</option>
                             <option v-for="country in countries" :key="country" :value="country">{{ country }}</option>
                         </select>
                         <select v-model="filterStatus" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <option value="">Tous les statuts</option>
-                            <option value="active">Actifs</option>
-                            <option value="banned">Bannis</option>
+                            <option value="">{{ t.filters.allStatuses }}</option>
+                            <option value="active">{{ t.filters.active }}</option>
+                            <option value="banned">{{ t.filters.banned }}</option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Users Table -->
+                <!-- Added translation for table headers and content -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Utilisateur</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Pays</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Annonces</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider no-print">Actions</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.table.user }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.table.country }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.table.listings }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.table.status }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider no-print">{{ t.table.actions }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <!-- Updated hover to use gray-750 like transactions page, removed user icon, restructured user display -->
                                 <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 dark:hover:bg-gray-750">
-                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Utilisateur">
+                                    <td class="px-6 py-4 whitespace-nowrap" :data-label="t.table.user">
                                         <div>
                                             <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">{{ capitalizeFirstLetter(user.first_name) }} {{ capitalizeAll(user.last_name) }}</div>
                                             <div class="text-sm text-gray-500 dark:text-gray-400">{{ user.email }}</div>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" data-label="Pays">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400" :data-label="t.table.country">
                                         <i class="fas fa-flag mr-1 text-primary"></i>{{ user.country || 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" data-label="Annonces">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100" :data-label="t.table.listings">
                                         {{ getUserListingsCount(user.id) }}
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap" data-label="Statut">
+                                    <td class="px-6 py-4 whitespace-nowrap" :data-label="t.table.status">
                                         <span :class="['px-2 py-1 text-xs font-semibold rounded-full', user.banned ? 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300' : 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300']">
-                                            {{ user.banned ? 'Banni' : 'Actif' }}
+                                            {{ user.banned ? t.statusLabels.banned : t.statusLabels.active }}
                                         </span>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium no-print" data-label="Actions">
-                                        <button @click="viewUserListings(user)" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-3" title="Voir les annonces">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium no-print" :data-label="t.table.actions">
+                                        <button @click="viewUserListings(user)" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 mr-3" :title="t.actions.viewListings">
                                             <i class="fas fa-eye"></i>
                                         </button>
-                                        <button v-if="!user.banned" @click="openBanModal(user)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" title="Bannir">
+                                        <button v-if="!user.banned" @click="openBanModal(user)" class="text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300" :title="t.actions.ban">
                                             <i class="fas fa-ban"></i>
                                         </button>
-                                        <button v-else @click="unbanUser(user)" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" title="Débannir">
+                                        <button v-else @click="unbanUser(user)" class="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300" :title="t.actions.unban">
                                             <i class="fas fa-check-circle"></i>
                                         </button>
                                     </td>
@@ -150,19 +159,20 @@ ob_start(); ?>
                     </div>
 
                     <!-- Pagination -->
+                    <!-- Added translation for pagination -->
                     <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 no-print">
                         <div class="flex-1 flex justify-between sm:hidden">
                             <button @click="previousPage" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
-                                Précédent
+                                {{ t.pagination.previous }}
                             </button>
                             <button @click="nextPage" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
-                                Suivant
+                                {{ t.pagination.next }}
                             </button>
                         </div>
                         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p class="text-sm text-gray-700 dark:text-gray-300">
-                                    Affichage de <span class="font-medium">{{ startItem }}</span> à <span class="font-medium">{{ endItem }}</span> sur <span class="font-medium">{{ totalItems }}</span> résultats
+                                    {{ t.pagination.showing }} <span class="font-medium">{{ startItem }}</span> {{ t.pagination.to }} <span class="font-medium">{{ endItem }}</span> {{ t.pagination.of }} <span class="font-medium">{{ totalItems }}</span> {{ t.pagination.results }}
                                 </p>
                             </div>
                             <div>
@@ -186,11 +196,12 @@ ob_start(); ?>
     </div>
 
     <!-- Ban User Modal -->
+    <!-- Added translation for ban modal -->
     <div v-if="showBanModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeBanModal">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-ban text-red-600 mr-2"></i>Bannir l'utilisateur
+                    <i class="fas fa-ban text-red-600 mr-2"></i>{{ t.banModal.title }}
                 </h3>
                 <button @click="closeBanModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <i class="fas fa-times text-xl"></i>
@@ -198,7 +209,7 @@ ob_start(); ?>
             </div>
 
             <div v-if="selectedUser" class="mb-4">
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Vous êtes sur le point de bannir:</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ t.banModal.aboutToBan }}</p>
                 <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ selectedUser.name }}</p>
                 <p class="text-sm text-gray-500 dark:text-gray-400">{{ selectedUser.email }}</p>
             </div>
@@ -206,17 +217,17 @@ ob_start(); ?>
             <form @submit.prevent="submitBan">
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Raison du bannissement
+                        {{ t.banModal.reasonLabel }}
                     </label>
-                    <textarea v-model="banReason" rows="4" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" placeholder="Expliquez la raison du bannissement..."></textarea>
+                    <textarea v-model="banReason" rows="4" required class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100" :placeholder="t.banModal.reasonPlaceholder"></textarea>
                 </div>
 
                 <div class="flex space-x-3">
                     <button type="button" @click="closeBanModal" class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        Annuler
+                        {{ t.banModal.cancel }}
                     </button>
                     <button type="submit" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        <i class="fas fa-ban mr-2"></i>Bannir
+                        <i class="fas fa-ban mr-2"></i>{{ t.banModal.banButton }}
                     </button>
                 </div>
             </form>
@@ -224,11 +235,12 @@ ob_start(); ?>
     </div>
 
     <!-- View Listings Modal -->
+    <!-- Added translation for listings modal -->
     <div v-if="showListingsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeListingsModal">
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                    <i class="fas fa-list text-primary mr-2"></i>Annonces de {{ selectedUser?.name }}
+                    <i class="fas fa-list text-primary mr-2"></i>{{ t.listingsModal.title.replace('{user}', selectedUser?.name) }}
                 </h3>
                 <button @click="closeListingsModal" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                     <i class="fas fa-times text-xl"></i>
@@ -238,43 +250,43 @@ ob_start(); ?>
             <!-- Filters for listings -->
             <div class="mb-4 flex space-x-3">
                 <select v-model="listingsFilter" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                    <option value="">Tous les types</option>
-                    <option value="Offre">Offres</option>
-                    <option value="Demande">Demandes</option>
+                    <option value="">{{ t.listingsModal.filters.allTypes }}</option>
+                    <option value="Offre">{{ t.listingsModal.filters.offers }}</option>
+                    <option value="Demande">{{ t.listingsModal.filters.requests }}</option>
                 </select>
                 <select v-model="listingsSortBy" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                    <option value="date">Date</option>
-                    <option value="amount">Montant</option>
-                    <option value="type">Type</option>
+                    <option value="date">{{ t.listingsModal.sortBy.date }}</option>
+                    <option value="amount">{{ t.listingsModal.sortBy.amount }}</option>
+                    <option value="type">{{ t.listingsModal.sortBy.type }}</option>
                 </select>
             </div>
 
             <div v-if="filteredUserListings.length === 0" class="text-center py-8">
                 <i class="fas fa-inbox text-4xl text-gray-300 mb-2"></i>
-                <p class="text-gray-500 dark:text-gray-400">Aucune annonce trouvée</p>
+                <p class="text-gray-500 dark:text-gray-400">{{ t.listingsModal.noListings }}</p>
             </div>
 
             <div v-else class="space-y-4">
                 <div v-for="listing in filteredUserListings" :key="listing.id" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow">
                     <div class="flex items-center justify-between mb-2">
                         <span :class="['px-3 py-1 rounded-full text-sm font-semibold', listing.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300']">
-                            {{ listing.type }}
+                            {{ listing.type === 'Offre' ? t.listingsModal.typeLabels.offer : t.listingsModal.typeLabels.request }}
                         </span>
                         <span class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(listing.created_at) }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Montant</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ t.listingsModal.labels.amount }}</p>
                             <p class="text-lg font-bold text-gray-900 dark:text-gray-100">{{ formatCurrency(listing.amount) }} {{ listing.currency }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">Localisation</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ t.listingsModal.labels.location }}</p>
                             <p class="text-sm text-gray-900 dark:text-gray-100">{{ listing.city }}, {{ listing.country }}</p>
                         </div>
                     </div>
                     <div class="mt-2">
                         <span :class="['px-2 py-1 text-xs font-semibold rounded-full', listing.status === 'Actif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700']">
-                            {{ listing.status }}
+                            {{ listing.status === 'Actif' ? t.listingsModal.statusLabels.active : t.listingsModal.statusLabels.inactive }}
                         </span>
                     </div>
                 </div>
@@ -297,6 +309,7 @@ ob_start(); ?>
             return {
                 darkMode: false,
                 sidebarOpen: false,
+                currentLanguage: 'fr',
                 searchTerm: '',
                 filterCountry: '',
                 filterStatus: '',
@@ -310,10 +323,193 @@ ob_start(); ?>
                 listingsSortBy: 'date',
                 countries: [],
                 allUsers: [],
-                listings: []
+                listings: [],
+                translations: {
+                    fr: {
+                        pageTitle: 'Liste des utilisateurs',
+                        greeting: 'Bonjour',
+                        stats: {
+                            totalUsers: 'Total Utilisateurs',
+                            totalListings: 'Total Annonces',
+                            bannedUsers: 'Utilisateurs Bannis'
+                        },
+                        filters: {
+                            searchPlaceholder: 'Rechercher par nom, email...',
+                            allCountries: 'Tous les pays',
+                            allStatuses: 'Tous les statuts',
+                            active: 'Actifs',
+                            banned: 'Bannis'
+                        },
+                        table: {
+                            user: 'Utilisateur',
+                            country: 'Pays',
+                            listings: 'Annonces',
+                            status: 'Statut',
+                            actions: 'Actions'
+                        },
+                        statusLabels: {
+                            active: 'Actif',
+                            banned: 'Banni'
+                        },
+                        actions: {
+                            viewListings: 'Voir les annonces',
+                            ban: 'Bannir',
+                            unban: 'Débannir'
+                        },
+                        pagination: {
+                            previous: 'Précédent',
+                            next: 'Suivant',
+                            showing: 'Affichage de',
+                            to: 'à',
+                            of: 'sur',
+                            results: 'résultats'
+                        },
+                        banModal: {
+                            title: "Bannir l'utilisateur",
+                            aboutToBan: 'Vous êtes sur le point de bannir:',
+                            reasonLabel: 'Raison du bannissement',
+                            reasonPlaceholder: 'Expliquez la raison du bannissement...',
+                            cancel: 'Annuler',
+                            banButton: 'Bannir'
+                        },
+                        listingsModal: {
+                            title: 'Annonces de {user}',
+                            filters: {
+                                allTypes: 'Tous les types',
+                                offers: 'Offres',
+                                requests: 'Demandes'
+                            },
+                            sortBy: {
+                                date: 'Date',
+                                amount: 'Montant',
+                                type: 'Type'
+                            },
+                            noListings: 'Aucune annonce trouvée',
+                            typeLabels: {
+                                offer: 'Offre',
+                                request: 'Demande'
+                            },
+                            labels: {
+                                amount: 'Montant',
+                                location: 'Localisation'
+                            },
+                            statusLabels: {
+                                active: 'Actif',
+                                inactive: 'Inactif'
+                            }
+                        },
+                        alerts: {
+                            userBanned: 'Utilisateur {user} banni avec succès.\nRaison: {reason}',
+                            userUnbanned: 'Utilisateur {user} débanni avec succès.',
+                            confirmUnban: 'Êtes-vous sûr de vouloir débannir {user} ?'
+                        },
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes transactions',
+                        nav_my_sponsorships: 'Mes parrainages',
+                        nav_logout: 'Déconnexion'
+                    },
+                    en: {
+                        pageTitle: 'Users List',
+                        greeting: 'Hello',
+                        stats: {
+                            totalUsers: 'Total Users',
+                            totalListings: 'Total Listings',
+                            bannedUsers: 'Banned Users'
+                        },
+                        filters: {
+                            searchPlaceholder: 'Search by name, email...',
+                            allCountries: 'All countries',
+                            allStatuses: 'All statuses',
+                            active: 'Active',
+                            banned: 'Banned'
+                        },
+                        table: {
+                            user: 'User',
+                            country: 'Country',
+                            listings: 'Listings',
+                            status: 'Status',
+                            actions: 'Actions'
+                        },
+                        statusLabels: {
+                            active: 'Active',
+                            banned: 'Banned'
+                        },
+                        actions: {
+                            viewListings: 'View listings',
+                            ban: 'Ban',
+                            unban: 'Unban'
+                        },
+                        pagination: {
+                            previous: 'Previous',
+                            next: 'Next',
+                            showing: 'Showing',
+                            to: 'to',
+                            of: 'of',
+                            results: 'results'
+                        },
+                        banModal: {
+                            title: 'Ban User',
+                            aboutToBan: 'You are about to ban:',
+                            reasonLabel: 'Ban Reason',
+                            reasonPlaceholder: 'Explain the reason for the ban...',
+                            cancel: 'Cancel',
+                            banButton: 'Ban'
+                        },
+                        listingsModal: {
+                            title: "{user}'s Listings",
+                            filters: {
+                                allTypes: 'All types',
+                                offers: 'Offers',
+                                requests: 'Requests'
+                            },
+                            sortBy: {
+                                date: 'Date',
+                                amount: 'Amount',
+                                type: 'Type'
+                            },
+                            noListings: 'No listings found',
+                            typeLabels: {
+                                offer: 'Offer',
+                                request: 'Request'
+                            },
+                            labels: {
+                                amount: 'Amount',
+                                location: 'Location'
+                            },
+                            statusLabels: {
+                                active: 'Active',
+                                inactive: 'Inactive'
+                            }
+                        },
+                        alerts: {
+                            userBanned: 'User {user} successfully banned.\nReason: {reason}',
+                            userUnbanned: 'User {user} successfully unbanned.',
+                            confirmUnban: 'Are you sure you want to unban {user}?'
+                        },
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout'
+                    }
+                }
             };
         },
         computed: {
+            t() {
+                return this.translations[this.currentLanguage];
+            },
             filteredUsers() {
                 let filtered = this.allUsers;
 
@@ -397,10 +593,27 @@ ob_start(); ?>
                 document.body.classList.add('dark-mode');
             }
 
+            const savedLanguage = localStorage.getItem('language');
+            if (savedLanguage && (savedLanguage === 'fr' || savedLanguage === 'en')) {
+                this.currentLanguage = savedLanguage;
+            }
+
+            window.addEventListener('languageChanged', (event) => {
+                this.currentLanguage = event.detail;
+            });
+
             await this.fetchUsers();
             await this.fetchListings();
         },
         methods: {
+            toggleLanguage() {
+                this.currentLanguage = this.currentLanguage === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLanguage);
+
+                window.dispatchEvent(new CustomEvent('languageChanged', {
+                    detail: this.currentLanguage
+                }));
+            },
             async fetchUsers() {
                 try {
                     const response = await api.get('?action=allUsers');
@@ -411,8 +624,6 @@ ob_start(); ?>
 
                     // Extract unique countries
                     this.countries = [...new Set(this.allUsers.map(u => u.country).filter(Boolean))];
-
-                    console.log('[v0] Users fetched:', this.allUsers);
                 } catch (error) {
                     console.error('Erreur lors du chargement des utilisateurs:', error);
                     this.allUsers = [];
@@ -422,7 +633,6 @@ ob_start(); ?>
                 try {
                     const response = await api.get('?action=allListings');
                     this.listings = response.data || [];
-                    console.log('[v0] Listings fetched:', this.listings);
                 } catch (error) {
                     console.error('Erreur lors du chargement des listings:', error);
                     this.listings = [];
@@ -456,16 +666,16 @@ ob_start(); ?>
                     // API call would go here
                     this.selectedUser.banned = true;
                     this.selectedUser.banReason = this.banReason;
-                    alert(`Utilisateur ${this.selectedUser.name} banni avec succès.\nRaison: ${this.banReason}`);
+                    alert(this.t.alerts.userBanned.replace('{user}', this.selectedUser.name).replace('{reason}', this.banReason));
                     this.closeBanModal();
                 }
             },
             unbanUser(user) {
-                if (confirm(`Êtes-vous sûr de vouloir débannir ${user.name} ?`)) {
+                if (confirm(this.t.alerts.confirmUnban.replace('{user}', user.name))) {
                     // API call would go here
                     user.banned = false;
                     delete user.banReason;
-                    alert(`Utilisateur ${user.name} débanni avec succès.`);
+                    alert(this.t.alerts.userUnbanned.replace('{user}', user.name));
                 }
             },
             toggleDarkMode() {
@@ -484,7 +694,7 @@ ob_start(); ?>
             },
             formatDate(dateString) {
                 const date = new Date(dateString);
-                return date.toLocaleDateString('fr-FR', {
+                return date.toLocaleDateString(this.currentLanguage === 'fr' ? 'fr-FR' : 'en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'

@@ -20,11 +20,16 @@ ob_start(); ?>
                             <button @click="sidebarOpen = true" class="md:hidden text-gray-600 dark:text-gray-300">
                                 <i class="fas fa-bars text-xl"></i>
                             </button>
+                            <!-- Added translation for page title -->
                             <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                                Liste des parrainages
+                                {{ t.sponsorships_list }}
                             </h1>
                         </div>
-                        <div class="flex items-center space-x-4">
+                        <!-- Added language switcher button next to theme toggle -->
+                        <div class="flex items-center space-x-2">
+                            <button @click="toggleLanguage" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <span class="text-sm font-semibold text-gray-600 dark:text-gray-300">{{ currentLang === 'fr' ? 'EN' : 'FR' }}</span>
+                            </button>
                             <button @click="toggleDarkMode" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                 <i :class="darkMode ? 'fas fa-sun text-yellow-400' : 'fas fa-moon text-gray-600 dark:text-gray-300'" class="text-xl"></i>
                             </button>
@@ -35,14 +40,16 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
                 <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <!-- Added translation for welcome message -->
                     <div class="text-gray-700 dark:text-gray-200 text-sm sm:text-base font-medium flex items-center">
-                        Bonjour
+                        {{ t.welcome }}
                         <span class="ml-1 font-semibold text-gray-900 dark:text-white">
                             Admin
                         </span>
                     </div>
                 </div>
 
+                <!-- Added translations for statistics cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                         <div class="flex items-center justify-between mb-2">
@@ -51,7 +58,7 @@ ob_start(); ?>
                             </div>
                         </div>
                         <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ allSponsorships.length }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Total Parrainages</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.total_sponsorships }}</div>
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
@@ -61,7 +68,7 @@ ob_start(); ?>
                             </div>
                         </div>
                         <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ uniqueSponsors }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Parrains Actifs</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.active_sponsors }}</div>
                     </div>
 
                     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
@@ -71,28 +78,28 @@ ob_start(); ?>
                             </div>
                         </div>
                         <div class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">{{ uniqueSponsored }}</div>
-                        <div class="text-sm text-gray-600 dark:text-gray-400">Filleuls</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">{{ t.sponsored_users }}</div>
                     </div>
                 </div>
 
+                <!-- Added translations for search and filter options -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 no-print">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input v-model="searchTerm" @input="applyFilters" type="text" placeholder="Rechercher par nom..." class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
+                        <input v-model="searchTerm" @input="applyFilters" type="text" :placeholder="t.search_placeholder" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
                         <select v-model="sortBy" @change="applyFilters" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-                            <option value="date">Trier par date</option>
-                            <option value="sponsor">Trier par parrain</option>
-                            <option value="sponsored">Trier par filleul</option>
-                            <!-- Added sort by most sponsorships -->
-                            <option value="most_sponsorships">Trier par plus de parrainages</option>
+                            <option value="date">{{ t.sort_by_date }}</option>
+                            <option value="sponsor">{{ t.sort_by_sponsor }}</option>
+                            <option value="sponsored">{{ t.sort_by_sponsored }}</option>
+                            <option value="most_sponsorships">{{ t.sort_by_most }}</option>
                         </select>
                     </div>
-                    <!-- Added filter by user section -->
+                    <!-- Added translations for filter banner -->
                     <div v-if="selectedUser" class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
                         <div class="flex items-center justify-between">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-filter text-blue-600 dark:text-blue-400"></i>
                                 <span class="text-sm font-medium text-blue-900 dark:text-blue-100">
-                                    Filtré par: {{ selectedUser.first_name }} {{ selectedUser.last_name }}
+                                    {{ t.filtered_by }}: {{ selectedUser.first_name }} {{ selectedUser.last_name }}
                                 </span>
                             </div>
                             <button @click="clearUserFilter" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
@@ -102,20 +109,21 @@ ob_start(); ?>
                     </div>
                 </div>
 
+                <!-- Added translations for table headers -->
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
                     <div class="overflow-x-auto max-w-full">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                             <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Parrain</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Filleul</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.sponsor }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.sponsored }}</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ t.date }}</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 <!-- Updated hover state to match transactions page -->
                                 <tr v-for="sponsorship in paginatedSponsorships" :key="sponsorship.id" class="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                                    <td data-label="Parrain" class="px-6 py-4">
+                                    <td :data-label="t.sponsor" class="px-6 py-4">
                                         <!-- Made sponsor name clickable to filter -->
                                         <div class="flex items-center gap-3 cursor-pointer" @click="filterByUser(sponsorship.sponsor_id, sponsorship.sponsor_first_name, sponsorship.sponsor_last_name)">
                                             <div class="min-w-0">
@@ -126,7 +134,7 @@ ob_start(); ?>
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-label="Filleul" class="px-6 py-4">
+                                    <td :data-label="t.sponsored" class="px-6 py-4">
                                         <!-- Made sponsored name clickable to filter -->
                                         <div class="flex items-center gap-3 cursor-pointer" @click="filterByUser(sponsorship.sponsored_id, sponsorship.sponsored_first_name, sponsorship.sponsored_last_name)">
                                             <div class="min-w-0">
@@ -137,7 +145,7 @@ ob_start(); ?>
                                             </div>
                                         </div>
                                     </td>
-                                    <td data-label="Date" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <td :data-label="t.date" class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                                         {{ formatDate(sponsorship.created_at) }}
                                     </td>
 
@@ -146,19 +154,20 @@ ob_start(); ?>
                         </table>
                     </div>
 
+                    <!-- Added translations for pagination -->
                     <div class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6 no-print">
                         <div class="flex-1 flex justify-between sm:hidden">
                             <button @click="previousPage" :disabled="currentPage === 1" class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
-                                Précédent
+                                {{ t.previous }}
                             </button>
                             <button @click="nextPage" :disabled="currentPage === totalPages" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
-                                Suivant
+                                {{ t.next }}
                             </button>
                         </div>
                         <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p class="text-sm text-gray-700 dark:text-gray-300">
-                                    Affichage de <span class="font-medium">{{ startItem }}</span> à <span class="font-medium">{{ endItem }}</span> sur <span class="font-medium">{{ totalItems }}</span> résultats
+                                    {{ t.showing }} <span class="font-medium">{{ startItem }}</span> {{ t.to }} <span class="font-medium">{{ endItem }}</span> {{ t.of }} <span class="font-medium">{{ totalItems }}</span> {{ t.results }}
                                 </p>
                             </div>
                             <div>
@@ -200,7 +209,76 @@ ob_start(); ?>
                 currentPage: 1,
                 itemsPerPage: 10,
                 allSponsorships: [],
-                selectedUser: null
+                selectedUser: null,
+                currentLang: 'fr',
+                translations: {
+                    fr: {
+                        sponsorships_list: 'Liste des parrainages',
+                        welcome: 'Bonjour',
+                        total_sponsorships: 'Total Parrainages',
+                        active_sponsors: 'Parrains Actifs',
+                        sponsored_users: 'Filleuls',
+                        search_placeholder: 'Rechercher par nom...',
+                        sort_by_date: 'Trier par date',
+                        sort_by_sponsor: 'Trier par parrain',
+                        sort_by_sponsored: 'Trier par filleul',
+                        sort_by_most: 'Trier par plus de parrainages',
+                        filtered_by: 'Filtré par',
+                        sponsor: 'Parrain',
+                        sponsored: 'Filleul',
+                        date: 'Date',
+                        previous: 'Précédent',
+                        next: 'Suivant',
+                        showing: 'Affichage de',
+                        to: 'à',
+                        of: 'sur',
+                        results: 'résultats',
+                        // Sidebar translations
+                        nav_dashboard: 'Tableau de bord',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Parrainages',
+                        nav_users: 'Utilisateurs',
+                        nav_profile: 'Profil',
+                        nav_home: 'Accueil',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'Mes transactions',
+                        nav_my_sponsorships: 'Mes parrainages',
+                        nav_logout: 'Déconnexion'
+                    },
+                    en: {
+                        sponsorships_list: 'Sponsorships List',
+                        welcome: 'Hello',
+                        total_sponsorships: 'Total Sponsorships',
+                        active_sponsors: 'Active Sponsors',
+                        sponsored_users: 'Sponsored Users',
+                        search_placeholder: 'Search by name...',
+                        sort_by_date: 'Sort by date',
+                        sort_by_sponsor: 'Sort by sponsor',
+                        sort_by_sponsored: 'Sort by sponsored',
+                        sort_by_most: 'Sort by most sponsorships',
+                        filtered_by: 'Filtered by',
+                        sponsor: 'Sponsor',
+                        sponsored: 'Sponsored',
+                        date: 'Date',
+                        previous: 'Previous',
+                        next: 'Next',
+                        showing: 'Showing',
+                        to: 'to',
+                        of: 'of',
+                        results: 'results',
+                        // Sidebar translations
+                        nav_dashboard: 'Dashboard',
+                        nav_transactions: 'Transactions',
+                        nav_sponsorships: 'Sponsorships',
+                        nav_users: 'Users',
+                        nav_profile: 'Profile',
+                        nav_home: 'Home',
+                        nav_marketplace: 'Marketplace',
+                        nav_my_transactions: 'My Transactions',
+                        nav_my_sponsorships: 'My Sponsorships',
+                        nav_logout: 'Logout'
+                    }
+                }
             };
         },
         computed: {
@@ -273,6 +351,9 @@ ob_start(); ?>
                 for (let i = 1; i <= total; i++)
                     if (i === 1 || i === total || (i >= current - 1 && i <= current + 1)) pages.push(i);
                 return pages;
+            },
+            t() {
+                return this.translations[this.currentLang];
             }
         },
         async mounted() {
@@ -280,6 +361,12 @@ ob_start(); ?>
                 this.darkMode = true;
                 document.body.classList.add('dark-mode');
             }
+
+            const savedLang = localStorage.getItem('language');
+            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
+                this.currentLang = savedLang;
+            }
+
             await this.fetchSponsorships();
         },
         methods: {
@@ -305,11 +392,20 @@ ob_start(); ?>
                 document.body.classList.toggle('dark-mode');
                 localStorage.setItem('darkMode', this.darkMode);
             },
+            toggleLanguage() {
+                this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
+                localStorage.setItem('language', this.currentLang);
+                // Dispatch event to notify sidebar
+                window.dispatchEvent(new CustomEvent('languageChanged', {
+                    detail: this.currentLang
+                }));
+            },
             applyFilters() {
                 this.currentPage = 1;
             },
             formatDate(dateString) {
-                return new Date(dateString).toLocaleDateString('fr-FR', {
+                const locale = this.currentLang === 'fr' ? 'fr-FR' : 'en-US';
+                return new Date(dateString).toLocaleDateString(locale, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
