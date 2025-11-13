@@ -166,7 +166,6 @@ ob_start(); ?>
                         offers: 'Mes Offres',
                         requests: 'Mes Demandes',
                         months: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
-                        // Sidebar translations
                         nav_dashboard: 'Tableau de bord',
                         nav_transactions: 'Transactions',
                         nav_sponsorships: 'Parrainages',
@@ -191,7 +190,6 @@ ob_start(); ?>
                         offers: 'My Offers',
                         requests: 'My Requests',
                         months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        // Sidebar translations
                         nav_dashboard: 'Dashboard',
                         nav_transactions: 'Transactions',
                         nav_sponsorships: 'Sponsorships',
@@ -208,11 +206,9 @@ ob_start(); ?>
         },
         computed: {
             stats() {
-                // Sécurité : s'assurer que les données sont bien des tableaux
                 const listings = Array.isArray(this.myListings) ? this.myListings : [];
                 const sponsorships = Array.isArray(this.mySponsorships) ? this.mySponsorships : [];
 
-                // Comptage des offres et demandes sans filtrage supplémentaire côté front
                 const myOffers = listings.filter(l => l.type === 'Offre').length;
                 const myRequests = listings.filter(l => l.type === 'Demande').length;
                 const totalVolume = listings.reduce((sum, l) => sum + parseFloat(l.amount || 0), 0);
@@ -253,17 +249,14 @@ ob_start(); ?>
         methods: {
             async fetchMyData() {
                 try {
-                    // Transactions utilisateur directement depuis l'API
                     const transactionsResponse = await api.get('index.php?action=myTransactionsList');
                     this.myListings = Array.isArray(transactionsResponse.data.data) ? transactionsResponse.data.data : [];
                     console.log('Transactions:', this.myListings);
 
-                    // Parrainages utilisateur
                     const sponsorshipsResponse = await api.get('index.php?action=mySponsorshipsList');
                     this.mySponsorships = Array.isArray(sponsorshipsResponse.data.data) ? sponsorshipsResponse.data.data : [];
                     console.log('Sponsorships:', this.mySponsorships);
 
-                    // Activité récente
                     this.recentActivities = this.myListings.slice(0, 5).map(listing => ({
                         id: listing.id,
                         type: listing.type,
@@ -313,11 +306,9 @@ ob_start(); ?>
             toggleLanguage() {
                 this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
                 localStorage.setItem('language', this.currentLang);
-                // Dispatch event to notify sidebar
                 window.dispatchEvent(new CustomEvent('languageChanged', {
                     detail: this.currentLang
                 }));
-                // Re-initialize charts with new language
                 this.$nextTick(() => this.initCharts());
             },
 
@@ -418,6 +409,121 @@ ob_start(); ?>
 
 
 <style>
+    :root {
+        --primary: #10B981;
+        --bg-dark: #0F172A;
+        --bg-dark-secondary: #1E293B;
+    }
+
+    body.dark-mode {
+        background-color: var(--bg-dark);
+        color: #F9FAFB;
+    }
+
+    .dark-mode .bg-white {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .bg-gray-50 {
+        background-color: var(--bg-dark) !important;
+    }
+
+    .dark-mode .bg-gray-100 {
+        background-color: var(--bg-dark-secondary) !important;
+    }
+
+    .dark-mode .text-gray-900 {
+        color: #F9FAFB !important;
+    }
+
+    .dark-mode .text-gray-700 {
+        color: #94A3B8 !important;
+    }
+
+    .dark-mode .text-gray-600 {
+        color: #94A3B8 !important;
+    }
+
+    .dark-mode .text-gray-500 {
+        color: #64748B !important;
+    }
+
+    .dark-mode .border-gray-200 {
+        border-color: #334155 !important;
+    }
+
+    .dark-mode .border-gray-300 {
+        border-color: #475569 !important;
+    }
+
+    .dark-mode .shadow-sm {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .dark-mode .shadow-md {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .primary-gradient {
+        background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .sidebar {
+        transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+        .sidebar {
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            z-index: 40;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        .bg-white {
+            background: white !important;
+        }
+
+        .shadow-sm,
+        .shadow-md {
+            box-shadow: none !important;
+        }
+    }
 </style>
 
 <?php $content = ob_get_clean(); ?>
