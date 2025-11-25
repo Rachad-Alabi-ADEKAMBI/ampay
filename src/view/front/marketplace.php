@@ -3,13 +3,13 @@
 ob_start();
 
 $isAuthenticated = isset($_SESSION['id']); // true ou false
-
-
+$role =  $_SESSION['role'];
 ?>
 <script>
     // Injecte une vraie valeur booléenne JS (pas une chaîne)
     window.isAuthenticated = <?php echo json_encode($isAuthenticated); ?>;
     window.user_id = <?php echo $_SESSION['id'] ?? 'null'; ?>;
+    window.role = <?php echo json_encode($role);  ?>
 </script>
 
 <div id="app" v-cloak>
@@ -220,11 +220,14 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                             <i class="fas fa-clock mr-1"></i>{{ listing.timeAgo }}
                         </div>
 
-                        <button v-if="listing.user_id != user_id"
-                            @click="openContactModal(listing)" :class="listing.type === 'Offre' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'"
+                        <button
+                            v-if="listing.user_id != user_id && role != 'admin'"
+                            @click="openContactModal(listing)"
+                            :class="listing.type === 'Offre' ? 'bg-green-500 hover:bg-green-600' : 'bg-yellow-500 hover:bg-yellow-600'"
                             class="w-full py-3 text-white rounded-lg font-semibold transition-colors">
                             <i class="fas fa-comment mr-2"></i>{{ t.contact_button }}
                         </button>
+
                     </div>
                 </div>
             </div>
@@ -310,60 +313,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
         </div>
     </div>
 
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="container mx-auto px-4 sm:px-6">
-            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-10 h-10 primary-gradient rounded-lg flex items-center justify-center">
-                            <i class="fas fa-bolt text-white"></i>
-                        </div>
-                        <span class="text-2xl font-bold">AMPAY</span>
-                    </div>
-                    <p class="text-gray-400 leading-relaxed">{{ t.footer_description }}</p>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_quick_links }}</h4>
-                    <ul class="space-y-2">
-                        <li><a href="index.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_home }}</a></li>
-                        <li><a href="marketplace.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_marketplace }}</a></li>
-                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_dashboard }}</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_support }}</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#faq" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_faq }}</a></li>
-                        <li><a href="#contact" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_contact }}</a></li>
-                        <li><a href="dashboard.php" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_dashboard }}</a></li>
-                        <li><a href="#about" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_about }}</a></li>
-                        <li><a href="#terms" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_terms }}</a></li>
-                        <li><a href="#privacy" class="text-gray-400 hover:text-primary transition-colors">{{ t.footer_privacy }}</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-lg font-semibold mb-4">{{ t.footer_follow_us }}</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-primary rounded-lg flex items-center justify-center transition-colors">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
-                <p>{{ t.footer_copyright }}</p>
-            </div>
-        </div>
-    </footer>
+    <?php include 'footer.php'; ?>
 </div>
 
 <script>
@@ -405,6 +355,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                 listings: [],
                 user_id: window.user_id,
                 isAuthenticated: !!window.isAuthenticated,
+                role: window.role,
                 translations: {
                     fr: {
                         nav_home: 'Accueil',
@@ -412,7 +363,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         nav_dashboard: 'Tableau de bord',
                         nav_logout: 'Déconnexion',
                         nav_login: 'Connexion',
-                        footer_description: 'Transferts d\'argent sans intermédiaire entre l\'Afrique et l\'Europe.',
+                        footer_description: 'Transferts d\'argent sans intermédiaire international.',
                         footer_quick_links: 'Liens rapides',
                         footer_terms: 'Conditions générales d\'utilisation',
                         footer_privacy: 'Politique de confidentialité',
@@ -456,7 +407,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                         nav_dashboard: 'Dashboard',
                         nav_logout: 'Logout',
                         nav_login: 'Login',
-                        footer_description: 'Money transfers without intermediaries between Africa and Europe.',
+                        footer_description: 'Money transfers without intermediaries worldwide.',
                         footer_quick_links: 'Quick Links',
                         footer_terms: 'Terms of Service',
                         footer_privacy: 'Privacy Policy',
@@ -578,7 +529,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
             if (savedLang) {
                 this.currentLang = savedLang;
             }
-            console.log('isAuthenticated (vue):', this.isAuthenticated);
+            console.log('role:', this.role);
 
             this.fetchListings();
         },

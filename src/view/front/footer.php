@@ -69,7 +69,11 @@
         </div>
         <div class="border-t border-gray-800 pt-8 text-center text-gray-400">
             <!-- Using translation variable for copyright text -->
-            <p>{{ t.footer_copyright }}</p>
+            <p>{{ t.footer_copyright }} <br>
+                Built with Blood, Sweat and Tears by
+                <a href="https://rachad-alabi-adekambi.github.io/portfolio/#/"><strong
+                        style="color:  #10B981; ">CC</strong></a>
+            </p>
         </div>
     </div>
 </footer>
