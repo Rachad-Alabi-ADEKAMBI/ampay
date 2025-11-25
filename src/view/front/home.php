@@ -5,13 +5,14 @@ ob_start();
 
 
 $isAuthenticated = isset($_SESSION['id']); // true ou false
-
+$role =  $_SESSION['role'];
 
 ?>
 <script>
     // Injecte une vraie valeur booléenne JS (pas une chaîne)
     window.isAuthenticated = <?php echo json_encode($isAuthenticated); ?>;
     window.user_id = <?php echo $_SESSION['id'] ?? 'null'; ?>;
+    window.role = <?php echo json_encode($role);  ?>
 </script>
 
 <div id="app" v-cloak>
@@ -257,7 +258,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                                     <i class="fas fa-clock mr-1"></i>{{ offer.timeAgo }}
                                 </div>
 
-                                <button v-if="offer.user_id != user_id"
+                                <button v-if="offer.user_id != user_id && role != 'admin'"
                                     @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
@@ -321,7 +322,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                                     <i class="fas fa-clock mr-1"></i>{{ request.timeAgo }}
                                 </div>
 
-                                <button @click="openContactModal(request)" v-if="request.user_id != user_id"
+                                <button @click="openContactModal(request)" v-if="request.user_id != user_id && role != 'admin'"
                                     class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
@@ -595,6 +596,7 @@ $isAuthenticated = isset($_SESSION['id']); // true ou false
                 contactRequestSubmitting: false,
                 contactRequestSuccess: false,
                 user_id: window.user_id,
+                role: window.role,
                 contactRequest: {
                     message: ''
                 },
