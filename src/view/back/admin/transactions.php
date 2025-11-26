@@ -1079,6 +1079,7 @@ ob_start(); ?>
                     const res = await api.get(`?action=getConversation&listing_id=${this.selectedListing.listing_id}&user_id=${conversation.user_id}`);
 
                     if (res.data && res.data.success && Array.isArray(res.data.messages)) {
+                        console.log("messages: " + res.data);
                         this.chatMessages = res.data.messages.sort((a, b) =>
                             new Date(a.created_at) - new Date(b.created_at)
                         );

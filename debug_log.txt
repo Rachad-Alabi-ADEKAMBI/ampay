@@ -133,3 +133,9 @@ Array
     [message] => je peux aider
     [listing_id] => 19
 )
+contactRequestUser() appelée
+Array
+(
+    [message] => je m'appelle Ray et je veux ces 4000 GHS
+    [listing_id] => 23
+)

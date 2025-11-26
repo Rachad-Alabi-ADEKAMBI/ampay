@@ -94,6 +94,10 @@ if (isset($_GET['action']) && !empty($_GET['action'])) {
             exit;
             break;
 
+        case 'deleteTransaction':
+            deleteTransaction();
+            exit;
+
         case 'updateTransaction':
             updateTransaction();
             break;

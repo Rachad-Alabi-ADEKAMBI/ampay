@@ -69,6 +69,99 @@ function newTransaction()
     }
 }
 
+function modelDeleteTransaction()
+{
+    global $pdo;
+
+    // Empêche les notices/warnings de polluer la réponse JSON
+    error_reporting(E_ERROR | E_PARSE);
+
+    // Évite le double session_start()
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['id'])) {
+        return [
+            'success' => false,
+            'message' => 'Utilisateur non authentifié.',
+            'debug' => 'Session id non défini'
+        ];
+    }
+
+    $currentUser = (int)$_SESSION['id'];
+
+    // Données envoyées
+    $raw = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+
+    if (!$data) {
+        return [
+            'success' => false,
+            'message' => 'Aucune donnée reçue.',
+            'debug' => 'Contenu reçu : ' . $raw
+        ];
+    }
+
+    if (empty($data['id'])) {
+        return [
+            'success' => false,
+            'message' => 'ID manquant.',
+            'debug' => 'Payload : ' . json_encode($data)
+        ];
+    }
+
+    $id = (int)$data['id'];
+
+    try {
+        $stmt = $pdo->prepare("SELECT user_id FROM LISTINGS WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $listing = $stmt->fetch(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        return [
+            'success' => false,
+            'message' => 'Erreur SQL SELECT.',
+            'debug' => $e->getMessage()
+        ];
+    }
+
+    if (!$listing) {
+        return [
+            'success' => false,
+            'message' => 'Annonce introuvable.',
+            'debug' => 'ID inexistant : ' . $id
+        ];
+    }
+
+    if ((int)$listing['user_id'] !== $currentUser) {
+        return [
+            'success' => false,
+            'message' => 'Action non autorisée.',
+            'debug' => "Owner={$listing['user_id']} / CurrentUser={$currentUser}"
+        ];
+    }
+
+    try {
+        $delete = $pdo->prepare("DELETE FROM LISTINGS WHERE id = :id LIMIT 1");
+        $delete->execute([':id' => $id]);
+
+        return [
+            'success' => true,
+            'message' => 'Annonce supprimée.',
+            'debug' => 'OK'
+        ];
+    } catch (PDOException $e) {
+        return [
+            'success' => false,
+            'message' => 'Erreur SQL DELETE.',
+            'debug' => $e->getMessage()
+        ];
+    }
+}
+
+
+
+
 function updateListing()
 {
     global $pdo;

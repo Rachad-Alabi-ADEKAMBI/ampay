@@ -818,6 +818,11 @@ ob_start(); ?>
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
+                userData: { // Added userData to hold user details for message filtering
+                    id: <?= json_encode($_SESSION['id'] ?? ''); ?>,
+                    first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
+                    last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
+                },
                 newListing: {
                     type: 'Offre',
                     amount: '',
@@ -1117,18 +1122,28 @@ ob_start(); ?>
                 this.commentedConversation = [];
 
                 try {
-                    const res = await fetch(`index.php?action=getConversation&listing_id=${transaction.listing_id}`);
+                    const url = `index.php?action=allMessagesByListingId&id=${transaction.listing_id}`;
+
+                    const res = await fetch(url);
                     const data = await res.json();
 
-                    if (data.success && Array.isArray(data.messages)) {
-                        this.commentedConversation = data.messages.sort((a, b) =>
-                            new Date(a.message_created_at) - new Date(b.message_created_at)
-                        );
+                    if (data.success && Array.isArray(data.data)) {
+                        const currentUserId = this.userData?.id; // Assumes userData.id exists
+                        this.commentedConversation = data.data
+                            .filter(msg => msg.sender_id === currentUserId || msg.receiver_id === currentUserId)
+                            .map(msg => ({
+                                ...msg,
+                                message_id: msg.id,
+                                message_created_at: msg.created_at,
+                                sender_name: `${msg.sender_first_name} ${msg.sender_last_name}`,
+                                receiver_name: `${msg.receiver_first_name} ${msg.receiver_last_name}`
+                            }))
+                            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
                     }
                 } catch (error) {
                     console.error("Erreur lors du chargement de la conversation:", error);
                 } finally {
-                    this.loadingCommentedMessages = false;
+                    this.loadingCommentedMessages = false; // Set loading to false after data fetch
                     this.$nextTick(() => {
                         this.scrollToBottom('commentedChatContainer');
                     });
@@ -1363,24 +1378,62 @@ ob_start(); ?>
             },
             async deleteListing(listing) {
                 if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
+
                 try {
-                    const response = await axios.post('index.php?action=deleteTransaction', { // Changed from api to axios
+                    const response = await axios.post('index.php?action=deleteTransaction', {
                         id: listing.id
                     });
-                    if (response.data?.success) {
+
+                    // DEBUG détaillé
+                    console.log('HTTP status:', response.status);
+                    console.log('Réponse serveur (data):', response.data);
+                    console.log('Réponse serveur (headers):', response.headers);
+
+                    // Normalisation du champ success (accepte true, "true", 1, "1")
+                    const ok = response.data && (
+                        response.data.success === true ||
+                        response.data.success === "true" ||
+                        response.data.success === 1 ||
+                        response.data.success === "1"
+                    );
+
+                    if (ok) {
                         alert('Annonce supprimée avec succès.');
                         this.closeDetailsModal();
                         await this.fetchMyListings();
-                        // After deletion, re-fetch all messages to update counts
                         await this.fetchAllMessages();
-                    } else {
-                        alert(response.data.message || 'Erreur lors de la suppression.');
+                        return;
                     }
+
+                    // Si on arrive ici, serveur a retourné JSON mais success est false/absent
+                    console.error('Suppression refusée par le serveur :', response.data);
+                    alert(response.data.message || 'Erreur lors de la suppression.');
+
                 } catch (error) {
-                    console.error('Erreur:', error);
-                    alert('Erreur lors de la suppression.');
+                    // Axios throw pour réponses non-2xx ou problèmes réseau
+                    if (error.response) {
+                        // Le serveur a répondu (mais code non-2xx)
+                        console.error('Erreur serveur (non-2xx) :', {
+                            status: error.response.status,
+                            data: error.response.data,
+                            headers: error.response.headers
+                        });
+                        // Affiche le message renvoyé par le serveur si présent
+                        const msg = error.response.data?.message || error.response.data?.error || `Erreur serveur ${error.response.status}`;
+                        alert(msg);
+                    } else if (error.request) {
+                        // Requête envoyée mais pas de réponse
+                        console.error('Pas de réponse reçue :', error.request);
+                        alert('Aucune réponse du serveur.');
+                    } else {
+                        // Autre erreur
+                        console.error('Erreur Axios:', error.message);
+                        alert('Erreur lors de la suppression.');
+                    }
                 }
-            },
+            }
+
+
         }
     }).mount('#app');
 </script>
