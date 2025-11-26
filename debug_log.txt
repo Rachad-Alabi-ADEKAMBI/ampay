@@ -1,0 +1,135 @@
+contactRequestUser() appelée
+Array
+(
+    [message] => 88t8
+    [listing_id] => 3
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => jo
+    [listing_id] => 3
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => gsf
+    [listing_id] => 3
+)
+contactRequestUser() appelée
+Array
+(
+)
+contactRequestUser() appelée
+Array
+(
+)
+contactRequestUser() appelée
+Array
+(
+)
+contactRequestUser() appelée
+Array
+(
+)
+contactRequestUser() appelée
+Array
+(
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ok
+    [listing_id] => 3
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => wtr
+    [listing_id] => 13
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => po
+    [listing_id] => 9
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => plk
+    [listing_id] => 13
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => eyt
+    [listing_id] => 12
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => ij
+    [listing_id] => 12
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => izi
+    [listing_id] => 15
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => paris
+    [listing_id] => 15
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => okkk
+    [listing_id] => 17
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => svp
+    [listing_id] => 17
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => je m'appelle Rachad, je veux bien lui fournir cela
+    [listing_id] => 20
+)
+contactRequestUser() appelée
+Array
+(
+    [message] => je peux aider
+    [listing_id] => 19
+)

@@ -94,7 +94,6 @@ function newMessage()
 }
 
 
-
 function fetchConversations()
 {
     global $pdo;
@@ -109,9 +108,15 @@ function fetchConversations()
 
     $user_id = (int) $_SESSION['id'];
     $listing_id = isset($_GET['listing_id']) ? (int) $_GET['listing_id'] : 0;
+    $other_user_id = isset($_GET['user_id']) ? (int) $_GET['user_id'] : 0;
 
     if ($listing_id <= 0) {
         echo json_encode(['success' => false, 'error' => 'ID de transaction invalide.'], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    if ($other_user_id <= 0) {
+        echo json_encode(['success' => false, 'error' => 'ID utilisateur invalide.'], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -134,12 +139,17 @@ function fetchConversations()
             LEFT JOIN users s ON s.id = m.sender_id
             LEFT JOIN users r ON r.id = m.receiver_id
             WHERE m.listing_id = :listing_id
-              AND (:user_id IN (m.sender_id, m.receiver_id))
+              AND (
+                  (m.sender_id = :user_id AND m.receiver_id = :other_user_id)
+                  OR
+                  (m.sender_id = :other_user_id AND m.receiver_id = :user_id)
+              )
             ORDER BY m.created_at ASC
         ");
         $stmt->execute([
             ':listing_id' => $listing_id,
-            ':user_id' => $user_id
+            ':user_id' => $user_id,
+            ':other_user_id' => $other_user_id
         ]);
 
         $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);

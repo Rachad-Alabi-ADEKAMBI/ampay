@@ -99,6 +99,7 @@ ob_start(); ?>
                         </div>
                     </div>
 
+                    <!-- Vue des Transactions Commentées -->
                     <div v-if="showCommentedView" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
                         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
                             <div class="flex items-center justify-between">
@@ -106,13 +107,13 @@ ob_start(); ?>
                                     <i class="fas fa-comments text-purple-600 mr-2"></i>{{ t.commented_transactions }}
                                 </h2>
                                 <span class="px-3 py-1 bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300 rounded-full text-sm font-semibold">
-                                    {{ commentedTransactions.length }} {{ t.transaction_s }}
+                                    {{ commentedTransactionsWithMessages.length }} {{ t.transaction_s }}
                                 </span>
                             </div>
                         </div>
 
-                        <div v-if="commentedTransactions.length === 0" class="text-center py-16">
-                            <i class="fas fa-comment-slash text-6xl text-gray-300 mb-4"></i>
+                        <div v-if="commentedTransactionsWithMessages.length === 0" class="text-center py-16">
+                            <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
                             <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">{{ t.no_commented_transaction }}</h3>
                             <p class="text-gray-600 dark:text-gray-400">{{ t.no_commented_transaction_desc }}</p>
                         </div>
@@ -131,7 +132,7 @@ ob_start(); ?>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                    <tr v-for="transaction in commentedTransactions" :key="transaction.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors md:table-row flex flex-col md:flex-row mb-4 md:mb-0 border-b-4 md:border-b-0 border-gray-200 dark:border-gray-700">
+                                    <tr v-for="transaction in commentedTransactionsWithMessages" :key="transaction.listing_id" class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors md:table-row flex flex-col md:flex-row mb-4 md:mb-0 border-b-4 md:border-b-0 border-gray-200 dark:border-gray-700">
                                         <td class="px-6 py-4 md:whitespace-nowrap" :data-label="t.type">
                                             <span :class="transaction.type === 'Offre' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300'" class="px-3 py-1 rounded-full text-xs font-semibold">
                                                 <i :class="transaction.type === 'Offre' ? 'fas fa-hand-holding-usd' : 'fas fa-hand-holding-heart'" class="mr-1"></i>
@@ -159,9 +160,10 @@ ob_start(); ?>
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 md:whitespace-nowrap text-sm font-medium" :data-label="t.actions">
-                                            <button @click="viewCommentedMessages(transaction)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300" :title="t.view_messages">
+                                            <button @click="viewCommentedMessages(transaction)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 transition-colors" :title="t.view_messages">
                                                 <i class="fas fa-comments"></i>
-                                                <span class="ml-1">({{ transaction.messages.length }})</span>
+                                                <!-- Display message count in parentheses -->
+                                                <span class="ml-1 font-semibold">({{ transaction.messages.length }})</span>
                                             </button>
                                         </td>
                                     </tr>
@@ -236,17 +238,18 @@ ob_start(); ?>
                                             </td>
                                             <td class="px-6 py-4 md:whitespace-nowrap text-sm font-medium" :data-label="t.actions">
                                                 <div class="flex gap-2">
-                                                    <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300" :title="t.view">
+                                                    <button @click="viewDetails(listing)" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 transition-colors" :title="t.view">
                                                         <i class="fas fa-eye"></i>
                                                     </button>
-                                                    <button @click="viewAdminMessages(listing)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300" :title="t.admin_messages">
+                                                    <button @click="viewAdminMessages(listing)" class="text-purple-600 hover:text-purple-900 dark:text-purple-400 dark:hover:text-purple-300 transition-colors relative" :title="t.admin_messages">
                                                         <i class="fas fa-comments"></i>
-                                                        <span v-if="getAdminMessageCount(listing.id) > 0" class="ml-1">({{ getAdminMessageCount(listing.id) }})</span>
+                                                        <!-- Display message count in parentheses for admin messages on each listing -->
+                                                        <span v-if="getMessageCountForListing(listing.id) > 0" class="ml-1 font-semibold">({{ getMessageCountForListing(listing.id) }})</span>
                                                     </button>
-                                                    <button @click="editListing(listing)" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300" :title="t.edit">
+                                                    <button @click="editListing(listing)" class="text-yellow-600 hover:text-yellow-900 dark:text-yellow-400 dark:hover:text-yellow-300 transition-colors" :title="t.edit">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
-                                                    <button @click="deleteListing(listing)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300" :title="t.delete">
+                                                    <button @click="deleteListing(listing)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors" :title="t.delete">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </div>
@@ -684,13 +687,14 @@ ob_start(); ?>
         </div>
     </div>
 
-    <!-- Modal pour voir les messages de l'admin sur mes propres transactions -->
+    <!-- Modal pour voir les messages admin -->
     <div v-if="showAdminMessagesModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4" @click.self="closeAdminMessagesModal">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col h-[90vh] md:max-h-[85vh]">
             <div class="px-4 sm:px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
                 <div class="flex justify-between items-center">
+                    <!-- Updated modal title to show Admin Messages -->
                     <h3 class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        <i class="fas fa-envelope text-primary mr-2"></i>
+                        <i class="fas fa-comments text-purple-600 mr-2"></i>
                         <span class="hidden sm:inline">{{ t.admin_messages }} - {{ t.listing }} #{{ selectedListingForMessages?.id }}</span>
                         <span class="sm:hidden">{{ t.listing }} #{{ selectedListingForMessages?.id }}</span>
                     </h3>
@@ -719,7 +723,7 @@ ob_start(); ?>
 
             <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-3" ref="adminChatContainer">
                 <div v-if="loadingAdminMessages" class="text-center py-8">
-                    <i class="fas fa-spinner fa-spin text-4xl text-primary mb-4"></i>
+                    <i class="fas fa-spinner fa-spin text-4xl text-purple-600 mb-4"></i>
                     <p class="text-gray-600 dark:text-gray-400">{{ t.loading_messages }}</p>
                 </div>
 
@@ -730,16 +734,16 @@ ob_start(); ?>
                 </div>
 
                 <div v-else v-for="msg in adminConversation" :key="msg.id" :class="['flex', msg.sender_id === userId ? 'justify-end' : 'justify-start']">
-                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-green-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
                         <div class="flex items-center mb-2">
-                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-green-600' : 'bg-gray-400 dark:bg-gray-600']">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
                                 <i :class="msg.sender_id === userId ? 'fas fa-user' : 'fas fa-user-shield'" class="text-white text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-green-100' : 'text-gray-700 dark:text-gray-300']">
+                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
                                     {{ msg.sender_id === userId ? t.you : 'Admin' }}
                                 </p>
-                                <p :class="['text-xs', msg.sender_id === userId ? 'text-green-200' : 'text-gray-500 dark:text-gray-400']">
+                                <p :class="['text-xs', msg.sender_id === userId ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
                                     {{ formatDate(msg.created_at) }}
                                 </p>
                             </div>
@@ -755,27 +759,28 @@ ob_start(); ?>
                         v-model="newAdminMessage"
                         rows="2"
                         :placeholder="t.write_message"
-                        class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
+                        class="flex-1 px-3 sm:px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 resize-none text-sm"></textarea>
                     <button
                         type="submit"
                         :disabled="!newAdminMessage.trim() || sendingAdminMessage"
-                        class="px-4 sm:px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
+                        class="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[60px] sm:min-w-[80px]">
                         <i class="fas fa-paper-plane text-base sm:text-lg"></i>
                     </button>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- ... existing modals for create, details, edit ... -->
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <script>
     const {
         createApp
     } = Vue;
-
-    const api = axios.create({
-        baseURL: 'index.php'
-    });
 
     createApp({
         data() {
@@ -783,13 +788,13 @@ ob_start(); ?>
                 darkMode: false,
                 sidebarOpen: false,
                 showCommentedView: false,
+                currentPage: 1,
+                itemsPerPage: 10,
                 searchTerm: '',
                 filterType: '',
                 filterStatus: '',
-                currentPage: 1,
-                itemsPerPage: 10,
                 showCreateModal: false,
-                showDetailsModal: false,
+                showDetailsModal: false, // Renamed from showDetailModal
                 showEditModal: false,
                 showCommentedMessagesModal: false,
                 showAdminMessagesModal: false,
@@ -809,7 +814,7 @@ ob_start(); ?>
                 newAdminMessage: '',
                 sendingCommentedMessage: false,
                 sendingAdminMessage: false,
-                adminMessageCounts: {},
+                messageCountsByListing: {}, // Renamed from adminMessageCounts for clarity
                 userId: <?= json_encode($_SESSION['id'] ?? ''); ?>,
                 user_first_name: <?= json_encode($_SESSION['first_name'] ?? ''); ?>,
                 user_last_name: <?= json_encode($_SESSION['last_name'] ?? ''); ?>,
@@ -982,12 +987,19 @@ ob_start(); ?>
             activeCount() {
                 return this.myListings.filter(l => l.status === 'Actif').length;
             },
+            commentedTransactionsWithMessages() {
+                // Filter to only show transactions that actually have messages associated
+                return this.commentedTransactions.filter(transaction =>
+                    transaction.messages && transaction.messages.length > 0
+                );
+            },
             filteredListings() {
                 let filtered = this.myListings;
                 if (this.searchTerm) {
                     filtered = filtered.filter(l =>
                         l.city?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-                        l.country?.toLowerCase().includes(this.searchTerm.toLowerCase())
+                        l.country?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                        l.amount?.toString().includes(this.searchTerm) // Added amount search
                     );
                 }
                 if (this.filterType) filtered = filtered.filter(l => l.type === this.filterType);
@@ -996,17 +1008,26 @@ ob_start(); ?>
             },
             paginatedListings() {
                 const start = (this.currentPage - 1) * this.itemsPerPage;
-                return this.filteredListings.slice(start, start + this.itemsPerPage);
+                const end = start + this.itemsPerPage;
+                return this.filteredListings.slice(start, end);
             },
             totalPages() {
                 return Math.ceil(this.filteredListings.length / this.itemsPerPage);
             },
             visiblePages() {
                 const pages = [];
-                for (let i = 1; i <= this.totalPages; i++) {
-                    if (i === 1 || i === this.totalPages || (i >= this.currentPage - 1 && i <= this.currentPage + 1)) {
-                        pages.push(i);
-                    }
+                const maxVisible = 5; // Max number of page buttons to show
+                const half = Math.floor(maxVisible / 2);
+                let start = Math.max(1, this.currentPage - half);
+                let end = Math.min(this.totalPages, start + maxVisible - 1);
+
+                // Adjust start if end is too close to totalPages
+                if (end - start < maxVisible - 1) {
+                    start = Math.max(1, end - maxVisible + 1);
+                }
+
+                for (let i = start; i <= end; i++) {
+                    pages.push(i);
                 }
                 return pages;
             },
@@ -1015,21 +1036,14 @@ ob_start(); ?>
             }
         },
         async mounted() {
-            const savedDarkMode = localStorage.getItem('darkMode');
-            if (savedDarkMode === 'true') {
-                this.darkMode = true;
-                document.body.classList.add('dark-mode');
-            }
+            this.darkMode = localStorage.getItem('darkMode') === 'true';
+            if (this.darkMode) document.documentElement.classList.add('dark');
+            this.currentLang = localStorage.getItem('lang') || 'fr';
 
-            const savedLang = localStorage.getItem('language');
-            if (savedLang && (savedLang === 'fr' || savedLang === 'en')) {
-                this.currentLang = savedLang;
-            }
-
-            if (this.userId) {
+            if (this.userId) { // Ensure user is logged in before fetching data
                 await this.fetchMyListings();
                 await this.fetchCommentedTransactions();
-                await this.fetchAllMessages();
+                await this.fetchAllMessages(); // Fetch all messages to populate counts
             }
         },
         methods: {
@@ -1038,7 +1052,7 @@ ob_start(); ?>
             },
             toggleLanguage() {
                 this.currentLang = this.currentLang === 'fr' ? 'en' : 'fr';
-                localStorage.setItem('language', this.currentLang);
+                localStorage.setItem('lang', this.currentLang);
                 window.dispatchEvent(new CustomEvent('languageChanged', {
                     detail: this.currentLang
                 }));
@@ -1077,10 +1091,13 @@ ob_start(); ?>
                     const data = await res.json();
                     if (Array.isArray(data)) {
                         this.allMessages = data;
-                        this.adminMessageCounts = {};
+                        // Calculate message count for each listing
+                        this.messageCountsByListing = {};
                         this.myListings.forEach(listing => {
-                            const count = this.allMessages.filter(msg => msg.listing_id === listing.id && msg.receiver_id === this.userId).length;
-                            this.adminMessageCounts[listing.id] = count;
+                            const count = this.allMessages.filter(msg =>
+                                msg.listing_id === listing.id
+                            ).length;
+                            this.messageCountsByListing[listing.id] = count;
                         });
                     } else {
                         this.allMessages = [];
@@ -1090,8 +1107,8 @@ ob_start(); ?>
                     this.allMessages = [];
                 }
             },
-            getAdminMessageCount(listingId) {
-                return this.adminMessageCounts[listingId] || 0;
+            getMessageCountForListing(listingId) {
+                return this.messageCountsByListing[listingId] || 0;
             },
             async viewCommentedMessages(transaction) {
                 this.selectedCommentedTransaction = transaction;
@@ -1132,7 +1149,7 @@ ob_start(); ?>
                         listing_id: this.selectedCommentedTransaction.listing_id,
                         message: this.newCommentedMessage.trim(),
                         sender_id: this.userId,
-                        receiver_id: 1
+                        receiver_id: 1 // Assuming admin is receiver_id = 1
                     });
 
                     if (response.data?.success) {
@@ -1163,16 +1180,22 @@ ob_start(); ?>
                 this.adminConversation = [];
 
                 try {
-                    const res = await fetch(`index.php?action=getConversation&listing_id=${listing.id}`);
+                    const res = await fetch(`index.php?action=allMessagesByListingId&id=${listing.id}`);
                     const data = await res.json();
 
-                    if (data.success && Array.isArray(data.messages)) {
-                        this.adminConversation = data.messages.sort((a, b) =>
-                            new Date(a.created_at || a.message_created_at) - new Date(b.created_at || b.message_created_at)
-                        );
+                    if (data.success && Array.isArray(data.data)) {
+                        // Filter messages to only show between user and admin
+                        this.adminConversation = data.data
+                            .filter(msg =>
+                                (msg.sender_id === this.userId && msg.receiver_id === 1) ||
+                                (msg.sender_id === 1 && msg.receiver_id === this.userId)
+                            )
+                            .sort((a, b) =>
+                                new Date(a.created_at) - new Date(b.created_at)
+                            );
                     }
                 } catch (error) {
-                    console.error("Erreur lors du chargement de la conversation:", error);
+                    console.error("Erreur lors du chargement de la conversation admin:", error);
                 } finally {
                     this.loadingAdminMessages = false;
                     this.$nextTick(() => {
@@ -1195,7 +1218,7 @@ ob_start(); ?>
                         listing_id: this.selectedListingForMessages.id,
                         message: this.newAdminMessage.trim(),
                         sender_id: this.userId,
-                        receiver_id: 1
+                        receiver_id: 1 // Assuming admin is receiver_id = 1
                     });
 
                     if (response.data?.success) {
@@ -1208,6 +1231,8 @@ ob_start(); ?>
                         });
 
                         this.newAdminMessage = '';
+                        await this.fetchAllMessages();
+
                         this.$nextTick(() => {
                             this.scrollToBottom('adminChatContainer');
                         });
@@ -1235,7 +1260,7 @@ ob_start(); ?>
             },
             toggleDarkMode() {
                 this.darkMode = !this.darkMode;
-                document.body.classList.toggle('dark-mode');
+                document.documentElement.classList.toggle('dark'); // Changed from 'dark-mode' to 'dark'
                 localStorage.setItem('darkMode', this.darkMode);
             },
             applyFilters() {
@@ -1254,6 +1279,15 @@ ob_start(); ?>
                     hour: '2-digit',
                     minute: '2-digit'
                 });
+            },
+            previousPage() {
+                if (this.currentPage > 1) this.currentPage--;
+            },
+            nextPage() {
+                if (this.currentPage < this.totalPages) this.currentPage++;
+            },
+            goToPage(page) {
+                this.currentPage = page;
             },
             openCreateModal() {
                 this.newListing = {
@@ -1280,6 +1314,8 @@ ob_start(); ?>
                         alert(response.data.message || 'Annonce créée avec succès.');
                         this.closeCreateModal();
                         await this.fetchMyListings();
+                    } else {
+                        alert(response.data.message || 'Erreur lors de la création de l\'annonce.');
                     }
                 } catch (error) {
                     console.error('Erreur:', error);
@@ -1300,7 +1336,7 @@ ob_start(); ?>
                 this.editingListing = {
                     ...listing
                 };
-                this.showDetailsModal = false;
+                this.showDetailsModal = false; // Close details modal before opening edit modal
                 this.showEditModal = true;
             },
             closeEditModal() {
@@ -1310,11 +1346,13 @@ ob_start(); ?>
             async updateListing() {
                 this.submitting = true;
                 try {
-                    const response = await api.post('?action=updateTransaction', this.editingListing);
+                    const response = await axios.post('index.php?action=updateTransaction', this.editingListing); // Changed from api to axios
                     if (response.data?.success) {
                         alert('Annonce modifiée avec succès.');
                         this.closeEditModal();
                         await this.fetchMyListings();
+                    } else {
+                        alert(response.data.message || 'Erreur lors de la modification.');
                     }
                 } catch (error) {
                     console.error('Erreur:', error);
@@ -1326,28 +1364,23 @@ ob_start(); ?>
             async deleteListing(listing) {
                 if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
                 try {
-                    const response = await api.post('?action=deleteTransaction', {
+                    const response = await axios.post('index.php?action=deleteTransaction', { // Changed from api to axios
                         id: listing.id
                     });
                     if (response.data?.success) {
                         alert('Annonce supprimée avec succès.');
                         this.closeDetailsModal();
                         await this.fetchMyListings();
+                        // After deletion, re-fetch all messages to update counts
+                        await this.fetchAllMessages();
+                    } else {
+                        alert(response.data.message || 'Erreur lors de la suppression.');
                     }
                 } catch (error) {
                     console.error('Erreur:', error);
                     alert('Erreur lors de la suppression.');
                 }
             },
-            previousPage() {
-                if (this.currentPage > 1) this.currentPage--;
-            },
-            nextPage() {
-                if (this.currentPage < this.totalPages) this.currentPage++;
-            },
-            goToPage(page) {
-                this.currentPage = page;
-            }
         }
     }).mount('#app');
 </script>
@@ -1360,58 +1393,60 @@ ob_start(); ?>
         --bg-gray-750: #1a2332;
     }
 
-    body.dark-mode {
+    /* Changed from body.dark-mode to html.dark */
+    html.dark body {
         background-color: var(--bg-dark);
         color: #F9FAFB;
     }
 
-    .dark-mode .bg-white {
+    /* Changed from .dark-mode .bg-white to .dark html .bg-white */
+    html.dark .bg-white {
         background-color: var(--bg-dark-secondary) !important;
     }
 
-    .dark-mode .bg-gray-50 {
+    html.dark .bg-gray-50 {
         background-color: var(--bg-dark) !important;
     }
 
-    .dark-mode .bg-gray-100 {
+    html.dark .bg-gray-100 {
         background-color: var(--bg-dark-secondary) !important;
     }
 
-    .dark-mode .text-gray-900 {
+    html.dark .text-gray-900 {
         color: #F9FAFB !important;
     }
 
-    .dark-mode .text-gray-700 {
+    html.dark .text-gray-700 {
         color: #94A3B8 !important;
     }
 
-    .dark-mode .text-gray-600 {
+    html.dark .text-gray-600 {
         color: #94A3B8 !important;
     }
 
-    .dark-mode .text-gray-500 {
+    html.dark .text-gray-500 {
         color: #64748B !important;
     }
 
-    .dark-mode .border-gray-200 {
+    html.dark .border-gray-200 {
         border-color: #334155 !important;
     }
 
-    .dark-mode .border-gray-300 {
+    html.dark .border-gray-300 {
         border-color: #475569 !important;
     }
 
-    .dark-mode .shadow-sm {
+    html.dark .shadow-sm {
         box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3) !important;
     }
 
-    .dark-mode .shadow-md {
+    html.dark .shadow-md {
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
     }
 
-    .dark-mode input,
-    .dark-mode select,
-    .dark-mode textarea {
+    html.dark input,
+    html.dark select,
+    html.dark textarea {
         background-color: var(--bg-dark-secondary) !important;
         color: #F9FAFB !important;
     }
@@ -1446,7 +1481,7 @@ ob_start(); ?>
             overflow: hidden;
         }
 
-        .dark-mode .responsive-table tbody tr {
+        html.dark .responsive-table tbody tr {
             border-color: #374151;
         }
 
@@ -1458,7 +1493,7 @@ ob_start(); ?>
             border-bottom: 1px solid #f3f4f6;
         }
 
-        .dark-mode .responsive-table tbody td {
+        html.dark .responsive-table tbody td {
             border-bottom-color: #1f2937;
         }
 
@@ -1473,12 +1508,12 @@ ob_start(); ?>
             margin-right: 1rem;
         }
 
-        .dark-mode .responsive-table tbody td::before {
+        html.dark .responsive-table tbody td::before {
             color: #9ca3af;
         }
     }
 
-    .dark-mode tr:hover {
+    html.dark tr:hover {
         background-color: var(--bg-gray-750) !important;
     }
 

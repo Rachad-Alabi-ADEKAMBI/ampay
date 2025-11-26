@@ -12,13 +12,23 @@ function fetchAllMessagesByListingId($listing_id)
                 m.id,
                 m.listing_id,
                 m.sender_id,
+                m.receiver_id,
                 m.message,
                 m.created_at,
-                u.first_name,
-                u.last_name,
-                u.email
+
+                -- Infos sender
+                s.first_name AS sender_first_name,
+                s.last_name AS sender_last_name,
+                s.email AS sender_email,
+
+                -- Infos receiver
+                r.first_name AS receiver_first_name,
+                r.last_name AS receiver_last_name,
+                r.email AS receiver_email
+
             FROM messages m
-            INNER JOIN users u ON m.sender_id = u.id
+            INNER JOIN users s ON m.sender_id = s.id
+            LEFT JOIN users r ON m.receiver_id = r.id
             WHERE m.listing_id = :listing_id
             ORDER BY m.created_at DESC
         ");
@@ -41,6 +51,7 @@ function fetchAllMessagesByListingId($listing_id)
         ]);
     }
 }
+
 
 function fetchAllListings()
 {
