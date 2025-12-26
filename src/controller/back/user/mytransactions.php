@@ -29,12 +29,7 @@ function createTransaction()
 function deleteTransaction()
 {
     // Appelle la fonction du modèle
-    $result = modelDeleteTransaction();
-
-    // Réponse JSON
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode($result);
-    exit;
+    modelDeleteTransaction();
 }
 
 function updateTransaction()

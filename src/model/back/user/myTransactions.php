@@ -76,86 +76,71 @@ function modelDeleteTransaction()
     // Empêche les notices/warnings de polluer la réponse JSON
     error_reporting(E_ERROR | E_PARSE);
 
-    // Évite le double session_start()
+    // Session
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
     if (!isset($_SESSION['id'])) {
-        return [
+        echo json_encode([
             'success' => false,
-            'message' => 'Utilisateur non authentifié.',
-            'debug' => 'Session id non défini'
-        ];
+            'error' => 'Utilisateur non authentifié.'
+        ]);
+        return;
     }
 
     $currentUser = (int)$_SESSION['id'];
 
     // Données envoyées
-    $raw = file_get_contents('php://input');
-    $data = json_decode($raw, true);
+    $data = json_decode(file_get_contents('php://input'), true);
 
-    if (!$data) {
-        return [
+    if (!$data || empty($data['id'])) {
+        echo json_encode([
             'success' => false,
-            'message' => 'Aucune donnée reçue.',
-            'debug' => 'Contenu reçu : ' . $raw
-        ];
-    }
-
-    if (empty($data['id'])) {
-        return [
-            'success' => false,
-            'message' => 'ID manquant.',
-            'debug' => 'Payload : ' . json_encode($data)
-        ];
+            'error' => 'ID de la transaction manquant ou données invalides.'
+        ]);
+        return;
     }
 
     $id = (int)$data['id'];
 
+    // Vérifier que la transaction existe et appartient à l'utilisateur
     try {
-        $stmt = $pdo->prepare("SELECT user_id FROM LISTINGS WHERE id = :id LIMIT 1");
+        $stmt = $pdo->prepare("SELECT user_id FROM listings WHERE id = :id LIMIT 1");
         $stmt->execute([':id' => $id]);
         $listing = $stmt->fetch(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        return [
-            'success' => false,
-            'message' => 'Erreur SQL SELECT.',
-            'debug' => $e->getMessage()
-        ];
-    }
 
-    if (!$listing) {
-        return [
-            'success' => false,
-            'message' => 'Annonce introuvable.',
-            'debug' => 'ID inexistant : ' . $id
-        ];
-    }
+        if (!$listing) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Transaction introuvable.'
+            ]);
+            return;
+        }
 
-    if ((int)$listing['user_id'] !== $currentUser) {
-        return [
-            'success' => false,
-            'message' => 'Action non autorisée.',
-            'debug' => "Owner={$listing['user_id']} / CurrentUser={$currentUser}"
-        ];
-    }
+        if ((int)$listing['user_id'] !== $currentUser) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Action non autorisée.'
+            ]);
+            return;
+        }
 
-    try {
-        $delete = $pdo->prepare("DELETE FROM LISTINGS WHERE id = :id LIMIT 1");
+        // Suppression
+        $delete = $pdo->prepare("DELETE FROM listings WHERE id = :id LIMIT 1");
         $delete->execute([':id' => $id]);
 
-        return [
+        echo json_encode([
             'success' => true,
-            'message' => 'Annonce supprimée.',
-            'debug' => 'OK'
-        ];
+            'message' => 'Transaction supprimée avec succès.'
+        ]);
+        return;
     } catch (PDOException $e) {
-        return [
+        echo json_encode([
             'success' => false,
-            'message' => 'Erreur SQL DELETE.',
-            'debug' => $e->getMessage()
-        ];
+            'error' => 'Erreur base de données : ' . $e->getMessage()
+        ]);
+        return;
     }
 }
 
