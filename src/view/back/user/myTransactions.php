@@ -650,16 +650,17 @@ ob_start(); ?>
                 </div>
 
                 <div v-else v-for="msg in commentedConversation" :key="msg.message_id" :class="['flex', msg.sender_id === userId ? 'justify-end' : 'justify-start']">
-                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                    <!-- Updated colors: green for sent messages, blue for received messages -->
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-green-600 text-white' : 'bg-blue-500 text-white']">
                         <div class="flex items-center mb-2">
-                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-green-700' : 'bg-blue-600']">
                                 <i :class="msg.sender_id === userId ? 'fas fa-user' : 'fas fa-user-shield'" class="text-white text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
+                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-green-100' : 'text-blue-100']">
                                     {{ msg.sender_id === userId ? t.you : 'Admin' }}
                                 </p>
-                                <p :class="['text-xs', msg.sender_id === userId ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
+                                <p :class="['text-xs', msg.sender_id === userId ? 'text-blue-200' : 'text-blue-200']">
                                     {{ formatDate(msg.message_created_at) }}
                                 </p>
                             </div>
@@ -734,16 +735,17 @@ ob_start(); ?>
                 </div>
 
                 <div v-else v-for="msg in adminConversation" :key="msg.id" :class="['flex', msg.sender_id === userId ? 'justify-end' : 'justify-start']">
-                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-blue-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100']">
+                    <!-- Updated colors: green for sent messages, blue for received messages -->
+                    <div :class="['max-w-[85%] sm:max-w-[70%] rounded-lg p-3 sm:p-4', msg.sender_id === userId ? 'bg-green-600 text-white' : 'bg-blue-500 text-white']">
                         <div class="flex items-center mb-2">
-                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-blue-600' : 'bg-gray-400 dark:bg-gray-600']">
+                            <div :class="['w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center mr-2', msg.sender_id === userId ? 'bg-green-700' : 'bg-blue-600']">
                                 <i :class="msg.sender_id === userId ? 'fas fa-user' : 'fas fa-user-shield'" class="text-white text-xs sm:text-sm"></i>
                             </div>
                             <div>
-                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-blue-100' : 'text-gray-700 dark:text-gray-300']">
+                                <p :class="['text-xs font-semibold', msg.sender_id === userId ? 'text-green-100' : 'text-blue-100']">
                                     {{ msg.sender_id === userId ? t.you : 'Admin' }}
                                 </p>
-                                <p :class="['text-xs', msg.sender_id === userId ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400']">
+                                <p :class="['text-xs', msg.sender_id === userId ? 'text-green-200' : 'text-blue-200']">
                                     {{ formatDate(msg.created_at) }}
                                 </p>
                             </div>
@@ -1228,13 +1230,23 @@ ob_start(); ?>
                 if (!this.newAdminMessage.trim() || this.sendingAdminMessage) return;
 
                 this.sendingAdminMessage = true;
+
+                const url = 'index.php?action=sendMessage';
+                const payload = {
+                    listing_id: this.selectedListingForMessages.id,
+                    message: this.newAdminMessage.trim(),
+                    sender_id: this.userId,
+                    receiver_id: 1 // admin
+                };
+
+                // Logs requis
+                console.log('Route appelée :', url);
+                console.log('Paramètres envoyés :', payload);
+
                 try {
-                    const response = await axios.post('index.php?action=sendMessage', {
-                        listing_id: this.selectedListingForMessages.id,
-                        message: this.newAdminMessage.trim(),
-                        sender_id: this.userId,
-                        receiver_id: 1 // Assuming admin is receiver_id = 1
-                    });
+                    const response = await axios.post(url, payload);
+
+                    console.log('Réponse serveur :', response.data);
 
                     if (response.data?.success) {
                         this.adminConversation.push({
@@ -1253,12 +1265,16 @@ ob_start(); ?>
                         });
                     }
                 } catch (error) {
-                    console.error('Erreur lors de l\'envoi du message:', error);
+                    console.error('Erreur requête :', error);
+                    if (error.response) {
+                        console.error('Réponse serveur (erreur) :', error.response.data);
+                    }
                     alert('Erreur lors de l\'envoi du message.');
                 } finally {
                     this.sendingAdminMessage = false;
                 }
             },
+
             scrollToBottom(refName) {
                 const container = this.$refs[refName];
                 if (container) {
@@ -1320,11 +1336,23 @@ ob_start(); ?>
             },
             async submitListing() {
                 this.submitting = true;
+
+                const url = 'index.php?action=createTransaction';
+                const payload = {
+                    ...this.newListing,
+                    user_id: this.userId
+                };
+
+                // Log de la route et des données envoyées
+                console.log('Route appelée :', url);
+                console.log('Données envoyées :', payload);
+
                 try {
-                    const response = await axios.post('index.php?action=createTransaction', {
-                        ...this.newListing,
-                        user_id: this.userId
-                    });
+                    const response = await axios.post(url, payload);
+
+                    // Log de la réponse serveur
+                    console.log('Réponse serveur :', response.data);
+
                     if (response.data?.success) {
                         alert(response.data.message || 'Annonce créée avec succès.');
                         this.closeCreateModal();
@@ -1333,12 +1361,17 @@ ob_start(); ?>
                         alert(response.data.message || 'Erreur lors de la création de l\'annonce.');
                     }
                 } catch (error) {
-                    console.error('Erreur:', error);
+                    // Log erreur complète
+                    console.error('Erreur requête :', error);
+                    if (error.response) {
+                        console.error('Réponse serveur (erreur) :', error.response.data);
+                    }
                     alert('Erreur lors de la création de l\'annonce.');
                 } finally {
                     this.submitting = false;
                 }
             },
+
             viewDetails(listing) {
                 this.selectedListing = listing;
                 this.showDetailsModal = true;
@@ -1360,8 +1393,14 @@ ob_start(); ?>
             },
             async updateListing() {
                 this.submitting = true;
+                const route = 'index.php?action=updateTransaction';
+                console.log('Route:', route);
+                console.log('Requête envoyée:', this.editingListing);
+
                 try {
-                    const response = await axios.post('index.php?action=updateTransaction', this.editingListing); // Changed from api to axios
+                    const response = await axios.post(route, this.editingListing);
+                    console.log('Réponse du serveur:', response.data);
+
                     if (response.data?.success) {
                         alert('Annonce modifiée avec succès.');
                         this.closeEditModal();
@@ -1370,19 +1409,26 @@ ob_start(); ?>
                         alert(response.data.message || 'Erreur lors de la modification.');
                     }
                 } catch (error) {
-                    console.error('Erreur:', error);
+                    console.error('Erreur lors de la requête:', error);
                     alert('Erreur lors de la modification.');
                 } finally {
                     this.submitting = false;
                 }
             },
+
             async deleteListing(listing) {
                 if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
 
+                const route = 'index.php?action=deleteTransaction';
+                const payload = {
+                    id: listing.id
+                };
+
+                console.log('Route:', route);
+                console.log('Requête envoyée:', payload);
+
                 try {
-                    const response = await axios.post('index.php?action=deleteTransaction', {
-                        id: listing.id
-                    });
+                    const response = await axios.post(route, payload);
 
                     // DEBUG détaillé
                     console.log('HTTP status:', response.status);
@@ -1405,33 +1451,28 @@ ob_start(); ?>
                         return;
                     }
 
-                    // Si on arrive ici, serveur a retourné JSON mais success est false/absent
                     console.error('Suppression refusée par le serveur :', response.data);
                     alert(response.data.message || 'Erreur lors de la suppression.');
 
                 } catch (error) {
-                    // Axios throw pour réponses non-2xx ou problèmes réseau
                     if (error.response) {
-                        // Le serveur a répondu (mais code non-2xx)
                         console.error('Erreur serveur (non-2xx) :', {
                             status: error.response.status,
                             data: error.response.data,
                             headers: error.response.headers
                         });
-                        // Affiche le message renvoyé par le serveur si présent
                         const msg = error.response.data?.message || error.response.data?.error || `Erreur serveur ${error.response.status}`;
                         alert(msg);
                     } else if (error.request) {
-                        // Requête envoyée mais pas de réponse
                         console.error('Pas de réponse reçue :', error.request);
                         alert('Aucune réponse du serveur.');
                     } else {
-                        // Autre erreur
                         console.error('Erreur Axios:', error.message);
                         alert('Erreur lors de la suppression.');
                     }
                 }
             }
+
 
 
         }

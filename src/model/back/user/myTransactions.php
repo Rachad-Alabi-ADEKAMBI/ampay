@@ -47,7 +47,7 @@ function newTransaction()
     $status = 'Actif';
 
     // Ajout du champ "status" dans la requête
-    $sql = "INSERT INTO LISTINGS (user_id, type, amount, currency, country, city, delay, status, created_at)
+    $sql = "INSERT INTO listings (user_id, type, amount, currency, country, city, delay, status, created_at)
             VALUES (:user_id, :type, :amount, :currency, :country, :city, :delay, :status, NOW())";
 
     $stmt = $pdo->prepare($sql);
@@ -160,24 +160,22 @@ function modelDeleteTransaction()
 }
 
 
-
-
 function updateListing()
 {
     global $pdo;
 
-    // Récupération et décodage des données JSON envoyées par Axios
     $data = json_decode(file_get_contents('php://input'), true);
 
     if (!$data) {
-        return ['success' => false, 'error' => 'Aucune donnée reçue.'];
+        echo json_encode(['success' => false, 'error' => 'Aucune donnée reçue.']);
+        return;
     }
 
-    // Vérification des champs requis
     $required = ['id', 'type', 'amount', 'currency', 'country', 'city', 'delay', 'status'];
     foreach ($required as $field) {
         if (!isset($data[$field]) || $data[$field] === '') {
-            return ['success' => false, 'error' => "Le champ '$field' est requis."];
+            echo json_encode(['success' => false, 'error' => "Le champ '$field' est requis."]);
+            return;
         }
     }
 
@@ -188,8 +186,7 @@ function updateListing()
                 country = :country,
                 city = :city,
                 delay = :delay,
-                status = :status,
-                updated_at = NOW()
+                status = :status
             WHERE id = :id";
 
     $stmt = $pdo->prepare($sql);
@@ -207,12 +204,12 @@ function updateListing()
         ]);
 
         if ($stmt->rowCount() > 0) {
-            return ['success' => true, 'message' => 'Annonce mise à jour avec succès.'];
+            echo json_encode(['success' => true, 'message' => 'Annonce mise à jour avec succès.']);
         } else {
-            return ['success' => false, 'error' => "Aucune modification détectée ou ID introuvable."];
+            echo json_encode(['success' => false, 'error' => "Aucune modification détectée ou ID introuvable."]);
         }
     } catch (PDOException $e) {
-        return ['success' => false, 'error' => 'Erreur base de données : ' . $e->getMessage()];
+        echo json_encode(['success' => false, 'error' => 'Erreur base de données : ' . $e->getMessage()]);
     }
 }
 

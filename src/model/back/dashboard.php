@@ -35,15 +35,23 @@ function fetchAllMessages()
 
 
 
+
 function newMessage()
 {
     global $pdo;
+
+    // Fuseau horaire correct
+    date_default_timezone_set('Africa/Porto-Novo');
+
     session_start();
     header('Content-Type: application/json; charset=utf-8');
-    ob_clean(); // Vide tout tampon de sortie
+    ob_clean();
 
     if (!isset($_SESSION['id'])) {
-        echo json_encode(['success' => false, 'error' => 'Utilisateur non authentifié.']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Utilisateur non authentifié.'
+        ]);
         exit;
     }
 
@@ -51,7 +59,10 @@ function newMessage()
     $input = json_decode(file_get_contents('php://input'), true);
 
     if (!$input) {
-        echo json_encode(['success' => false, 'error' => 'Aucune donnée reçue.']);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Aucune donnée reçue.'
+        ]);
         exit;
     }
 
@@ -73,25 +84,50 @@ function newMessage()
     $message     = trim($input['message']);
     $receiver_id = (int) $input['receiver_id'];
 
+    // Date générée par PHP (PAS MySQL)
+    $created_at = date('Y-m-d H:i:s');
+
     try {
         $stmt = $pdo->prepare("
-            INSERT INTO messages (created_at, listing_id, message, sender_id, receiver_id, status)
-            VALUES (NOW(), :listing_id, :message, :sender_id, :receiver_id, 'Envoyé')
+            INSERT INTO messages (
+                created_at,
+                listing_id,
+                message,
+                sender_id,
+                receiver_id,
+                status
+            ) VALUES (
+                :created_at,
+                :listing_id,
+                :message,
+                :sender_id,
+                :receiver_id,
+                'Envoyé'
+            )
         ");
+
         $stmt->execute([
+            ':created_at'  => $created_at,
             ':listing_id'  => $listing_id,
             ':message'     => $message,
             ':sender_id'   => $sender_id,
             ':receiver_id' => $receiver_id
         ]);
 
-        echo json_encode(['success' => true, 'message' => 'Message envoyé avec succès.']);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Message envoyé avec succès.'
+        ]);
         exit;
     } catch (PDOException $e) {
-        echo json_encode(['success' => false, 'error' => 'Erreur base de données : ' . $e->getMessage()]);
+        echo json_encode([
+            'success' => false,
+            'error' => 'Erreur base de données : ' . $e->getMessage()
+        ]);
         exit;
     }
 }
+
 
 
 function fetchConversations()

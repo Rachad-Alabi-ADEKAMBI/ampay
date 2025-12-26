@@ -15,6 +15,198 @@ $role =  $_SESSION['role'];
     window.role = <?php echo json_encode($role);  ?>
 </script>
 
+<style>
+    /* Ajout des animations personnalisées pour la page */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    @keyframes bounce {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-8px);
+        }
+    }
+
+    @keyframes glow {
+
+        0%,
+        100% {
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+        }
+
+        50% {
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    .slide-in-left {
+        animation: slideInLeft 0.8s ease-out;
+    }
+
+    .slide-in-right {
+        animation: slideInRight 0.8s ease-out;
+    }
+
+    .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .float-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .pulse-animation {
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    .bounce-animation {
+        animation: bounce 1s ease-in-out infinite;
+    }
+
+    /* Styles pour les cercles avec meilleur contraste */
+    .icon-circle-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle-success:hover {
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+        transform: scale(1.05);
+    }
+
+    .icon-circle-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle-primary:hover {
+        box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+        transform: scale(1.05);
+    }
+
+    .icon-circle-offer {
+        background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle-offer:hover {
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+    }
+
+    .icon-circle-request {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle-request:hover {
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Amélioration de la visibilité des cartes */
+    .card-offer,
+    .card-request {
+        transition: all 0.3s ease;
+    }
+
+    .card-offer:hover,
+    .card-request:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Animation pour les icones */
+    .icon-animated {
+        transition: all 0.3s ease;
+    }
+
+    .card-offer:hover .icon-animated,
+    .card-request:hover .icon-animated {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Styles pour les textes du header */
+    .header-card {
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .header-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .header-card:hover .icon-circle-success,
+    .header-card:hover .icon-circle-primary {
+        animation: bounce 0.6s ease-in-out;
+    }
+</style>
+
 <div id="app" v-cloak>
     <!-- Added theme and language toggle buttons -->
     <?php include 'header.php'; ?>
@@ -33,7 +225,7 @@ $role =  $_SESSION['role'];
                     <p class="text-xl text-gray-300 leading-relaxed">
                         {{ t.hero_description }}
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                    <div class="flex flex-col sm:flex-row gap-4 pt-4 fade-in-up">
                         <a href="index.php?action=marketplace" class="px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity text-center shadow-lg">
                             <i class="fas fa-rocket mr-2"></i>{{ t.cta_start }}
                         </a>
@@ -42,15 +234,15 @@ $role =  $_SESSION['role'];
                         </a>
                     </div>
                     <div class="grid grid-cols-3 gap-4 pt-8">
-                        <div class="text-center">
+                        <div class="text-center fade-in-up" style="animation-delay: 0.2s;">
                             <div class="text-3xl font-bold text-primary">2.5K+</div>
                             <div class="text-sm text-gray-400">{{ t.stats_users }}</div>
                         </div>
-                        <div class="text-center">
+                        <div class="text-center fade-in-up" style="animation-delay: 0.4s;">
                             <div class="text-3xl font-bold text-primary">15+</div>
                             <div class="text-sm text-gray-400">{{ t.stats_countries }}</div>
                         </div>
-                        <div class="text-center">
+                        <div class="text-center fade-in-up" style="animation-delay: 0.6s;">
                             <div class="text-3xl font-bold text-primary">€2M+</div>
                             <div class="text-sm text-gray-400">{{ t.stats_transferred }}</div>
                         </div>
@@ -59,26 +251,27 @@ $role =  $_SESSION['role'];
 
                 <div class="hidden lg:flex justify-center slide-in-right">
                     <div class="relative float-animation">
-                        <div class="absolute -left-8 top-20 bg-white rounded-xl p-4 shadow-2xl" style="animation: float 3s ease-in-out infinite; animation-delay: 0.5s;">
+                        <!-- Amélioration des cercles avec meilleur contraste et icones visibles -->
+                        <div class="absolute -left-8 top-20 bg-white rounded-xl p-4 shadow-2xl header-card" style="animation: float 3s ease-in-out infinite; animation-delay: 0.5s;">
                             <div class="flex items-center space-x-3">
-                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-check text-2xl" style="color: red;"></i>
+                                <div class="w-16 h-16 icon-circle-success rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-zap text-white text-2xl icon-animated"></i>
                                 </div>
 
                                 <div>
-                                    <div class="text-sm text-gray-600">{{ t.transfer_success }}</div>
-                                    <div class="text-lg font-bold text-gray-900">500 EUR</div>
+                                    <div class="text-sm text-gray-600">{{ t.instant }}</div>
+                                    <div class="text-lg font-bold text-gray-900">2 min</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute -right-8 bottom-32 bg-white rounded-xl p-4 shadow-2xl" style="animation: float 3s ease-in-out infinite; animation-delay: 1s;">
+                        <div class="absolute -right-8 bottom-32 bg-white rounded-xl p-4 shadow-2xl header-card" style="animation: float 3s ease-in-out infinite; animation-delay: 1s;">
                             <div class="flex items-center space-x-3">
-                                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-bolt text-blue-800 text-2xl"></i>
+                                <div class="w-16 h-16 icon-circle-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-users text-white text-2xl icon-animated"></i>
                                 </div>
                                 <div>
-                                    <div class="text-sm text-gray-600">{{ t.instant }}</div>
-                                    <div class="text-lg font-bold text-gray-900">2 min</div>
+                                    <div class="text-sm text-gray-600">{{ t.users_count }}</div>
+                                    <div class="text-lg font-bold text-gray-900">2.5K+</div>
                                 </div>
                             </div>
                         </div>
@@ -119,13 +312,12 @@ $role =  $_SESSION['role'];
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-16">
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift fade-in-up">
                     <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1633158829585-23ba8f7c8caf?w=800&h=400&fit=crop" alt="Offreur" class="absolute inset-0 w-full h-full object-cover opacity-30">
-                        <i class="fas fa-hand-holding-usd text-white text-6xl relative z-10"></i>
+                        <i class="fas fa-hand-holding-usd text-white text-6xl relative z-10 animate-bounce"></i>
                     </div>
                     <div class="p-8">
-                        <!-- Translated service card content -->
                         <div class="inline-block px-4 py-1 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
                             {{ t.for_providers }}
                         </div>
@@ -134,19 +326,19 @@ $role =  $_SESSION['role'];
                             {{ t.provider_description }}
                         </p>
                         <ul class="space-y-3 mb-6">
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.1s;">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.provider_feature_1 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.2s;">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.provider_feature_2 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.3s;">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.provider_feature_3 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.4s;">
                                 <i class="fas fa-check-circle text-green-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.provider_feature_4 }}</span>
                             </li>
@@ -157,13 +349,12 @@ $role =  $_SESSION['role'];
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift">
+                <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover-lift fade-in-up" style="animation-delay: 0.1s;">
                     <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center relative overflow-hidden">
                         <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=400&fit=crop" alt="Demandeur" class="absolute inset-0 w-full h-full object-cover opacity-30">
-                        <i class="fas fa-hand-holding-heart text-white text-6xl relative z-10"></i>
+                        <i class="fas fa-hand-holding-heart text-white text-6xl relative z-10 animate-bounce" style="animation-delay: 0.3s;"></i>
                     </div>
                     <div class="p-8">
-                        <!-- Translated requester card content -->
                         <div class="inline-block px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
                             {{ t.for_requesters }}
                         </div>
@@ -172,19 +363,19 @@ $role =  $_SESSION['role'];
                             {{ t.requester_description }}
                         </p>
                         <ul class="space-y-3 mb-6">
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.1s;">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.requester_feature_1 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.2s;">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.requester_feature_2 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.3s;">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.requester_feature_3 }}</span>
                             </li>
-                            <li class="flex items-start">
+                            <li class="flex items-start fade-in-up" style="animation-delay: 0.4s;">
                                 <i class="fas fa-check-circle text-blue-600 mt-1 mr-3"></i>
                                 <span class="text-gray-700">{{ t.requester_feature_4 }}</span>
                             </li>
@@ -197,19 +388,17 @@ $role =  $_SESSION['role'];
             </div>
 
             <div class="text-center mb-12 fade-in-up">
-                <!-- Translated recent offers section -->
                 <h3 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ t.recent_offers_title }}</h3>
                 <p class="text-lg text-gray-600">{{ t.recent_offers_subtitle }}</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 <div>
-                    <!-- Translated offers heading -->
-                    <h4 class="text-2xl font-bold text-green-600 mb-6 flex items-center">
+                    <h4 class="text-2xl font-bold text-green-600 mb-6 flex items-center fade-in-up">
                         <i class="fas fa-hand-holding-usd mr-3"></i>{{ t.available_offers }}
                     </h4>
                     <div class="space-y-4">
-                        <div v-for="offer in recentOffers" :key="offer.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-green-500">
+                        <div v-for="offer in recentOffers" :key="offer.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-green-500 card-offer fade-in-up">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
@@ -218,9 +407,10 @@ $role =  $_SESSION['role'];
                                     </span>
                                 </div>
 
+                                <!-- Amélioration de l'icone du cercle offer -->
                                 <div class="flex items-center mb-4">
-                                    <div class="bg-green-500 w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                        <i class="fas fa-hashtag text-white"></i>
+                                    <div class="icon-circle-offer w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-gift text-white text-lg icon-animated"></i>
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-semibold text-gray-900 truncate">{{ t.new_offer }}</p>
@@ -259,7 +449,7 @@ $role =  $_SESSION['role'];
                                 </div>
 
                                 <button v-if="offer.user_id != user_id && role != 'admin'"
-                                    @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors">
+                                    @click="openContactModal(offer)" class="w-full py-3 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-colors hover:shadow-lg">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
@@ -268,12 +458,11 @@ $role =  $_SESSION['role'];
                 </div>
 
                 <div>
-                    <!-- Translated requests heading -->
-                    <h4 class="text-2xl font-bold text-yellow-600 mb-6 flex items-center">
+                    <h4 class="text-2xl font-bold text-yellow-600 mb-6 flex items-center fade-in-up" style="animation-delay: 0.1s;">
                         <i class="fas fa-hand-holding-heart mr-3"></i>{{ t.active_requests }}
                     </h4>
                     <div class="space-y-4">
-                        <div v-for="request in recentRequests" :key="request.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-yellow-500">
+                        <div v-for="request in recentRequests" :key="request.id" class="bg-white rounded-xl shadow-sm overflow-hidden hover-lift border-l-4 border-yellow-500 card-request fade-in-up" style="animation-delay: 0.05s;">
                             <div class="p-6">
                                 <div class="flex items-center justify-between mb-4">
                                     <span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
@@ -282,9 +471,10 @@ $role =  $_SESSION['role'];
                                     </span>
                                 </div>
 
+                                <!-- Amélioration de l'icone du cercle request -->
                                 <div class="flex items-center mb-4">
-                                    <div class="bg-yellow-500 w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
-                                        <i class="fas fa-hashtag text-white"></i>
+                                    <div class="icon-circle-request w-12 h-12 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                                        <i class="fas fa-lightbulb text-white text-lg icon-animated"></i>
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-semibold text-gray-900 truncate">{{ t.new_request }}</p>
@@ -322,8 +512,8 @@ $role =  $_SESSION['role'];
                                     <i class="fas fa-clock mr-1"></i>{{ request.timeAgo }}
                                 </div>
 
-                                <button @click="openContactModal(request)" v-if="request.user_id != user_id && role != 'admin'"
-                                    class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors">
+                                <button v-if="request.user_id != user_id && role != 'admin'"
+                                    @click="openContactModal(request)" class="w-full py-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-colors hover:shadow-lg">
                                     <i class="fas fa-comment mr-2"></i>{{ t.connect }}
                                 </button>
                             </div>
@@ -333,7 +523,6 @@ $role =  $_SESSION['role'];
             </div>
 
             <div class="text-center mt-12">
-                <!-- Translated view all button -->
                 <a href="index.php?action=marketplace" class="inline-block px-8 py-4 primary-gradient text-white rounded-lg text-lg font-semibold hover:opacity-90 transition-opacity shadow-lg">
                     <i class="fas fa-store mr-2"></i>{{ t.view_all_offers }}
                 </a>
@@ -345,7 +534,6 @@ $role =  $_SESSION['role'];
         <div class="container mx-auto px-4 sm:px-6">
             <div class="text-center mb-16 fade-in-up">
                 <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.how_it_works }}</h2>
-                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-600 max-w-2xl mx-auto">{{ t.how_it_works_subtitle }}</p>
             </div>
 
@@ -371,7 +559,6 @@ $role =  $_SESSION['role'];
         <div class="parallax-content container mx-auto px-4 sm:px-6">
             <div class="text-center mb-16 text-white fade-in-up">
                 <h2 class="text-4xl sm:text-5xl font-bold mb-4">{{ t.why_choose }}</h2>
-                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-300 max-w-2xl mx-auto">{{ t.why_choose_subtitle }}</p>
             </div>
 
@@ -393,7 +580,6 @@ $role =  $_SESSION['role'];
                 <div class="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                     <i class="fas fa-gift text-white text-4xl"></i>
                 </div>
-                <!-- Translated referral program section -->
                 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">{{ t.referral_title }}</h2>
                 <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed">
                     {{ t.referral_description }}
@@ -416,7 +602,6 @@ $role =  $_SESSION['role'];
         <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
             <div class="text-center mb-16 fade-in-up">
                 <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.faq_title }}</h2>
-                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-600">{{ t.faq_subtitle }}</p>
             </div>
 
@@ -424,10 +609,8 @@ $role =  $_SESSION['role'];
                 <div v-for="(faq, index) in faqs" :key="index" class="bg-gray-50 rounded-xl overflow-hidden hover-lift">
                     <button @click="toggleFaq(index)" class="w-full px-6 py-5 text-left flex items-center justify-between hover:bg-gray-100 transition-colors">
                         <span class="text-lg font-semibold text-gray-900 pr-4">{{ faq.question }}</span>
-                        <!-- Updated to use faqOpenStates array -->
                         <i :class="faqOpenStates[index] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-primary text-xl flex-shrink-0"></i>
                     </button>
-                    <!-- Updated to use faqOpenStates array -->
                     <div v-if="faqOpenStates[index]" class="px-6 pb-5">
                         <p class="text-gray-600 leading-relaxed">{{ faq.answer }}</p>
                     </div>
@@ -440,7 +623,6 @@ $role =  $_SESSION['role'];
         <div class="container mx-auto px-4 sm:px-6 max-w-4xl">
             <div class="text-center mb-16 fade-in-up">
                 <h2 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">{{ t.contact_title }}</h2>
-                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-600">{{ t.contact_subtitle }}</p>
             </div>
 
@@ -448,7 +630,6 @@ $role =  $_SESSION['role'];
                 <form @submit.prevent="submitContactForm" class="space-y-6">
                     <div class="grid sm:grid-cols-2 gap-6">
                         <div>
-                            <!-- Translated form labels -->
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 <i class="fas fa-user mr-1 text-primary"></i>{{ t.full_name }}
                             </label>
@@ -506,7 +687,6 @@ $role =  $_SESSION['role'];
         <div class="container mx-auto px-4 sm:px-6 text-center">
             <div class="max-w-3xl mx-auto text-white fade-in-up">
                 <h2 class="text-4xl sm:text-5xl font-bold mb-6">{{ t.ready_title }}</h2>
-                <!-- Translated subtitle -->
                 <p class="text-xl text-gray-300 mb-8 leading-relaxed">
                     {{ t.ready_subtitle }}
                 </p>
@@ -520,7 +700,6 @@ $role =  $_SESSION['role'];
     <div v-if="showContactModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" @click.self="closeContactModal">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 modal-content">
             <div class="flex justify-between items-center mb-6">
-                <!-- Translated modal title -->
                 <h3 class="text-2xl font-bold text-gray-900">
                     <i class="fas fa-handshake text-primary mr-2"></i>{{ t.connection_modal_title }}
                 </h3>
@@ -733,7 +912,9 @@ $role =  $_SESSION['role'];
                         connection_modal_title: 'Mise en relation',
                         listing_number: 'Annonce',
                         send_request: 'Envoyer la demande',
-                        request_sent_success: 'Demande envoyée ! Nous vous mettrons en contact sous peu.'
+                        request_sent_success: 'Demande envoyée ! Nous vous mettrons en contact sous peu.',
+                        users_count: 'Utilisateurs',
+                        transfer_success: 'Transfert réussi'
                     },
                     en: {
                         nav_home: 'Home',
@@ -856,7 +1037,9 @@ $role =  $_SESSION['role'];
                         connection_modal_title: 'Connection',
                         listing_number: 'Listing',
                         send_request: 'Send request',
-                        request_sent_success: 'Request sent! We will connect you shortly.'
+                        request_sent_success: 'Request sent! We will connect you shortly.',
+                        users_count: 'Users',
+                        transfer_success: 'Transfer successful'
                     }
                 }
             };
@@ -1258,7 +1441,7 @@ $role =  $_SESSION['role'];
         backdrop-filter: blur(4px);
     }
 
-    @keyframes fadeInUp {
+    /* @keyframes fadeInUp {
         from {
             opacity: 0;
             transform: translateY(30px);
@@ -1268,9 +1451,9 @@ $role =  $_SESSION['role'];
             opacity: 1;
             transform: translateY(0);
         }
-    }
+    } */
 
-    @keyframes slideInLeft {
+    /* @keyframes slideInLeft {
         from {
             opacity: 0;
             transform: translateX(-50px);
@@ -1280,9 +1463,9 @@ $role =  $_SESSION['role'];
             opacity: 1;
             transform: translateX(0);
         }
-    }
+    } */
 
-    @keyframes slideInRight {
+    /* @keyframes slideInRight {
         from {
             opacity: 0;
             transform: translateX(50px);
@@ -1292,9 +1475,9 @@ $role =  $_SESSION['role'];
             opacity: 1;
             transform: translateX(0);
         }
-    }
+    } */
 
-    @keyframes float {
+    /* @keyframes float {
 
         0%,
         100% {
@@ -1304,9 +1487,9 @@ $role =  $_SESSION['role'];
         50% {
             transform: translateY(-20px);
         }
-    }
+    } */
 
-    @keyframes pulse-glow {
+    /* @keyframes pulse-glow {
 
         0%,
         100% {
@@ -1316,9 +1499,9 @@ $role =  $_SESSION['role'];
         50% {
             box-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
         }
-    }
+    } */
 
-    @keyframes modalSlideIn {
+    /* @keyframes modalSlideIn {
         from {
             opacity: 0;
             transform: translateY(-50px);
@@ -1328,27 +1511,27 @@ $role =  $_SESSION['role'];
             opacity: 1;
             transform: translateY(0);
         }
-    }
+    } */
 
     .modal-content {
         animation: modalSlideIn 0.3s ease-out;
     }
 
-    .fade-in-up {
+    /* .fade-in-up {
         animation: fadeInUp 0.8s ease-out forwards;
-    }
+    } */
 
-    .slide-in-left {
+    /* .slide-in-left {
         animation: slideInLeft 0.8s ease-out forwards;
-    }
+    } */
 
-    .slide-in-right {
+    /* .slide-in-right {
         animation: slideInRight 0.8s ease-out forwards;
-    }
+    } */
 
-    .float-animation {
+    /* .float-animation {
         animation: float 3s ease-in-out infinite;
-    }
+    } */
 
     .hover-lift {
         transition: transform 0.3s ease, box-shadow 0.3s ease;

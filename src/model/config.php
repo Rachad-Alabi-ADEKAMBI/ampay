@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Africa/Porto-Novo');
+
 // Crée une seule instance PDO et sécurise la fonction contre redéclaration
 if (!function_exists('getConnexion')) {
     function getConnexion()

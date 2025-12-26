@@ -139,3 +139,9 @@ Array
     [message] => je m'appelle Ray et je veux ces 4000 GHS
     [listing_id] => 23
 )
+contactRequestUser() appelée
+Array
+(
+    [message] => moi je veux bien
+    [listing_id] => 23
+)
